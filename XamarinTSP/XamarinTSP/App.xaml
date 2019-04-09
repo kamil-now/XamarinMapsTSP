@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinTSP.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <sys:Int32 x:Key="FontSize">10</sys:Int32>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

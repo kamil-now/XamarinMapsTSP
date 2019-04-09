@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="XamarinTSP.UI.Views.LocationListView"
+             xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors">
+    <ContentView.Content>
+        <FlexLayout Direction="Column" >
+            <ListView  x:Name="List"
+                   Grid.Row="0"
+                       FlexLayout.AlignSelf="Start"
+                       BackgroundColor="DarkGray"
+                   ItemsSource="{Binding Locations}"
+                   SelectedItem="{Binding SelectedLocation}">
+                <ListView.Behaviors>
+                    <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                                                  Command="{Binding SelectCommand}" />
+                </ListView.Behaviors>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <Grid HeightRequest="10" BackgroundColor="LightGray">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Entry Grid.Column="0" Text="{Binding }" FontSize="Micro"/>
+                                    <Button Grid.Column="1"
+                                        FontSize="Micro"
+                                        Text="DELETE"
+                                        CommandParameter="{Binding}"
+                                        Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=List}}" />
+
+                                </Grid>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Grid  Grid.Row="1" HeightRequest="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Entry  Grid.Column="1" Text="{Binding NewLocation}" FontSize="Micro"/>
+                <Button Grid.Column="2"
+                    Text="ADD"
+                    Command="{Binding AddLocationCommand}" FontSize="Micro"/>
+
+            </Grid>
+        </FlexLayout>
+    </ContentView.Content>
+</ContentView>

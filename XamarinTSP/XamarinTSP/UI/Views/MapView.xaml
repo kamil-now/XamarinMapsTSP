@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:XamarinTSP.UI.Views"
+             xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
+             x:Class="XamarinTSP.UI.Views.MapView">
+    <ContentView.Content>
+        <ContentView Grid.Row="0" Content="{Binding Map}" />
+    </ContentView.Content>
+
+</ContentView>

@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:XamarinTSP.UI.Views"
+             xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
+             x:Class="XamarinTSP.UI.Views.MainPage"
+            NavigationPage.HasNavigationBar="False">
+    <ContentPage.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing"
+                                          Command="{Binding OnAppearingCommand}" />
+    </ContentPage.Behaviors>
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <views:LocationListView Grid.Row="0" BindingContext="{Binding LocationListViewModel}" />
+
+            <views:MapView  Grid.Row="1" BindingContext="{Binding MapViewModel}" MinimumHeightRequest="{Binding MapMinimumSize}"/>
+
+            <Button Grid.Row="2"
+                    Text="TSP"
+                    Command="{Binding RunTSPCommand}" FontSize="Micro" MinimumHeightRequest="10"/>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
