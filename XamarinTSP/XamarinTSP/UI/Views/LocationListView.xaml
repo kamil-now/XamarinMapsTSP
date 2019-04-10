@@ -4,16 +4,21 @@
              x:Class="XamarinTSP.UI.Views.LocationListView"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors">
     <ContentView.Content>
-        <FlexLayout Direction="Column" >
+        <!--<Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>-->
             <ListView  x:Name="List"
                    Grid.Row="0"
-                       FlexLayout.AlignSelf="Start"
                        BackgroundColor="DarkGray"
+                       MinimumHeightRequest="20"
                    ItemsSource="{Binding Locations}"
                    SelectedItem="{Binding SelectedLocation}">
                 <ListView.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                   Command="{Binding SelectCommand}" />
+                    <behaviors:ListViewAutoSizeBehavior/>
                 </ListView.Behaviors>
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -36,18 +41,23 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+            <ListView.FooterTemplate>
+                <DataTemplate>
+                    <Grid  Grid.Row="1" HeightRequest="10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                        <Entry  Grid.Column="0"  Text="tmp" FontSize="Micro"/>
+                        <!--Text="{Binding NewLocation}"-->
+                        <Button Grid.Column="1"
+                        Text="ADD"
+                         FontSize="Micro"/>
+                        <!--Command="{Binding AddLocationCommand}"-->
+                    </Grid>
+                </DataTemplate>
+                </ListView.FooterTemplate>
             </ListView>
-            <Grid  Grid.Row="1" HeightRequest="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Entry  Grid.Column="1" Text="{Binding NewLocation}" FontSize="Micro"/>
-                <Button Grid.Column="2"
-                    Text="ADD"
-                    Command="{Binding AddLocationCommand}" FontSize="Micro"/>
 
-            </Grid>
-        </FlexLayout>
     </ContentView.Content>
 </ContentView>
