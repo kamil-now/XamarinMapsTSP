@@ -16,7 +16,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <views:LocationListView Grid.Row="0" BindingContext="{Binding LocationListViewModel}" />
+            <views:LocationListView Margin="10,0"  Grid.Row="0" BindingContext="{Binding LocationListViewModel}" />
 
             <views:MapView  Grid.Row="1" BindingContext="{Binding MapViewModel}" MinimumHeightRequest="{Binding MapMinimumSize}"/>
 

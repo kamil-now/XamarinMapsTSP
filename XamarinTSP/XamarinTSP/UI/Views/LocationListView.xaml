@@ -4,60 +4,62 @@
              x:Class="XamarinTSP.UI.Views.LocationListView"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors">
     <ContentView.Content>
-        <!--<Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>-->
-            <ListView  x:Name="List"
+        <ListView  x:Name="List"
                    Grid.Row="0"
-                       BackgroundColor="DarkGray"
-                       MinimumHeightRequest="20"
-                   ItemsSource="{Binding Locations}"
+                   MinimumHeightRequest="20"
+                   Footer="{Binding }"
+                   ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}"
                    SelectedItem="{Binding SelectedLocation}">
-                <ListView.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="ItemTapped"
+            <ListView.Behaviors>
+                <behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                   Command="{Binding SelectCommand}" />
-                    <behaviors:ListViewAutoSizeBehavior/>
-                </ListView.Behaviors>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <Grid HeightRequest="10" BackgroundColor="LightGray">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Entry Grid.Column="0" Text="{Binding }" FontSize="Micro"/>
-                                    <Button Grid.Column="1"
-                                        FontSize="Micro"
-                                        Text="DELETE"
+                <behaviors:ListViewAutoSizeBehavior/>
+            </ListView.Behaviors>
+            <ListView.FooterTemplate>
+                <DataTemplate>
+                    <Button
+                        Margin="5"
+                        WidthRequest="40" 
+                        HeightRequest="40" 
+                        BorderRadius="20"
+                        BorderColor="Black"
+                        BorderWidth="2"
+                        Text="+"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        BackgroundColor="LightGray"
+                        FontSize="Medium"
+                        Command="{Binding AddLocationCommand}"/>
+                </DataTemplate>
+            </ListView.FooterTemplate>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Entry  Grid.Column="0" 
+                                        Text="{Binding Name}" 
+                                        FontSize="Small"/>
+                                <Button Grid.Column="1"
+                                        FontSize="Medium"
+                                        FontAttributes="Bold"
+                                        Text="&#x2715;"
+                                        BackgroundColor="Transparent"
+                                        BorderColor="Transparent"
                                         CommandParameter="{Binding}"
                                         Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=List}}" />
 
-                                </Grid>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            <ListView.FooterTemplate>
-                <DataTemplate>
-                    <Grid  Grid.Row="1" HeightRequest="10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                        <Entry  Grid.Column="0"  Text="tmp" FontSize="Micro"/>
-                        <!--Text="{Binding NewLocation}"-->
-                        <Button Grid.Column="1"
-                        Text="ADD"
-                         FontSize="Micro"/>
-                        <!--Command="{Binding AddLocationCommand}"-->
-                    </Grid>
+                            </Grid>
+                        </ViewCell.View>
+                    </ViewCell>
                 </DataTemplate>
-                </ListView.FooterTemplate>
-            </ListView>
+            </ListView.ItemTemplate>
+
+        </ListView>
 
     </ContentView.Content>
 </ContentView>

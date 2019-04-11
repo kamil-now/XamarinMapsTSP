@@ -17,6 +17,8 @@ namespace XamarinTSP.UI.ViewModels
             MapViewModel = mapViewModel;
             LocationListViewModel = locationListViewModel;
             _googleMapsService = googleMapsService;
+
+            locationListViewModel.Locations.CollectionChanged += mapViewModel.ListChanged;
         }
         public void DisplayRoute()
         {
@@ -29,7 +31,7 @@ namespace XamarinTSP.UI.ViewModels
         public ICommand RunTSPCommand => new Command(async () =>
         {
             var returnToOrigin = true;
-            string[] waypoints = LocationListViewModel.Locations.ToArray();
+            string[] waypoints = LocationListViewModel.Locations.Where(x => !string.IsNullOrEmpty(x.Name)).Select(x=>x.Name).ToArray();
 
             var configuration = new DistanceMatrixConfiguration()
             {
