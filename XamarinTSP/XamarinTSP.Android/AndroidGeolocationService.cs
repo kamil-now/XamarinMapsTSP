@@ -1,5 +1,4 @@
-﻿using Android.Locations;
-using Plugin.Geolocator;
+﻿using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,20 +14,20 @@ namespace XamarinTSP.Droid
     {
         private GeolocationConfiguration _configuration;
         private IGeolocator _locator;
-        private Geocoder _geocoder;
+        private Android.Locations.Geocoder _geocoder;
         public AndroidGeolocationService()
         {
             _configuration = new GeolocationConfiguration();
 
             _locator = CrossGeolocator.Current;
             _locator.DesiredAccuracy = _configuration.LocationAccuracy;
-            _geocoder = new Geocoder(Android.App.Application.Context);
+            _geocoder = new Android.Locations.Geocoder(Android.App.Application.Context);
         }
-        public async Task<IEnumerable<Position>> SearchLocation(string locationName)
+        public async Task<IEnumerable<Xamarin.Forms.Maps.Position>> GetLocationCoordinates(string locationName)
         {
-            var addresses = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
+            var positions = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
 
-            return addresses.Select(p => new Position(p.Latitude, p.Longitude));
+            return positions?.Select(p => new Xamarin.Forms.Maps.Position(p.Latitude, p.Longitude));
         }
     }
 }

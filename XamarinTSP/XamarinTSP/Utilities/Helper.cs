@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 using XamarinTSP.TSP;
 
 namespace XamarinTSP.Utilities
@@ -62,6 +64,26 @@ namespace XamarinTSP.Utilities
         public static void Display(Population population)
         {
             //TODO
+        }
+        public static Task InvokeOnMainThreadAsync(Action action, int delay = 0)
+        {
+            var task = new TaskCompletionSource<object>();
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    if (delay > 0)
+                    {
+                        await Task.Delay(delay);
+                    }
+                    action();
+                    task.SetResult(null);
+                }
+                catch (Exception ex)
+                {
+                    task.SetException(ex);
+                }
+            }); return task.Task;
         }
     }
 }

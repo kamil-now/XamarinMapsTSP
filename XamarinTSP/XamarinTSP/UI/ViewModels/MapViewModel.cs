@@ -28,34 +28,69 @@ namespace XamarinTSP.UI.ViewModels
             };
         }
 
-        public void ListChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            foreach (var item in e.NewItems)
+            if (args?.NewItems == null)
+                return;
+            foreach (var item in args?.NewItems)
             {
-                var location = item as Location;
-                location.PropertyChanged += (s,ev) => AddPin(location.Name);
-                
+                if (item is Location location)
+                {
+                    location.OnDispose += (s, e) => RemovePin(location.Pin);
+                    location.OnEdit += async (s, e) =>
+                    {
+                        Position? selectedPosition = null;
+
+                        if (!string.IsNullOrEmpty(location.Name))
+                        {
+                            var positions = await _geolocation.GetLocationCoordinates(location.Name);
+                            //TODO select from list
+                            selectedPosition = positions.FirstOrDefault();
+                        }
+
+                        if (selectedPosition != null)
+                        {
+                            location.SetPinPosition((Position)selectedPosition);
+
+                            AddOrUpdatePin(location.Pin);
+                        }
+                        else
+                        {
+                            RemovePin(location.Pin);
+                        }
+                    };
+                    
+                }
             }
-            
         }
 
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
         public async Task MoveToLocation(string locationName)
         {
             _geolocation = DependencyService.Get<IGeolocationService>();
-            var positions = await _geolocation.SearchLocation(locationName);
+            var positions = await _geolocation.GetLocationCoordinates(locationName);
             if (positions != null)
-                this.Map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(positions.First().Latitude, positions.First().Longitude), _mapDistance));
+            {
+                var pos = new Position(positions.First().Latitude, positions.First().Longitude);
+                this.Map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, _mapDistance));
+            }
             NotifyOfPropertyChange(() => Map);
         }
-        public void AddPin(Pin pin)
+        public void AddOrUpdatePin(Pin pin)
         {
-            Map.Pins.Add(pin);
+            if (!Map.Pins.Contains(pin))
+            {
+                Map.Pins.Add(pin);
+            }
+            NotifyOfPropertyChange(() => Map);
         }
-        public void AddPin(string address)
+        public void RemovePin(Pin pin)
         {
-            var pin = new Pin() { Address = address };
-            Map.Pins.Add(pin);
+            if (Map.Pins.Contains(pin))
+            {
+                Map.Pins.Remove(pin);
+            }
+            NotifyOfPropertyChange(() => Map);
         }
     }
 

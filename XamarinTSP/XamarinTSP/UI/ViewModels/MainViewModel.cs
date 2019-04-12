@@ -19,6 +19,8 @@ namespace XamarinTSP.UI.ViewModels
             _googleMapsService = googleMapsService;
 
             locationListViewModel.Locations.CollectionChanged += mapViewModel.ListChanged;
+
+            LocationListViewModel.Locations.Add(new Location() { Name = "" });
         }
         public void DisplayRoute()
         {

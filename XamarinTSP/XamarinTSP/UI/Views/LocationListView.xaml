@@ -4,10 +4,15 @@
              x:Class="XamarinTSP.UI.Views.LocationListView"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors">
     <ContentView.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+        
         <ListView  x:Name="List"
                    Grid.Row="0"
                    MinimumHeightRequest="20"
-                   Footer="{Binding }"
                    ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}"
                    SelectedItem="{Binding SelectedLocation}">
             <ListView.Behaviors>
@@ -15,23 +20,6 @@
                                                   Command="{Binding SelectCommand}" />
                 <behaviors:ListViewAutoSizeBehavior/>
             </ListView.Behaviors>
-            <ListView.FooterTemplate>
-                <DataTemplate>
-                    <Button
-                        Margin="5"
-                        WidthRequest="40" 
-                        HeightRequest="40" 
-                        BorderRadius="20"
-                        BorderColor="Black"
-                        BorderWidth="2"
-                        Text="+"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        BackgroundColor="LightGray"
-                        FontSize="Medium"
-                        Command="{Binding AddLocationCommand}"/>
-                </DataTemplate>
-            </ListView.FooterTemplate>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ViewCell>
@@ -43,7 +31,14 @@
                                 </Grid.ColumnDefinitions>
                                 <Entry  Grid.Column="0" 
                                         Text="{Binding Name}" 
-                                        FontSize="Small"/>
+                                        FontSize="Small">
+                                    <Entry.Behaviors>
+                                        <behaviors:EventToCommandBehavior EventName="Completed"
+                                                  Command="{Binding EditFinishedCommand}" />
+                                        <behaviors:EventToCommandBehavior EventName="Unfocused"
+                                                  Command="{Binding EditFinishedCommand}" />
+                                    </Entry.Behaviors>
+                                </Entry>
                                 <Button Grid.Column="1"
                                         FontSize="Medium"
                                         FontAttributes="Bold"
@@ -60,6 +55,22 @@
             </ListView.ItemTemplate>
 
         </ListView>
+            <StackLayout Grid.Row="1">
 
+                <StackLayout HeightRequest="1" 
+                             BackgroundColor="Black" 
+                             HorizontalOptions="FillAndExpand"/>
+                <Button Text="&#x2715;"
+                        Grid.Row="1"
+                        Padding="1"
+                        FontSize="Small"
+                        Rotation="45"
+                        HorizontalOptions="Center"
+                        FontAttributes="Bold"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Command="{Binding Path=BindingContext.AddLocationCommand, Source={x:Reference Name=List}}"/>
+            </StackLayout>
+        </Grid>
     </ContentView.Content>
 </ContentView>

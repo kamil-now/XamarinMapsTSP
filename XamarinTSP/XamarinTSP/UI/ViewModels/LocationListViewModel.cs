@@ -11,7 +11,7 @@ namespace XamarinTSP.UI.ViewModels
     {
         public LocationListViewModel()
         {
-            Locations = new ObservableCollection<Location>() { new Location() { Name = "" } };
+            Locations = new ObservableCollection<Location>();
         }
 
         public ObservableCollection<Location> Locations { get; set; }
@@ -23,7 +23,7 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand AddLocationCommand => new Command(() =>
         {
-            Locations.Add(new Location() { Name = "" });
+            Locations.Add(new Location());
         });
         public ICommand DeleteCommand => new Command<Location>(location =>
         {
