@@ -1,80 +1,91 @@
-﻿using System;
-using System.ComponentModel;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace XamarinTSP.UI.Behaviors
 {
     public class ListViewAutoSizeBehavior : BehaviorBase<ListView>
     {
+        public static BindableProperty MaxRowsCountProperty = BindableProperty.Create(
+                                                       propertyName: "MaxRowsCountProperty",
+                                                       returnType: typeof(int),
+                                                       declaringType: typeof(ListViewAutoSizeBehavior),
+                                                       defaultValue: null,
+                                                       defaultBindingMode: BindingMode.OneWay);
+
+        public static BindableProperty MinRowsCountProperty = BindableProperty.Create(
+                                                      propertyName: "MinRowsCountProperty",
+                                                      returnType: typeof(int),
+                                                      declaringType: typeof(ListViewAutoSizeBehavior),
+                                                      defaultValue: null,
+                                                      defaultBindingMode: BindingMode.OneWay);
+        public static BindableProperty ItemsCountProperty = BindableProperty.Create(
+                                                       propertyName: "ItemsCountProperty",
+                                                       returnType: typeof(int),
+                                                       declaringType: typeof(ListViewAutoSizeBehavior),
+                                                       defaultValue: null,
+                                                       defaultBindingMode: BindingMode.OneWay,
+                                                       propertyChanged: ItemsCountChanged);
+
+        public int MaxRowsCount
+        {
+            get { return (int)GetValue(MaxRowsCountProperty); }
+            set { SetValue(MaxRowsCountProperty, value); }
+        }
+        public int MinRowsCount
+        {
+            get { return (int)GetValue(MinRowsCountProperty); }
+            set { SetValue(MinRowsCountProperty, value); }
+        }
+        public int ItemsCount
+        {
+            get { return (int)GetValue(ItemsCountProperty); }
+            set { SetValue(ItemsCountProperty, value); }
+        }
         protected override void OnAttachedTo(ListView bindable)
         {
             base.OnAttachedTo(bindable);
-            bindable.ItemAppearing += AppearanceChanged;
-            bindable.ItemDisappearing += AppearanceChanged;
-            bindable.BindingContextChanged += Bindable_BindingContextChanged;
+            bindable.Refreshing+= (s, e) => SetHeight(ItemsCount);
+            bindable.ItemAppearing += (s, e) => SetHeight(ItemsCount);
         }
 
-        private void Bindable_BindingContextChanged(object sender, EventArgs e)
+        private static void ItemsCountChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            //throw new NotImplementedException();
-        }
-
-        protected override void OnDetachingFrom(ListView bindable)
-        {
-            base.OnDetachingFrom(bindable);
-            bindable.ItemAppearing -= AppearanceChanged;
-            bindable.ItemDisappearing -= AppearanceChanged;
-        }
-        private void AppearanceChanged(object sender, ItemVisibilityEventArgs e) => UpdateHeight(e.Item);
-
-        private void UpdateHeight(object item)
-        {
-            if (AssociatedObject.HasUnevenRows)
+            if (bindable is ListViewAutoSizeBehavior behavior)
             {
-                double height;
-
-                if ((height = AssociatedObject.HeightRequest) ==
-                    (double)VisualElement.HeightRequestProperty.DefaultValue)
-                    height = 0;
-
-                height += MeasureRowHeight(item);
-
-                SetHeight(height);
-            }
-            else if (AssociatedObject.RowHeight == (int)ListView.RowHeightProperty.DefaultValue)
-            {
-                var height = MeasureRowHeight(item);
-                AssociatedObject.RowHeight = height;
-                SetHeight(height);
+                behavior.SetHeight((int)newValue);
             }
         }
+        void SetHeight(int numberOfElements)
+        {
+            var cellHeight = MeasureCellHeight();
+            var minHeight = MinRowsCount * cellHeight;
+            var maxHeight = MaxRowsCount * cellHeight;
+            var height = numberOfElements * cellHeight;
 
-        int MeasureRowHeight(object item)
+
+            if (AssociatedObject.Header is VisualElement header)
+            {
+                if (header.HeightRequest < header.MinimumHeightRequest)
+                {
+                    header.HeightRequest = header.MinimumHeightRequest;
+                }
+                height += header.HeightRequest;
+            }
+            if (AssociatedObject.Footer is VisualElement footer)
+            {
+                if (footer.HeightRequest < footer.MinimumHeightRequest)
+                {
+                    footer.HeightRequest = footer.MinimumHeightRequest;
+                }
+                height += footer.HeightRequest;
+            }
+            AssociatedObject.HeightRequest = height > minHeight ? height < maxHeight ? height : maxHeight : minHeight;
+        }
+        double MeasureCellHeight()
         {
             var template = AssociatedObject.ItemTemplate;
             var cell = (Cell)template.CreateContent();
-            cell.BindingContext = item;
             var height = cell.RenderHeight;
-            var mod = height % 1;
-            if (mod > 0)
-                height = height - mod + 1;
-            return (int)height;
-        }
-
-        void SetHeight(double height)
-        {
-            double minHeight = AssociatedObject.MinimumHeightRequest;
-            if (AssociatedObject.Header is VisualElement header)
-                height += header.HeightRequest;
-            if (AssociatedObject.Footer is VisualElement footer)
-            {
-                height += footer.HeightRequest;
-                if (footer.HeightRequest < minHeight)
-                {
-                    footer.HeightRequest = minHeight;
-                }
-            }
-            AssociatedObject.HeightRequest = 200;// height > minHeight ? height : minHeight;
+            return height * 1.1;
         }
     }
 }

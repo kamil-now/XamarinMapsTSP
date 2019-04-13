@@ -15,7 +15,7 @@ namespace XamarinTSP.Utilities
         }
         public EventHandler OnDispose;
         public EventHandler OnEdit;
-        private bool _startedEdit;
+        //private bool _startedEdit;
         private volatile object _lck = new object();
         private string _name;
         public Pin Pin { get; set; }
@@ -44,7 +44,7 @@ namespace XamarinTSP.Utilities
         {
             lock (_lck)
             {
-                OnEdit.Invoke(null, null);
+                OnEdit?.Invoke(null, null);
                 NotifyOfPropertyChange(() => Name);
             }
 

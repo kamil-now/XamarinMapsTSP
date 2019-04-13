@@ -7,10 +7,15 @@ namespace XamarinTSP.Utilities
 {
     public class GoogleMapsService
     {
-        public async Task<DistanceMatrixResponse> GetDistanceMatrix(DistanceMatrixConfiguration configuration)
+        public async Task<DistanceMatrixResponse> GetDistanceMatrix(DistanceMatrixRequestConfiguration configuration)
         {
             var parameters = BuildRequestParameters(configuration);
-            return await HttpRequest.Post<DistanceMatrixResponse>($@"https://maps.googleapis.com/maps/api/distancematrix/json?{parameters}");
+            var response = await HttpRequest.Post<DistanceMatrixResponse>($@"https://maps.googleapis.com/maps/api/distancematrix/json?{parameters}");
+            if (response == null)
+            {
+                throw new Exception("NULL API RESPONSE");
+            }
+            return response;
         }
 
         public void OpenInGoogleMaps(string[] waypoints)
@@ -21,8 +26,9 @@ namespace XamarinTSP.Utilities
             str += string.Join("%7C", waypoints.Skip(1).Take(waypoints.Length - 2));
             Device.OpenUri(new Uri(str));
         }
-        private string BuildRequestParameters(DistanceMatrixConfiguration configuration)
+        private string BuildRequestParameters(DistanceMatrixRequestConfiguration configuration)
         {
+            //TODO refactor
             if (configuration.Destinations == null || configuration.Origins == null)
                 throw new ArgumentException("Invalid request configuration");
 

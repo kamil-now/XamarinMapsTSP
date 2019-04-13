@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace XamarinTSP.Utilities
 {
-    public class DistanceMatrixConfiguration
+    public class DistanceMatrixRequestConfiguration
     {
         [Description("destinations")]
         public string[] Destinations { get; set; }

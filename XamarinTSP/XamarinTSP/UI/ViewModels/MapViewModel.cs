@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +11,10 @@ namespace XamarinTSP.UI.ViewModels
 {
     public class MapViewModel : PropertyChangedBase
     {
-        public Map Map { get; set; }
         private IGeolocationService _geolocation;
         private Distance _mapDistance;
+
+        public Map Map { get; set; }
 
         public MapViewModel()
         {
@@ -30,6 +30,7 @@ namespace XamarinTSP.UI.ViewModels
 
         public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
+            //TODO refactor 
             if (args?.NewItems == null)
                 return;
             foreach (var item in args?.NewItems)
@@ -44,7 +45,6 @@ namespace XamarinTSP.UI.ViewModels
                         if (!string.IsNullOrEmpty(location.Name))
                         {
                             var positions = await _geolocation.GetLocationCoordinates(location.Name);
-                            //TODO select from list
                             selectedPosition = positions.FirstOrDefault();
                         }
 
@@ -59,7 +59,7 @@ namespace XamarinTSP.UI.ViewModels
                             RemovePin(location.Pin);
                         }
                     };
-                    
+
                 }
             }
         }
@@ -67,7 +67,6 @@ namespace XamarinTSP.UI.ViewModels
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
         public async Task MoveToLocation(string locationName)
         {
-            _geolocation = DependencyService.Get<IGeolocationService>();
             var positions = await _geolocation.GetLocationCoordinates(locationName);
             if (positions != null)
             {

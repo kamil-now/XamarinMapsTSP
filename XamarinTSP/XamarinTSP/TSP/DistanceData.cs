@@ -4,6 +4,7 @@ namespace XamarinTSP.TSP
 {
     public class DistanceData : IDistanceData
     {
+        public int ElementSize => distanceData.Length;
         int[][] distanceData;
         bool returnToOrigin;
 
@@ -15,7 +16,7 @@ namespace XamarinTSP.TSP
         double CalculateValue(Element element)
         {
             double value = 0;
-            int size = distanceData.Length - (returnToOrigin ? 1 : 0);
+            int size = distanceData.Length - (returnToOrigin ? 0 : 1);
 
             for (int i = 0; i < size; i++)
             {

@@ -1,61 +1,58 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using XamarinTSP.Utilities;
 
 namespace XamarinTSP.TSP
 {
-   public class TSPAlgorithm
+    public class TSPAlgorithm
     {
-        static int tournamentSize = 5;
-        static int populationSize = 100;
-        static double crossoverChance = 0.6;
-        static double mutationChance = 0.7;
-        static double elitism = 50;
-        static ISelectionAlgorithm selectionAlgorithm = new TournamentSelection(tournamentSize);
-        static ICrossoverAlgorithm crossoverAlgorithm = new PMXCrossover(crossoverChance);
-        static IDistanceData distanceData;
+        TSPConfiguration _config;
 
-        public static int[] RUN(int[][] distanceInfo,int populationsCount, bool returnToOrigin)
+        public TSPAlgorithm(TSPConfiguration configuration)
         {
-            //TODO return to origin option
-            distanceData = new DistanceData(distanceInfo, returnToOrigin);
+            _config = configuration;
 
-            Population population = new Population(populationSize, distanceInfo.Length);
+        }
+        public int[] Run(IDistanceData distanceData, int populationsCount)
+        {
+            var isValid = _config.Validate();
+            if (!isValid)
+            {
+                throw new Exception("INVALID TSP CONFIGURATION");
+            }
+            Population population = new Population(_config.PopulationSize, distanceData.ElementSize);
 
             distanceData.SetStats(population);
-            
+
             Element currentBest = population.Best.Copy();
             for (int populationNumber = 0; populationNumber < populationsCount; populationNumber++)
             {
-                crossoverAlgorithm.Crossover(population);
+                _config.CrossoverAlgorithm.Crossover(population);
                 foreach (var item in population.Elements)
                 {
-                    if (Helper.RandomPercent() < mutationChance)
+                    if (Helper.RandomPercent() < _config.MutationChance)
                     {
                         item.Mutate();
                     }
                 }
                 distanceData.SetStats(population);
 
-                population = selectionAlgorithm.Select(population, populationSize);
+                population = _config.SelectionAlgorithm.Select(population, _config.PopulationSize);
 
-                if (populationNumber % 1000 == 0)
+                if (Helper.RandomPercent() < _config.ElitismChance)
                 {
-                    if (elitism > 3)
-                        elitism--;
-                    else
-                        elitism = 10;
-                }
-                if (populationNumber > 1000)
-                {
+                    int elitism = (int)(_config.ElitismFactor * population.Size);
                     for (int j = 0; j < elitism; j++)
                     {
                         population.Add(population.Best.Copy());
                     }
                 }
-                var diversity = population.Diversity;
-                mutationChance = 1 - diversity - 0.2;
+
+                if (_config.MutationBasedOnDiversity)
+                {
+                    var diversity = population.Diversity;
+                    _config.MutationChance = 1 - diversity - 0.2;
+
+                }
 
                 if (population.Best.Value < currentBest.Value)
                 {
@@ -65,7 +62,7 @@ namespace XamarinTSP.TSP
 
             return FormatResult(currentBest.Data);
         }
-        private static int[] FormatResult(int[] data)
+        private int[] FormatResult(int[] data)
         {
             var length = data.Length;
             var result = new int[length];
@@ -73,7 +70,7 @@ namespace XamarinTSP.TSP
             int index = Array.FindIndex(data, x => x == 0);
 
             Array.ConstrainedCopy(data, index, result, 0, length - index);
-            Array.ConstrainedCopy(data, 0, result, index, index);
+            Array.ConstrainedCopy(data, 0, result, length - index, index);
 
             return result;
         }

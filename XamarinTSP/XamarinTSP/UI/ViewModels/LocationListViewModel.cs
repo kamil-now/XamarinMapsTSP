@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Xamarin.Forms;
 using XamarinTSP.Abstractions;
 using XamarinTSP.Utilities;
@@ -9,25 +7,27 @@ namespace XamarinTSP.UI.ViewModels
 {
     public class LocationListViewModel : PropertyChangedBase
     {
-        public LocationListViewModel()
+        private INavigator _navigator;
+
+        public LocationList List { get; set; }
+
+        public LocationListViewModel(LocationList list, INavigator navigator)
         {
-            Locations = new ObservableCollection<Location>();
+            _navigator = navigator;
+            List = list;
         }
 
-        public ObservableCollection<Location> Locations { get; set; }
-        public Location SelectedLocation { get; set; }
-        public Location NewLocation { get; set; }
         public ICommand SelectCommand => new Command(() =>
         {
 
         });
-        public ICommand AddLocationCommand => new Command(() =>
+        public ICommand AddLocationCommand => new Command(async () =>
         {
-            Locations.Add(new Location());
+            await _navigator.PushAsync<SelectLocationViewModel>();
         });
         public ICommand DeleteCommand => new Command<Location>(location =>
         {
-            Locations.Remove(location);
+            List.Locations.Remove(location);
         });
     }
 }

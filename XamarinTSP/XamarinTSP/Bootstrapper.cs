@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Xamarin.Forms;
 using XamarinTSP.Abstractions;
+using XamarinTSP.TSP;
 using XamarinTSP.UI.ViewModels;
 using XamarinTSP.UI.Views;
 using XamarinTSP.Utilities;
@@ -27,18 +28,23 @@ namespace XamarinTSP
             var builder = new ContainerBuilder();
 
             builder.Register(context => Application.Current.MainPage.Navigation).SingleInstance();
-
             builder.RegisterType<ViewFactory>().As<IViewFactory>().SingleInstance();
             builder.RegisterType<Navigator>().As<INavigator>().SingleInstance();
 
             builder.RegisterType<MainPage>().SingleInstance();
             builder.RegisterType<MainViewModel>().SingleInstance();
 
+            builder.RegisterType<SelectLocationPage>().SingleInstance();
+            builder.RegisterType<SelectLocationViewModel>().SingleInstance();
+
             builder.RegisterType<MapViewModel>().SingleInstance();
             builder.RegisterType<LocationListViewModel>().SingleInstance();
 
 
-            builder.RegisterType<GoogleMapsService>().SingleInstance();
+            builder.RegisterType<LocationList>().AsSelf().SingleInstance();
+            builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
+            
+            builder.RegisterType<TSPConfiguration>().AsSelf().SingleInstance();
 
             return builder.Build();
         }
@@ -56,6 +62,7 @@ namespace XamarinTSP
         private void MapViews(IViewFactory viewFactory)
         {
             viewFactory.Register<MainViewModel, MainPage>();
+            viewFactory.Register<SelectLocationViewModel, SelectLocationPage>();
         }
 
     }
