@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
 using XamarinTSP.Utilities;
@@ -20,24 +22,18 @@ namespace XamarinTSP.UI.ViewModels
         public MainViewModel(INavigator navigator, IGeolocationService geolocation, LocationList list, GoogleMapsService googleMapsService)
         {
             List = list;
-
+            //temp
+            List = MockLocationList.List(geolocation);
+            List.Locations.ForEach(x => x.Name = geolocation.GetLocationName(x.Position).Result.FirstOrDefault());
+            NotifyOfPropertyChange(() => List.Locations.Count);
+            //
             _googleMapsService = googleMapsService;
             _navigator = navigator;
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
 
-            CustomMap = new CustomMap(list, geolocation);
-
-           // LocationListViewModel.List.Locations.CollectionChanged += mapViewModel.ListChanged;
-
-            List.Locations.Add(new Location() { Name = "Warszawa" }); //!temporary - autosize on empty collection  
-            List.Locations.Add(new Location() { Name = "Kraków" });
-            List.Locations.Add(new Location() { Name = "szczecin" });
-            List.Locations.Add(new Location() { Name = "Kołobrzeg" });
-            List.Locations.Add(new Location() { Name = "Wrocław" });
-            List.Locations.Add(new Location() { Name = "Gdańsk" });
-            List.Locations.Add(new Location() { Name = "Rzeszów" });
+            CustomMap = new CustomMap(List, geolocation);
         }
         public void DisplayRoute()
         {
@@ -49,19 +45,21 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand AddLocationCommand => new Command(async () =>
         {
-            
+
             await _navigator.PushAsync<SetLocationViewModel>();
         });
         public ICommand OpenConfigurationCommand => new Command(async () =>
         {
 
         });
-        public ICommand OpenInGoogleMapsCommand => new Command(async () =>
+        public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
+            //TODO manage empty name case
             _googleMapsService.OpenInGoogleMaps(List.Locations.Select(x => x.Name).ToArray());
         });
         public ICommand RunTSPCommand => new Command(async () =>
         {
+            //TODO manage empty name case
             string[] waypoints = List.Locations.Where(x => !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
 
             var configuration = new DistanceMatrixRequestConfiguration()

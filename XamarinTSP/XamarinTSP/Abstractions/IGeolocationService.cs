@@ -8,5 +8,6 @@ namespace XamarinTSP.Abstractions
     {
         Task<IEnumerable<Xamarin.Forms.Maps.Position>> GetLocationCoordinates(string locationName);
         Task<IEnumerable<Location>> GetLocationList(string locationName);
+        Task<IEnumerable<string>> GetLocationName(Xamarin.Forms.Maps.Position position);
     }
 }

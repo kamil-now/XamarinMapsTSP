@@ -8,46 +8,56 @@ namespace XamarinTSP.Utilities
 {
     public class Location : PropertyChangedBase, IDisposable
     {
-        public Location()
-        {
-            _name = "";
-            //Pin = new Pin() { Label = _name };
-        }
         public EventHandler OnDispose;
-        public EventHandler OnEdit;
+        public EventHandler PositionChanged;
+
         private volatile object _lck = new object();
         private string _name;
-        //public Pin Pin { get; set; }
-        public Position Coordinates { get; set; }
+        private Position _position;
+
+        public Guid Id { get; }
+        public string DisplayString
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Name)) return Name;
+                return $"{Position.Latitude } {Position.Longitude}";
+            }
+        }
+        public Position Position
+        {
+            get => _position;
+            set
+            {
+                _position = value;
+                PositionChanged?.Invoke(this, null);
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => DisplayString);
+            }
+        }
         public string Name
         {
             get => _name; set
             {
                 _name = value;
-                OnEdit?.Invoke(null, null);
-                NotifyOfPropertyChange(() => Name);
+                NotifyOfPropertyChange();
+                NotifyOfPropertyChange(() => DisplayString);
             }
+        }
+        public Location()
+        {
+            Id = Guid.NewGuid();
+            _name = "";
         }
         public ICommand EditFinishedCommand => new Command(() =>
         {
             lock (_lck)
             {
-                OnEdit?.Invoke(null, null);
                 NotifyOfPropertyChange(() => Name);
             }
 
         });
-        //public void SetPinPosition(Position position)
-        //{
-        //    Pin.Position = position;
-        //    NotifyOfPropertyChange(() => Pin);
-        //}
+        public void Dispose() => OnDispose?.Invoke(this, null);
 
-        public void Dispose() => OnDispose(this, null);
-        public override string ToString()
-        {
-            if (!string.IsNullOrEmpty(Name)) return Name;
-            return $"{Coordinates.Latitude } {Coordinates.Longitude}";
-        }
     }
 }

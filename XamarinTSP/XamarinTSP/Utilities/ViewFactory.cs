@@ -23,7 +23,6 @@ namespace XamarinTSP.Utilities
 
         public Page Resolve<TViewModel>() where TViewModel : class, IViewModel
         {
-            //TODO refactor
             var viewModel = componentContext.Resolve<TViewModel>();
             var viewType = map[typeof(TViewModel)];
             var view = componentContext.Resolve(viewType) as Page;

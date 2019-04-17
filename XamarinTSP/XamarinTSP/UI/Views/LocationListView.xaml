@@ -24,7 +24,9 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="0"
-                                       Text="{Binding Name}"
+                                       HorizontalOptions="Start"
+                                       VerticalOptions="Center"
+                                       Text="{Binding DisplayString}"
                                        FontSize="Small"
                                        LineBreakMode="NoWrap"
                                        Margin="0"/>
@@ -32,6 +34,8 @@
                                             Margin="0"
                                             FontSize="Medium"
                                             FontAttributes="Bold"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
                                             Image="ic_clear_black_24dp.png"
                                             BackgroundColor="Transparent"
                                             BorderColor="Transparent"

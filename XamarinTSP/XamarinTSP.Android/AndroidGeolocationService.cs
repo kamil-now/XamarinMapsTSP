@@ -47,5 +47,10 @@ namespace XamarinTSP.Droid
                 return location;
             });
         }
+        public async Task<IEnumerable<string>> GetLocationName(Xamarin.Forms.Maps.Position position)
+        {
+            var locations = await _geocoder.GetFromLocationAsync(position.Latitude,position.Longitude, _configuration.MaxResults);
+            return locations.Select(x=>x.FeatureName);
+        }
     }
 }

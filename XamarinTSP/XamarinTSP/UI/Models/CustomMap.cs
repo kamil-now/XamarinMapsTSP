@@ -1,8 +1,10 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
 using XamarinTSP.Utilities;
@@ -21,48 +23,32 @@ namespace XamarinTSP.UI.ViewModels
             _list = list;
             _geolocation = geolocation;
             _mapDistance = Distance.FromMiles(1000);
+
             Map = new Map(MapSpan.FromCenterAndRadius(new Position(0, 0), _mapDistance))
             {
                 MapType = MapType.Street,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
             };
+
+            _list.Locations.CollectionChanged += ListChanged;
+            if (_list?.Locations?.Count != 0)
+            {
+                _list.Locations.ForEach(location => SetNewLocationPin(location));
+            }
         }
 
         public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            //TODO refactor 
-            //if (args?.NewItems == null)
-            //    return;
-            //foreach (var item in args?.NewItems)
-            //{
-            //    if (item is Location location)
-            //    {
-            //        location.OnDispose += (s, e) => RemovePin(location.Pin);
-            //        location.OnEdit += async (s, e) =>
-            //        {
-            //            Position? selectedPosition = null;
-
-            //            if (!string.IsNullOrEmpty(location.Name))
-            //            {
-            //                var positions = await _geolocation.GetLocationCoordinates(location.Name);
-            //                selectedPosition = positions.FirstOrDefault();
-            //            }
-
-            //            if (selectedPosition != null)
-            //            {
-            //                location.SetPinPosition((Position)selectedPosition);
-
-            //                AddOrUpdatePin(location.Pin);
-            //            }
-            //            else
-            //            {
-            //                RemovePin(location.Pin);
-            //            }
-            //        };
-
-            //    }
-            //}
+            if (args?.NewItems == null)
+                return;
+            foreach (var item in args?.NewItems)
+            {
+                if (item is Location location)
+                {
+                    SetNewLocationPin(location);
+                }
+            }
         }
 
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
@@ -76,21 +62,49 @@ namespace XamarinTSP.UI.ViewModels
             }
             NotifyOfPropertyChange(() => Map);
         }
-        public void AddOrUpdatePin(Pin pin)
+        public void AddPin(Location location)
         {
-            if (!Map.Pins.Contains(pin))
+            var pin = new Pin
             {
-                Map.Pins.Add(pin);
-            }
+                AutomationId = location.Id.ToString(),
+                Position = location.Position,
+                Label = location.DisplayString
+            };
+            Map.Pins.Add(pin);
             NotifyOfPropertyChange(() => Map);
         }
-        public void RemovePin(Pin pin)
+        public void UpdatePin(Location location)
         {
-            if (Map.Pins.Contains(pin))
-            {
-                Map.Pins.Remove(pin);
-            }
+            var pin = Map.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
+            if (pin == null)
+                return;
+            pin.Position = location.Position;
+            pin.Label = location.DisplayString;
             NotifyOfPropertyChange(() => Map);
+        }
+        public void RemovePin(Location location)
+        {
+            var pin = Map.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
+            if (pin == null)
+                return;
+            Map.Pins.Remove(pin);
+            NotifyOfPropertyChange(() => Map);
+        }
+        private void SetNewLocationPin(Location location)
+        {
+            AddPin(location);
+            location.OnDispose += (s, e) => RemovePin(location);
+            location.PositionChanged += (s, e) =>
+            {
+                if (location?.Position == null)
+                {
+                    RemovePin(location);
+                }
+                else
+                {
+                    UpdatePin(location);
+                }
+            };
         }
     }
 
