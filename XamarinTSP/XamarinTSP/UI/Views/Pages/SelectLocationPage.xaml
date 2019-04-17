@@ -26,13 +26,7 @@
                             HorizontalOptions="Center"
                             Command="{Binding ReturnCommand}" />
                     <Entry  Grid.Column="1"
-                            Text="{Binding SearchText}">
-                        <!--<Entry.Behaviors>
-                            <behaviors:EventToCommandBehavior EventName="Completed"
-                                                              Command="{Binding EditFinishedCommand}" />
-                            <behaviors:EventToCommandBehavior EventName="Unfocused"
-                                                              Command="{Binding EditFinishedCommand}" />
-                        </Entry.Behaviors>-->
+                            Text="{Binding EditedLocation}">
                     </Entry>
                 </Grid>
             </Frame>
@@ -50,7 +44,7 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
-                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding }" />
                             </ViewCell.View>
                         </ViewCell>
                     </DataTemplate>

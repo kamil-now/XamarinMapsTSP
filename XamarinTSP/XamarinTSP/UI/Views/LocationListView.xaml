@@ -4,42 +4,31 @@
              x:Class="XamarinTSP.UI.Views.LocationListView"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors">
     <ContentView.Content>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <ListView  x:Name="List"
-                       Grid.Row="0"
-                       ItemsSource="{Binding List.Locations, UpdateSourceEventName=CollectionChanged}">
-                <ListView.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="ItemTapped"
+        <ListView x:Name="List"
+                    Grid.Row="0"
+                    SelectedItem="{Binding SelectedLocation}"
+                    ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}">
+            <ListView.Behaviors>
+                <behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                       Command="{Binding SelectCommand}" />
-                    <behaviors:ListViewAutoSizeBehavior ItemsCount="{Binding List.Locations.Count, UpdateSourceEventName=CollectionChanged}"
-                                                        MinRowsCount="1" MaxRowsCount="5"/>
-                </ListView.Behaviors>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <ViewCell.View>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Entry  Grid.Column="0"
-                                            Text="{Binding Name}"
-                                            FontSize="Small"
-                                            Margin="0">
-                                        <Entry.Behaviors>
-                                            <behaviors:EventToCommandBehavior EventName="Completed"
-                                                                              Command="{Binding EditFinishedCommand}" />
-                                            <behaviors:EventToCommandBehavior EventName="Unfocused"
-                                                                              Command="{Binding EditFinishedCommand}" />
-                                        </Entry.Behaviors>
-                                    </Entry>
-                                    <Button Grid.Column="1"
+                <behaviors:ListViewAutoSizeBehavior ItemsCount="{Binding Locations.Count, UpdateSourceEventName=CollectionChanged}"
+                                                        MinRowsCount="1" MaxRowsCount="4"/>
+            </ListView.Behaviors>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.View>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="4*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0"
+                                       Text="{Binding Name}"
+                                       FontSize="Small"
+                                       LineBreakMode="NoWrap"
+                                       Margin="0"/>
+                                <Button Grid.Column="1"
                                             Margin="0"
                                             FontSize="Medium"
                                             FontAttributes="Bold"
@@ -49,46 +38,11 @@
                                             CommandParameter="{Binding}"
                                             Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Name=List}}" />
 
-                                </Grid>
-                            </ViewCell.View>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Grid Grid.Row="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <StackLayout HeightRequest="1"
-                             Grid.ColumnSpan="2"
-                             BackgroundColor="Black"
-                             HorizontalOptions="FillAndExpand" />
-                <Entry  Grid.Column="0"
-                        Grid.Row="1"
-                        Text="{Binding Name}"
-                        FontSize="Small"
-                        IsVisible="False"
-                        IsEnabled="False" />
-
-                <Button Grid.Column="1"
-                        Grid.Row="1"
-                        FontSize="Medium"
-                        FontAttributes="Bold"
-                        Image="ic_add_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        CommandParameter="{Binding}"
-                        Command="{Binding Path=BindingContext.AddLocationCommand, Source={x:Reference Name=List}}" />
-                        <!--Rotation="45"
-                        Text="&#x2715;"-->
-
-            </Grid>
-        </Grid>
+                            </Grid>
+                        </ViewCell.View>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </ContentView.Content>
 </ContentView>

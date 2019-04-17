@@ -9,16 +9,17 @@ using XamarinTSP.Utilities;
 
 namespace XamarinTSP.UI.ViewModels
 {
-    public class MapViewModel : PropertyChangedBase
+    public class CustomMap : PropertyChangedBase
     {
         private IGeolocationService _geolocation;
         private Distance _mapDistance;
 
         public Map Map { get; set; }
-
-        public MapViewModel()
+        private LocationList _list;
+        public CustomMap(LocationList list, IGeolocationService geolocation)
         {
-            _geolocation = DependencyService.Get<IGeolocationService>();
+            _list = list;
+            _geolocation = geolocation;
             _mapDistance = Distance.FromMiles(1000);
             Map = new Map(MapSpan.FromCenterAndRadius(new Position(0, 0), _mapDistance))
             {
@@ -31,37 +32,37 @@ namespace XamarinTSP.UI.ViewModels
         public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             //TODO refactor 
-            if (args?.NewItems == null)
-                return;
-            foreach (var item in args?.NewItems)
-            {
-                if (item is Location location)
-                {
-                    location.OnDispose += (s, e) => RemovePin(location.Pin);
-                    location.OnEdit += async (s, e) =>
-                    {
-                        Position? selectedPosition = null;
+            //if (args?.NewItems == null)
+            //    return;
+            //foreach (var item in args?.NewItems)
+            //{
+            //    if (item is Location location)
+            //    {
+            //        location.OnDispose += (s, e) => RemovePin(location.Pin);
+            //        location.OnEdit += async (s, e) =>
+            //        {
+            //            Position? selectedPosition = null;
 
-                        if (!string.IsNullOrEmpty(location.Name))
-                        {
-                            var positions = await _geolocation.GetLocationCoordinates(location.Name);
-                            selectedPosition = positions.FirstOrDefault();
-                        }
+            //            if (!string.IsNullOrEmpty(location.Name))
+            //            {
+            //                var positions = await _geolocation.GetLocationCoordinates(location.Name);
+            //                selectedPosition = positions.FirstOrDefault();
+            //            }
 
-                        if (selectedPosition != null)
-                        {
-                            location.SetPinPosition((Position)selectedPosition);
+            //            if (selectedPosition != null)
+            //            {
+            //                location.SetPinPosition((Position)selectedPosition);
 
-                            AddOrUpdatePin(location.Pin);
-                        }
-                        else
-                        {
-                            RemovePin(location.Pin);
-                        }
-                    };
+            //                AddOrUpdatePin(location.Pin);
+            //            }
+            //            else
+            //            {
+            //                RemovePin(location.Pin);
+            //            }
+            //        };
 
-                }
-            }
+            //    }
+            //}
         }
 
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);

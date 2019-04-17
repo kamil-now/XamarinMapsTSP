@@ -13,29 +13,31 @@ namespace XamarinTSP.UI.ViewModels
         private GoogleMapsService _googleMapsService;
         private TSPAlgorithm _tspAlgorithm;
         private TSPConfiguration _tspConfiguration;
+        private INavigator _navigator;
+        public CustomMap CustomMap { get; set; }
+        public LocationList List { get; set; }
 
-        public MapViewModel MapViewModel { get; set; }
-        public LocationListViewModel LocationListViewModel { get; set; }
-
-        public MainViewModel(MapViewModel mapViewModel, LocationListViewModel locationListViewModel, GoogleMapsService googleMapsService)
+        public MainViewModel(INavigator navigator, IGeolocationService geolocation, LocationList list, GoogleMapsService googleMapsService)
         {
-            MapViewModel = mapViewModel;
-            LocationListViewModel = locationListViewModel;
+            List = list;
 
             _googleMapsService = googleMapsService;
+            _navigator = navigator;
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
 
-            LocationListViewModel.List.Locations.CollectionChanged += mapViewModel.ListChanged;
+            CustomMap = new CustomMap(list, geolocation);
 
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Warszawa" }); //!temporary - autosize on empty collection  
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Kraków" });
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "szczecin" });
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Kołobrzeg" });
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Wrocław" });
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Gdańsk" });
-            LocationListViewModel.List.Locations.Add(new Location() { Name = "Rzeszów" });
+           // LocationListViewModel.List.Locations.CollectionChanged += mapViewModel.ListChanged;
+
+            List.Locations.Add(new Location() { Name = "Warszawa" }); //!temporary - autosize on empty collection  
+            List.Locations.Add(new Location() { Name = "Kraków" });
+            List.Locations.Add(new Location() { Name = "szczecin" });
+            List.Locations.Add(new Location() { Name = "Kołobrzeg" });
+            List.Locations.Add(new Location() { Name = "Wrocław" });
+            List.Locations.Add(new Location() { Name = "Gdańsk" });
+            List.Locations.Add(new Location() { Name = "Rzeszów" });
         }
         public void DisplayRoute()
         {
@@ -43,11 +45,24 @@ namespace XamarinTSP.UI.ViewModels
         }
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-            await MapViewModel.MoveToUserRegion();
+            await CustomMap.MoveToUserRegion();
+        });
+        public ICommand AddLocationCommand => new Command(async () =>
+        {
+            
+            await _navigator.PushAsync<SetLocationViewModel>();
+        });
+        public ICommand OpenConfigurationCommand => new Command(async () =>
+        {
+
+        });
+        public ICommand OpenInGoogleMapsCommand => new Command(async () =>
+        {
+            _googleMapsService.OpenInGoogleMaps(List.Locations.Select(x => x.Name).ToArray());
         });
         public ICommand RunTSPCommand => new Command(async () =>
         {
-            string[] waypoints = LocationListViewModel.List.Locations.Where(x => !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
+            string[] waypoints = List.Locations.Where(x => !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
 
             var configuration = new DistanceMatrixRequestConfiguration()
             {
@@ -79,7 +94,8 @@ namespace XamarinTSP.UI.ViewModels
             if (_tspConfiguration.ReturnToOrigin)
                 route[result.Length] = waypoints[0];
 
-            _googleMapsService.OpenInGoogleMaps(route);
+            List.Locations = new System.Collections.ObjectModel.ObservableCollection<Location>(route.Select(x => new Location() { Name = x }));
+            //_googleMapsService.OpenInGoogleMaps(route);
         });
     }
 }

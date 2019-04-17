@@ -6,27 +6,33 @@ using XamarinTSP.Utilities;
 
 namespace XamarinTSP.UI.ViewModels
 {
-    public class SelectLocationViewModel : ViewModelBase
+    public class SetLocationViewModel : ViewModelBase
     {
-        private string _searchText;
         private IGeolocationService _geolocationService;
         private INavigator _navigator;
         private LocationList _list;
-
-        public Location SelectedLocation { get; set; }
+        public Location SelectedLocation { get; set; } //temp
         public ObservableCollection<Location> Locations { get; set; }
 
-        public string SearchText
+        public string EditedLocation
         {
-            get => _searchText;
+            get => _list?.SelectedLocation?.Name ?? "";
             set
             {
-                _searchText = value;
-                if (!string.IsNullOrEmpty(_searchText))
+                if (_list.SelectedLocation == null)
+                {
+                    var newLocation = new Location() { Name = value };
+                    _list.SelectedLocation = newLocation;
+                }
+                else
+                {
+                    _list.SelectedLocation.Name = value;
+                }
+                if (!string.IsNullOrEmpty(_list.SelectedLocation.Name))
                 {
                     Helper.InvokeOnMainThreadAsync(async () =>
                     {
-                        var result = await _geolocationService.GetLocationList(_searchText);
+                        var result = await _geolocationService.GetLocationList(_list.SelectedLocation.Name);
                         Locations = new ObservableCollection<Location>(result);
                         NotifyOfPropertyChange(() => Locations);
                     }, 100);
@@ -34,7 +40,7 @@ namespace XamarinTSP.UI.ViewModels
                 NotifyOfPropertyChange();
             }
         }
-        public SelectLocationViewModel(LocationList list, INavigator navigator)
+        public SetLocationViewModel(LocationList list, INavigator navigator)
         {
             _list = list;
             _navigator = navigator;
@@ -43,15 +49,11 @@ namespace XamarinTSP.UI.ViewModels
         }
         public ICommand SelectCommand => new Command(() =>
         {
-            //TODO parameter
-            //if (selected is Location location)
-            _list.Locations.Add(SelectedLocation);
+            _list.Locations.Add(_list.SelectedLocation);
             ReturnCommand.Execute(null);
-
         });
         public ICommand ReturnCommand => new Command(() =>
         {
-            _searchText = "";
             Locations.Clear();
             _navigator.PopToRootAsync();
         });

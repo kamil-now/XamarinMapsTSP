@@ -43,7 +43,7 @@ namespace XamarinTSP.Droid
                 //    location.Name += string.IsNullOrEmpty(line) ? "---" : line;
                 //}
 
-                location.SetPinPosition(new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude));
+                //location.SetPinPosition(new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude));
                 return location;
             });
         }

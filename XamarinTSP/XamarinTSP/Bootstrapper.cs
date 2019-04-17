@@ -28,6 +28,8 @@ namespace XamarinTSP
             var builder = new ContainerBuilder();
 
             builder.Register(context => Application.Current.MainPage.Navigation).SingleInstance();
+
+            builder.Register(geolocation => DependencyService.Get<IGeolocationService>()).As<IGeolocationService>().SingleInstance();
             builder.RegisterType<ViewFactory>().As<IViewFactory>().SingleInstance();
             builder.RegisterType<Navigator>().As<INavigator>().SingleInstance();
 
@@ -35,11 +37,7 @@ namespace XamarinTSP
             builder.RegisterType<MainViewModel>().SingleInstance();
 
             builder.RegisterType<SelectLocationPage>().SingleInstance();
-            builder.RegisterType<SelectLocationViewModel>().SingleInstance();
-
-            builder.RegisterType<MapViewModel>().SingleInstance();
-            builder.RegisterType<LocationListViewModel>().SingleInstance();
-
+            builder.RegisterType<SetLocationViewModel>().SingleInstance();
 
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
@@ -62,7 +60,7 @@ namespace XamarinTSP
         private void MapViews(IViewFactory viewFactory)
         {
             viewFactory.Register<MainViewModel, MainPage>();
-            viewFactory.Register<SelectLocationViewModel, SelectLocationPage>();
+            viewFactory.Register<SetLocationViewModel, SelectLocationPage>();
         }
 
     }

@@ -16,14 +16,88 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <views:LocationListView Grid.Row="0" BindingContext="{Binding LocationListViewModel}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Row="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0"
+                        Image="ic_directions_walk_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
+                <Button Grid.Row="1"
+                        Image="ic_directions_bike_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        HorizontalOptions="Center" 
+                        VerticalOptions="Center"/>
 
-            <views:MapView  Grid.Row="1" BindingContext="{Binding MapViewModel}" MinimumHeightRequest="{Binding MapMinimumSize}"/>
+                <Button Grid.Row="2"
+                        Image="ic_directions_car_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"/>
 
-            <Button Grid.Row="2"
-                    Text="TSP"
-                    Command="{Binding RunTSPCommand}" FontSize="Micro" MinimumHeightRequest="10"/>
 
+            </Grid>
+            <Frame BackgroundColor="White"
+                   BorderColor="LightGray"
+                   Margin="2"
+                   CornerRadius="10"
+                   Grid.Row="0"  Grid.Column="1">
+                <views:LocationListView Grid.Row="0" 
+                                    Grid.Column="1"
+                                    BindingContext="{Binding List}"/>
+            </Frame>
+            <Grid Grid.Row="0" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Button Grid.Row="1"
+                        FontSize="Medium"
+                        FontAttributes="Bold"
+                        Image="ic_add_circle_outline_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        HorizontalOptions="Center"
+                        Command="{Binding AddLocationCommand}" />
+
+            </Grid>
+
+            <views:MapView  Grid.Row="1" Grid.ColumnSpan="3" BindingContext="{Binding CustomMap}" />
+            <Grid Grid.Row="2" Grid.ColumnSpan="3"  MinimumHeightRequest="10" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Image="ic_add_settings_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Command="{Binding OpenConfigurationCommand}" />
+                <Button Grid.Column="1"
+                        Image="ic_play_arrow_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Command="{Binding RunTSPCommand}"  />
+                <Button Grid.Column="2"
+                        Image="ic_map_black_24dp.png"
+                        BackgroundColor="Transparent"
+                        BorderColor="Transparent"
+                        Command="{Binding OpenInGoogleMapsCommand}" />
+            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -43,7 +43,7 @@ namespace XamarinTSP.UI.Behaviors
         protected override void OnAttachedTo(ListView bindable)
         {
             base.OnAttachedTo(bindable);
-            bindable.Refreshing+= (s, e) => SetHeight(ItemsCount);
+            bindable.Refreshing += (s, e) => SetHeight(ItemsCount);
             bindable.ItemAppearing += (s, e) => SetHeight(ItemsCount);
         }
 

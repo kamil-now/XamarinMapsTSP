@@ -11,32 +11,20 @@ namespace XamarinTSP.Utilities
         public Location()
         {
             _name = "";
-            Pin = new Pin() { Label = _name };
+            //Pin = new Pin() { Label = _name };
         }
         public EventHandler OnDispose;
         public EventHandler OnEdit;
-        //private bool _startedEdit;
         private volatile object _lck = new object();
         private string _name;
-        public Pin Pin { get; set; }
-        public string Name// { get; set; }
+        //public Pin Pin { get; set; }
+        public Position Coordinates { get; set; }
+        public string Name
         {
             get => _name; set
             {
                 _name = value;
-
-                //if (!_startedEdit)
-                //{
-                //    _startedEdit = true;
-                //    Helper.InvokeOnMainThreadAsync(() =>
-                //    {
-                //        if (_startedEdit)
-                //        {
-                //            _startedEdit = false;
-                //            EditFinishedCommand.Execute(null);
-                //        }
-                //    }, delay: 1000);
-                //}
+                OnEdit?.Invoke(null, null);
                 NotifyOfPropertyChange(() => Name);
             }
         }
@@ -49,12 +37,17 @@ namespace XamarinTSP.Utilities
             }
 
         });
-        public void SetPinPosition(Position position)
-        {
-            Pin.Position = position;
-            NotifyOfPropertyChange(() => Pin);
-        }
+        //public void SetPinPosition(Position position)
+        //{
+        //    Pin.Position = position;
+        //    NotifyOfPropertyChange(() => Pin);
+        //}
 
         public void Dispose() => OnDispose(this, null);
+        public override string ToString()
+        {
+            if (!string.IsNullOrEmpty(Name)) return Name;
+            return $"{Coordinates.Latitude } {Coordinates.Longitude}";
+        }
     }
 }
