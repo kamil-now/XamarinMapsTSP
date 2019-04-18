@@ -6,10 +6,10 @@
     <ContentView.Content>
         <ListView x:Name="List"
                     Grid.Row="0"
-                    SelectedItem="{Binding SelectedLocation}"
                     ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}">
             <ListView.Behaviors>
                 <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                                                      CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
                                                       Command="{Binding SelectCommand}" />
                 <behaviors:ListViewAutoSizeBehavior ItemsCount="{Binding Locations.Count, UpdateSourceEventName=CollectionChanged}"
                                                         MinRowsCount="1" MaxRowsCount="4"/>

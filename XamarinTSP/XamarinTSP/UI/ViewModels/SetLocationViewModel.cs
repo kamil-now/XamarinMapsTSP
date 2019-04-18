@@ -28,7 +28,7 @@ namespace XamarinTSP.UI.ViewModels
                 {
                     Helper.InvokeOnMainThreadAsync(async () =>
                     {
-                        var result = await _geolocationService.GetLocationList(value);
+                        var result = await _geolocationService.GetLocationListAsync(value);
                         Locations = new ObservableCollection<Location>(result);
                         NotifyOfPropertyChange(() => Locations);
                     }, 100);

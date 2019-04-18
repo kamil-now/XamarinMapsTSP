@@ -31,8 +31,7 @@ namespace XamarinTSP.UI.ViewModels
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
-
-            List.Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange(() => List.Locations);
+            CustomMap = new CustomMap(List, _geolocation);
         }
         public void DisplayRoute()
         {
@@ -40,21 +39,15 @@ namespace XamarinTSP.UI.ViewModels
         }
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-            //temp
-            if (List.Locations?.Count == 0)
-            {
-                var list = await LocationList.GetMockData(_geolocation);
-                List = list;
-                NotifyOfPropertyChange(() => List);
-                NotifyOfPropertyChange(() => List.Locations.Count);
-            }
-            //
-            CustomMap = new CustomMap(List, _geolocation);
             await CustomMap.MoveToUserRegion();
+        });
+        public ICommand SelectCommand => new Command<Location>(async selected =>
+        {
+            List.SelectedLocation = selected;
+            await _navigator.PushAsync<SetLocationViewModel>();
         });
         public ICommand AddLocationCommand => new Command(async () =>
         {
-
             await _navigator.PushAsync<SetLocationViewModel>();
         });
         public ICommand OpenConfigurationCommand => new Command(async () =>
@@ -88,7 +81,7 @@ namespace XamarinTSP.UI.ViewModels
                 }
                 if (_tspConfiguration.ReturnToOrigin)
                     route.Add(List.Locations.ElementAt(0));
-
+                
                 List.Locations = new System.Collections.ObjectModel.ObservableCollection<Location>(route);
             }
             catch (Exception ex)

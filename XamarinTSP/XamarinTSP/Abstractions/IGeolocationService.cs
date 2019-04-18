@@ -7,7 +7,9 @@ namespace XamarinTSP.Abstractions
     public interface IGeolocationService
     {
         Task<IEnumerable<Xamarin.Forms.Maps.Position>> GetLocationCoordinates(string locationName);
-        Task<IEnumerable<Location>> GetLocationList(string locationName);
-        Task<IEnumerable<Location>> GetLocationList(Xamarin.Forms.Maps.Position position);
+        Task<IEnumerable<Location>> GetLocationListAsync(string locationName);
+        Task<IEnumerable<Location>> GetLocationListAsync(Xamarin.Forms.Maps.Position position);
+        IEnumerable<Location> GetLocationList(string locationName);
+        IEnumerable<Location> GetLocationList(Xamarin.Forms.Maps.Position position);
     }
 }

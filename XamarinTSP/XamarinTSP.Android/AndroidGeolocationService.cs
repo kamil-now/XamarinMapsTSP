@@ -29,14 +29,24 @@ namespace XamarinTSP.Droid
             return positions?.Select(p => new Xamarin.Forms.Maps.Position(p.Latitude, p.Longitude));
         }
 
-        public async Task<IEnumerable<Location>> GetLocationList(string locationName)
+        public async Task<IEnumerable<Location>> GetLocationListAsync(string locationName)
         {
             var addressList = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
             return GetLocations(addressList);
         }
-        public async Task<IEnumerable<Location>> GetLocationList(Xamarin.Forms.Maps.Position position)
+        public async Task<IEnumerable<Location>> GetLocationListAsync(Xamarin.Forms.Maps.Position position)
         {
             var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults);
+            return GetLocations(addressList);
+        }
+        public IEnumerable<Location> GetLocationList(string locationName)
+        {
+            var addressList =  _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults).Result;
+            return GetLocations(addressList);
+        }
+        public IEnumerable<Location> GetLocationList(Xamarin.Forms.Maps.Position position)
+        {
+            var addressList = _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults).Result;
             return GetLocations(addressList);
         }
         private IEnumerable<Location> GetLocations(IList<Android.Locations.Address> addressList)

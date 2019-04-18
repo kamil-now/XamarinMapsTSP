@@ -15,12 +15,13 @@ namespace XamarinTSP.Utilities
         public LocationList()
         {
             Locations = new ObservableCollection<Location>();
+            Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange(() => Locations);
         }
         public ICommand DeleteCommand => new Command<Location>(location =>
         {
             Locations.Remove(location);
         });
-        public async static Task<LocationList> GetMockData(IGeolocationService geolocation)
+        public static LocationList GetMockData(IGeolocationService geolocation)
         {
             var list = new LocationList()
             {
@@ -38,11 +39,8 @@ namespace XamarinTSP.Utilities
                     new Location() { Position = new Xamarin.Forms.Maps.Position(50.269412, 19.035555) }
                 }
             };
-            list.Locations.ForEach(async x =>
-            {
-                var locations = await geolocation.GetLocationList(x.Position);
-                x = locations.FirstOrDefault();
-            });
+            list.Locations.ForEach(x => x = geolocation.GetLocationList(x.Position).FirstOrDefault());
+            list.NotifyOfPropertyChange(() => list.Locations);
             return list;
         }
     }

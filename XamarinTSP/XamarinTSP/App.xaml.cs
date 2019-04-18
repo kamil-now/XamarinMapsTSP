@@ -3,6 +3,7 @@ using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XamarinTSP.Utilities;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace XamarinTSP
@@ -12,8 +13,9 @@ namespace XamarinTSP
         public string ApiKey { get; set; }
         public App(string apiKey)
         {
-            ApiKey = apiKey;
+            Helper.InvokeOnMainThreadAsync(async () => { if (!await CheckPermissions()) System.Diagnostics.Process.GetCurrentProcess().Kill(); });
 
+            ApiKey = apiKey;
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
 
@@ -21,15 +23,6 @@ namespace XamarinTSP
 
             var bootstrapper = new Bootstrapper(this);
             bootstrapper.Run();
-        }
-
-        protected override void OnStart()
-        {
-            var ok = CheckPermissions().Result;
-            if (!ok)
-            {
-                //TODO
-            }
         }
         private async Task<bool> CheckPermissions()
         {

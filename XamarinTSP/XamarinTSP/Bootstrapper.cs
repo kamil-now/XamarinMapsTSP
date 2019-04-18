@@ -38,19 +38,10 @@ namespace XamarinTSP
 
             builder.RegisterType<SetLocationPage>().SingleInstance();
             builder.RegisterType<SetLocationViewModel>().SingleInstance();
-
-            builder.Register(async locationList => //temp
-            //if (List.Locations?.Count == 0)
-            //{
-            //    var list = 
-                    await LocationList.GetMockData(Container.Resolve<IGeolocationService>())
-            //    List = list;
-            //   // NotifyOfPropertyChange(() => List);
-            //    //NotifyOfPropertyChange(() => List.Locations.Count);
-            //}
-            ).As<LocationList>().SingleInstance();
+            //temp
+            builder.Register(context => LocationList.GetMockData(Container.Resolve<IGeolocationService>())).As<LocationList>().SingleInstance();
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
-            
+
             builder.RegisterType<TSPConfiguration>().AsSelf().SingleInstance();
 
             return builder.Build();

@@ -36,7 +36,7 @@
                        Margin="10,5"
                        ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}">
                 <ListView.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="ItemSelected"
+                    <behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                       CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
                                                       Command="{Binding SelectCommand}" />
                 </ListView.Behaviors>
