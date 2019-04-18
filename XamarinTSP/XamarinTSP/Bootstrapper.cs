@@ -36,10 +36,19 @@ namespace XamarinTSP
             builder.RegisterType<MainPage>().SingleInstance();
             builder.RegisterType<MainViewModel>().SingleInstance();
 
-            builder.RegisterType<SelectLocationPage>().SingleInstance();
+            builder.RegisterType<SetLocationPage>().SingleInstance();
             builder.RegisterType<SetLocationViewModel>().SingleInstance();
 
-            builder.RegisterType<LocationList>().AsSelf().SingleInstance();
+            builder.Register(async locationList => //temp
+            //if (List.Locations?.Count == 0)
+            //{
+            //    var list = 
+                    await LocationList.GetMockData(Container.Resolve<IGeolocationService>())
+            //    List = list;
+            //   // NotifyOfPropertyChange(() => List);
+            //    //NotifyOfPropertyChange(() => List.Locations.Count);
+            //}
+            ).As<LocationList>().SingleInstance();
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
             
             builder.RegisterType<TSPConfiguration>().AsSelf().SingleInstance();
@@ -60,7 +69,7 @@ namespace XamarinTSP
         private void MapViews(IViewFactory viewFactory)
         {
             viewFactory.Register<MainViewModel, MainPage>();
-            viewFactory.Register<SetLocationViewModel, SelectLocationPage>();
+            viewFactory.Register<SetLocationViewModel, SetLocationPage>();
         }
 
     }

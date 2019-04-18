@@ -31,26 +31,29 @@ namespace XamarinTSP.Droid
 
         public async Task<IEnumerable<Location>> GetLocationList(string locationName)
         {
-            var locations = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
-            return locations.Select(x =>
+            var addressList = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
+            return GetLocations(addressList);
+        }
+        public async Task<IEnumerable<Location>> GetLocationList(Xamarin.Forms.Maps.Position position)
+        {
+            var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults);
+            return GetLocations(addressList);
+        }
+        private IEnumerable<Location> GetLocations(IList<Android.Locations.Address> addressList)
+        {
+            return addressList.Select(x =>
             {
-                var location = new Location();
-                //TODO format result, expand Location class 
-                location.Name = x.FeatureName;//$"{x.GetAddressLine(0)}";
-                //for (int i = 0; i < x.MaxAddressLineIndex; i++)
-                //{
-                //    var line = x.GetAddressLine(i);
-                //    location.Name += string.IsNullOrEmpty(line) ? "---" : line;
-                //}
-
-                //location.SetPinPosition(new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude));
+                var location = new Location
+                {
+                    PostalCode = x.PostalCode,
+                    City = x.SubAdminArea,
+                    Street = $"{x.Thoroughfare} {x.SubThoroughfare}",
+                    Country = x.CountryName,
+                    AdminArea = x.AdminArea,
+                    Position = new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude)
+                };
                 return location;
             });
-        }
-        public async Task<IEnumerable<string>> GetLocationName(Xamarin.Forms.Maps.Position position)
-        {
-            var locations = await _geocoder.GetFromLocationAsync(position.Latitude,position.Longitude, _configuration.MaxResults);
-            return locations.Select(x=>x.FeatureName);
         }
     }
 }

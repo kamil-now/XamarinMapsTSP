@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:XamarinTSP.UI.Views"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
-             x:Class="XamarinTSP.UI.Views.SelectLocationPage"
+             x:Class="XamarinTSP.UI.Views.SetLocationPage"
              NavigationPage.HasNavigationBar="False">
     <ContentPage.Content>
         <Grid>
@@ -26,7 +26,7 @@
                             HorizontalOptions="Center"
                             Command="{Binding ReturnCommand}" />
                     <Entry  Grid.Column="1"
-                            Text="{Binding EditedLocation}">
+                            Text="{Binding EditedLocation,Mode=OneWayToSource}">
                     </Entry>
                 </Grid>
             </Frame>
@@ -34,17 +34,20 @@
             <ListView  x:Name="List"
                        Grid.Row="1"
                        Margin="10,5"
-                       SelectedItem="{Binding SelectedLocation}"
                        ItemsSource="{Binding Locations, UpdateSourceEventName=CollectionChanged}">
                 <ListView.Behaviors>
-                    <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                    <behaviors:EventToCommandBehavior EventName="ItemSelected"
+                                                      CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
                                                       Command="{Binding SelectCommand}" />
                 </ListView.Behaviors>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
-                                <Label Text="{Binding }" />
+                                <StackLayout >
+                                    <Label Text="{Binding MainDisplayString}" FontAttributes="Bold"/>
+                                    <Label Text="{Binding AdditionalLocationInfo}" />
+                                </StackLayout>
                             </ViewCell.View>
                         </ViewCell>
                     </DataTemplate>

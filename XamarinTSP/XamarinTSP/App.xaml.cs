@@ -13,6 +13,12 @@ namespace XamarinTSP
         public App(string apiKey)
         {
             ApiKey = apiKey;
+
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
             var bootstrapper = new Bootstrapper(this);
             bootstrapper.Run();
         }

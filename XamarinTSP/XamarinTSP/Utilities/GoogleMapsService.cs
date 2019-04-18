@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -18,12 +19,13 @@ namespace XamarinTSP.Utilities
             return response;
         }
 
-        public void OpenInGoogleMaps(string[] waypoints)
+        public void OpenInGoogleMaps(IEnumerable<Location> locations)
         {
+            var waypoints = locations.Select(x => $"{x.Position.Latitude}, {x.Position.Longitude}").ToArray();
             var origin = waypoints[0];
             var destination = waypoints[waypoints.Length - 1];
             string str = $"https://www.google.com/maps/dir/?api=1&origin={origin}&destination={destination}&waypoints=";
-            str += string.Join("%7C", waypoints.Skip(1).Take(waypoints.Length - 2));
+            str += string.Join("|", waypoints.Skip(1).Take(waypoints.Length - 2));
             Device.OpenUri(new Uri(str));
         }
         private string BuildRequestParameters(DistanceMatrixRequestConfiguration configuration)
@@ -47,7 +49,7 @@ namespace XamarinTSP.Utilities
                     var flags = Helper.GetFlags(value as Enum);
                     if (flags != null && flags.Count() > 0)
                     {
-                        val += string.Join("%7C", flags.Select(flag => Helper.GetDescription(flag)));
+                        val += string.Join("|", flags.Select(flag => Helper.GetDescription(flag)));
                     }
                     else
                     {
@@ -57,7 +59,7 @@ namespace XamarinTSP.Utilities
                 else if (value.GetType().IsArray)
                 {
                     var array = value as object[];
-                    val += string.Join("%7C", array.Select(x => x.ToString()));
+                    val += string.Join("|", array.Select(x => x.ToString()));
                 }
                 else if (value.GetType() == typeof(DateTime))
                 {

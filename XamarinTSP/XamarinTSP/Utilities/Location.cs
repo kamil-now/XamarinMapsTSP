@@ -15,15 +15,22 @@ namespace XamarinTSP.Utilities
         private string _name;
         private Position _position;
 
+        public string PostalCode { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
+        public string Country { get; set; }
+        public string AdminArea { get; set; }
         public Guid Id { get; }
-        public string DisplayString
+        public string MainDisplayString
         {
             get
             {
-                if (!string.IsNullOrEmpty(Name)) return Name;
+                var retval = string.Join(", ", new[] { Street, City, Country });
+                if (string.IsNullOrEmpty(retval)) return retval;
                 return $"{Position.Latitude } {Position.Longitude}";
             }
         }
+        public string AdditionalLocationInfo => string.Join(" ", new[] { PostalCode, City, AdminArea });
         public Position Position
         {
             get => _position;
@@ -32,16 +39,7 @@ namespace XamarinTSP.Utilities
                 _position = value;
                 PositionChanged?.Invoke(this, null);
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => DisplayString);
-            }
-        }
-        public string Name
-        {
-            get => _name; set
-            {
-                _name = value;
-                NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => DisplayString);
+                NotifyOfPropertyChange(() => MainDisplayString);
             }
         }
         public Location()
@@ -51,10 +49,10 @@ namespace XamarinTSP.Utilities
         }
         public ICommand EditFinishedCommand => new Command(() =>
         {
-            lock (_lck)
-            {
-                NotifyOfPropertyChange(() => Name);
-            }
+            //lock (_lck)
+            //{
+            //    NotifyOfPropertyChange(() => Name);
+            //}
 
         });
         public void Dispose() => OnDispose?.Invoke(this, null);

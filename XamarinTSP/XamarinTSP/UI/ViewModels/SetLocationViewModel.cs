@@ -16,28 +16,23 @@ namespace XamarinTSP.UI.ViewModels
 
         public string EditedLocation
         {
-            get => _list?.SelectedLocation?.Name ?? "";
+            get => _list?.SelectedLocation?.MainDisplayString ?? "";
             set
             {
                 if (_list.SelectedLocation == null)
                 {
-                    var newLocation = new Location() { Name = value };
+                    var newLocation = new Location();
                     _list.SelectedLocation = newLocation;
                 }
-                else
-                {
-                    _list.SelectedLocation.Name = value;
-                }
-                if (!string.IsNullOrEmpty(_list.SelectedLocation.Name))
+                if (!string.IsNullOrEmpty(value))
                 {
                     Helper.InvokeOnMainThreadAsync(async () =>
                     {
-                        var result = await _geolocationService.GetLocationList(_list.SelectedLocation.Name);
+                        var result = await _geolocationService.GetLocationList(value);
                         Locations = new ObservableCollection<Location>(result);
                         NotifyOfPropertyChange(() => Locations);
                     }, 100);
                 }
-                NotifyOfPropertyChange();
             }
         }
         public SetLocationViewModel(LocationList list, INavigator navigator)
@@ -47,9 +42,9 @@ namespace XamarinTSP.UI.ViewModels
             _geolocationService = DependencyService.Get<IGeolocationService>();
             Locations = new ObservableCollection<Location>();
         }
-        public ICommand SelectCommand => new Command(() =>
+        public ICommand SelectCommand => new Command<Location>(selected =>
         {
-            _list.Locations.Add(_list.SelectedLocation);
+            _list.Locations.Add(selected);
             ReturnCommand.Execute(null);
         });
         public ICommand ReturnCommand => new Command(() =>

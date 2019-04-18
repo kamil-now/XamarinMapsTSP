@@ -16,24 +16,23 @@ namespace XamarinTSP.UI.ViewModels
         private TSPAlgorithm _tspAlgorithm;
         private TSPConfiguration _tspConfiguration;
         private INavigator _navigator;
+        private IGeolocationService _geolocation;
+
         public CustomMap CustomMap { get; set; }
         public LocationList List { get; set; }
 
         public MainViewModel(INavigator navigator, IGeolocationService geolocation, LocationList list, GoogleMapsService googleMapsService)
         {
             List = list;
-            //temp
-            List = MockLocationList.List(geolocation);
-            List.Locations.ForEach(x => x.Name = geolocation.GetLocationName(x.Position).Result.FirstOrDefault());
-            NotifyOfPropertyChange(() => List.Locations.Count);
-            //
+
             _googleMapsService = googleMapsService;
             _navigator = navigator;
+            _geolocation = geolocation;
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
 
-            CustomMap = new CustomMap(List, geolocation);
+            List.Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange(() => List.Locations);
         }
         public void DisplayRoute()
         {
@@ -41,6 +40,16 @@ namespace XamarinTSP.UI.ViewModels
         }
         public ICommand OnAppearingCommand => new Command(async () =>
         {
+            //temp
+            if (List.Locations?.Count == 0)
+            {
+                var list = await LocationList.GetMockData(_geolocation);
+                List = list;
+                NotifyOfPropertyChange(() => List);
+                NotifyOfPropertyChange(() => List.Locations.Count);
+            }
+            //
+            CustomMap = new CustomMap(List, _geolocation);
             await CustomMap.MoveToUserRegion();
         });
         public ICommand AddLocationCommand => new Command(async () =>
@@ -54,18 +63,15 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
-            //TODO manage empty name case
-            _googleMapsService.OpenInGoogleMaps(List.Locations.Select(x => x.Name).ToArray());
+            _googleMapsService.OpenInGoogleMaps(List.Locations);
         });
         public ICommand RunTSPCommand => new Command(async () =>
         {
-            //TODO manage empty name case
-            string[] waypoints = List.Locations.Where(x => !string.IsNullOrEmpty(x.Name)).Select(x => x.Name).ToArray();
-
+            var dest = List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray();
             var configuration = new DistanceMatrixRequestConfiguration()
             {
-                Origins = waypoints,
-                Destinations = waypoints
+                Origins = dest,
+                Destinations = dest
             };
             int[] result = null;
             try
@@ -73,8 +79,17 @@ namespace XamarinTSP.UI.ViewModels
                 var response = await _googleMapsService.GetDistanceMatrix(configuration);
                 var data = new DistanceMatrixData(response);
 
-                result = _tspAlgorithm.Run(new DistanceData(data.DistanceMatrix, _tspConfiguration.ReturnToOrigin), waypoints.Length * 200);
+                result = _tspAlgorithm.Run(new DistanceData(data.DistanceMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
 
+                var route = new List<Location>();
+                for (int i = 0; i < result.Length - 1; i++)
+                {
+                    route.Add(List.Locations.ElementAt(result[i]));
+                }
+                if (_tspConfiguration.ReturnToOrigin)
+                    route.Add(List.Locations.ElementAt(0));
+
+                List.Locations = new System.Collections.ObjectModel.ObservableCollection<Location>(route);
             }
             catch (Exception ex)
             {
@@ -82,18 +97,7 @@ namespace XamarinTSP.UI.ViewModels
                 await Application.Current.MainPage.DisplayAlert("TSP ERROR", ex.Message, "OK");
                 return;
             }
-
-            string[] route = new string[_tspConfiguration.ReturnToOrigin ? result.Length + 1 : result.Length];
-
-            for (int i = 0; i < result.Length - 1; i++)
-            {
-                route[i] = waypoints[result[i]];
-            }
-            if (_tspConfiguration.ReturnToOrigin)
-                route[result.Length] = waypoints[0];
-
-            List.Locations = new System.Collections.ObjectModel.ObservableCollection<Location>(route.Select(x => new Location() { Name = x }));
-            //_googleMapsService.OpenInGoogleMaps(route);
+            await Application.Current.MainPage.DisplayAlert("TSP FINISHED", "Optimal route has been calculated", "OK");
         });
     }
 }

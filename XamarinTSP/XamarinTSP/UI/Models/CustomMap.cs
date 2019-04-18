@@ -68,7 +68,7 @@ namespace XamarinTSP.UI.ViewModels
             {
                 AutomationId = location.Id.ToString(),
                 Position = location.Position,
-                Label = location.DisplayString
+                Label = location.MainDisplayString
             };
             Map.Pins.Add(pin);
             NotifyOfPropertyChange(() => Map);
@@ -79,7 +79,7 @@ namespace XamarinTSP.UI.ViewModels
             if (pin == null)
                 return;
             pin.Position = location.Position;
-            pin.Label = location.DisplayString;
+            pin.Label = location.MainDisplayString;
             NotifyOfPropertyChange(() => Map);
         }
         public void RemovePin(Location location)
