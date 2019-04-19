@@ -1,4 +1,6 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ namespace XamarinTSP.UI.ViewModels
 {
     public class CustomMap : PropertyChangedBase
     {
+        private const int EARTH_RADIUS_KM = 6371;
         private IGeolocationService _geolocation;
         private Distance _mapDistance;
 
@@ -36,7 +39,7 @@ namespace XamarinTSP.UI.ViewModels
                 _list.Locations.ForEach(location => SetNewLocationPin(location));
             }
         }
-
+        public CustomMap() { }
         public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
             if (args?.NewItems == null)
@@ -49,7 +52,35 @@ namespace XamarinTSP.UI.ViewModels
                 }
             }
         }
+        public async Task ZoomToPins()
+        {
+            var points = Map.Pins.Select(x => x.Position);
+            var center = CalculateCenter(points);
+            var radius = Distance.FromMeters(CalculateRadius(center, points));
 
+            this.Map.MoveToRegion(MapSpan.FromCenterAndRadius(center, radius));
+
+        }
+        private Position CalculateCenter(IEnumerable<Position> points)
+        {
+            return new Position();
+        }
+        private double CalculateRadius(Position center, IEnumerable<Position> points)
+        {
+            return 0;
+        }
+        public double MeasureDistance(Position a, Position b)
+        {
+            var dLat = DegreeToRadian(b.Latitude - a.Latitude);
+            var dLon = DegreeToRadian(b.Longitude - a.Longitude);
+            var lat1 = DegreeToRadian(a.Latitude);
+            var lat2 = DegreeToRadian(b.Latitude);
+
+            var x = Math.Pow(Math.Sin(dLat / 2), 2) + Math.Pow(Math.Sin(dLon / 2), 2) * Math.Cos(lat1) * Math.Cos(lat2);
+            var c = 2 * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
+            return EARTH_RADIUS_KM * c;
+        }
+        private double DegreeToRadian(double degree) => degree * Math.PI / 180;
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
         public async Task MoveToLocation(string locationName)
         {
