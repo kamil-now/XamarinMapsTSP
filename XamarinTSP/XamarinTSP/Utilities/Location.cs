@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Windows.Input;
-using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
 
@@ -10,9 +8,9 @@ namespace XamarinTSP.Utilities
     {
         public EventHandler OnDispose;
         public EventHandler PositionChanged;
+        public EventHandler DataChanged;
 
         private volatile object _lck = new object();
-        private string _name;
         private Position _position;
 
         public string PostalCode { get; set; }
@@ -26,10 +24,14 @@ namespace XamarinTSP.Utilities
             get
             {
                 var retval = string.Join(", ", new[] { Street, City, Country });
-                if (string.IsNullOrEmpty(retval)) return retval;
-                return $"{Position.Latitude } {Position.Longitude}";
+
+                if (!string.IsNullOrEmpty(retval))
+                    return retval + $"\n{Coordinates}";
+
+                return Coordinates;
             }
         }
+        public string Coordinates => $"{Position.Latitude } {Position.Longitude}";
         public string AdditionalLocationInfo => string.Join(" ", new[] { PostalCode, City, AdminArea });
         public Position Position
         {
@@ -39,22 +41,14 @@ namespace XamarinTSP.Utilities
                 _position = value;
                 PositionChanged?.Invoke(this, null);
                 NotifyOfPropertyChange();
-                NotifyOfPropertyChange(() => MainDisplayString);
+                NotifyOfPropertyChange(() => Coordinates);
             }
         }
         public Location()
         {
             Id = Guid.NewGuid();
-            _name = "";
+            DataChanged += (s, e) => NotifyOfPropertyChange(() => MainDisplayString);
         }
-        public ICommand EditFinishedCommand => new Command(() =>
-        {
-            //lock (_lck)
-            //{
-            //    NotifyOfPropertyChange(() => Name);
-            //}
-
-        });
         public void Dispose() => OnDispose?.Invoke(this, null);
 
     }

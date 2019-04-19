@@ -3,6 +3,7 @@ using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XamarinTSP.Utilities;
 
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace XamarinTSP
@@ -12,11 +13,12 @@ namespace XamarinTSP
         public string ApiKey { get; set; }
         public App(string apiKey)
         {
-            //Helper.InvokeOnMainThreadAsync(async () => { if (!await CheckPermissions()) System.Diagnostics.Process.GetCurrentProcess().Kill(); });
-            var task = CheckPermissions();
-            task.Wait();
-            if (!task.Result)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
+            Helper.InvokeOnMainThreadAsync(async () =>
+            {
+                var permissionGranted = await CheckPermissions(Permission.Location);
+                if (!permissionGranted)
+                    CloseApp();
+            });
             ApiKey = apiKey;
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
@@ -26,22 +28,26 @@ namespace XamarinTSP
             var bootstrapper = new Bootstrapper(this);
             bootstrapper.Run();
         }
-        private async Task<bool> CheckPermissions()
+        public void CloseApp()
+        {
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+        private async Task<bool> CheckPermissions(Permission permission)
         {
             try
             {
-                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Location);
+                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(permission);
                 if (status != PermissionStatus.Granted)
                 {
-                    if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Location))
+                    if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
                     {
                         return false;
                     }
 
-                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Location);
+                    var results = await CrossPermissions.Current.RequestPermissionsAsync(permission);
 
-                    if (results.ContainsKey(Permission.Location))
-                        status = results[Permission.Location];
+                    if (results.ContainsKey(permission))
+                        status = results[permission];
                 }
 
                 return status == PermissionStatus.Granted;

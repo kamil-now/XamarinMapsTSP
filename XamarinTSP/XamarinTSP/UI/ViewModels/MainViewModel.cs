@@ -37,9 +37,9 @@ namespace XamarinTSP.UI.ViewModels
         {
             //TODO
         }
-        public ICommand OnAppearingCommand => new Command(async () =>
+        public ICommand OnAppearingCommand => new Command(() =>
         {
-            await CustomMap.MoveToUserRegion();
+            CustomMap.FocusOnPins();
         });
         public ICommand SelectCommand => new Command<Location>(async selected =>
         {
@@ -52,14 +52,15 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand OpenConfigurationCommand => new Command(async () =>
         {
-
+            await _navigator.PushAsync<SetLocationViewModel>();
         });
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
             _googleMapsService.OpenInGoogleMaps(List.Locations);
         });
-        public ICommand RunTSPCommand => new Command(async () =>
+        public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
+            button.Image = new FileImageSource() { File = button.Image.File.Replace("black", "blue_light") };
             var dest = List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray();
             var configuration = new DistanceMatrixRequestConfiguration()
             {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +10,15 @@ using XamarinTSP.Utilities;
 
 namespace XamarinTSP.UI.ViewModels
 {
-    public class CustomMap : PropertyChangedBase
+    public class CustomMap : Map
     {
 
         private IGeolocationService _geolocation;
         private Distance _mapDistance;
         public Map Map { get; set; }
         private LocationList _list;
+        public LocationList List => _list;
+        public CustomMap() { }
         public CustomMap(LocationList list, IGeolocationService geolocation)
         {
             _list = list;
@@ -59,7 +59,10 @@ namespace XamarinTSP.UI.ViewModels
                 var pos = new Position(positions.First().Latitude, positions.First().Longitude);
                 this.Map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, _mapDistance));
             }
-            NotifyOfPropertyChange(() => Map);
+        }
+        public void DisplayRoute()
+        {
+            //Map.
         }
         public void AddPin(Location location)
         {
@@ -70,7 +73,7 @@ namespace XamarinTSP.UI.ViewModels
                 Label = location.MainDisplayString
             };
             Map.Pins.Add(pin);
-            NotifyOfPropertyChange(() => Map);
+            FocusOnPins();
         }
         public void UpdatePin(Location location)
         {
@@ -79,7 +82,7 @@ namespace XamarinTSP.UI.ViewModels
                 return;
             pin.Position = location.Position;
             pin.Label = location.MainDisplayString;
-            NotifyOfPropertyChange(() => Map);
+            FocusOnPins();
         }
         public void RemovePin(Location location)
         {
@@ -87,12 +90,15 @@ namespace XamarinTSP.UI.ViewModels
             if (pin == null)
                 return;
             Map.Pins.Remove(pin);
-            NotifyOfPropertyChange(() => Map);
+            FocusOnPins();
         }
         private void SetNewLocationPin(Location location)
         {
             AddPin(location);
-            location.OnDispose += (s, e) => RemovePin(location);
+            location.OnDispose += (s, e) =>
+            {
+                RemovePin(location);
+            };
             location.PositionChanged += (s, e) =>
             {
                 if (location?.Position == null)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using XamarinTSP.Abstractions;
 using XamarinTSP.Utilities;
 
@@ -31,6 +32,7 @@ namespace XamarinTSP.UI.ViewModels
                         var result = await _geolocationService.GetLocationListAsync(value);
                         Locations = new ObservableCollection<Location>(result);
                         NotifyOfPropertyChange(() => Locations);
+                        Locations.ForEach(x => x.DataChanged.Invoke(null, null));
                     }, 100);
                 }
             }

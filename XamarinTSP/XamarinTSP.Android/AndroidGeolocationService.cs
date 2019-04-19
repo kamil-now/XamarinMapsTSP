@@ -31,12 +31,12 @@ namespace XamarinTSP.Droid
 
         public async Task<IEnumerable<Location>> GetLocationListAsync(string locationName)
         {
-            var addressList = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
+            var addressList = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults).ConfigureAwait(false);
             return GetLocations(addressList);
         }
         public async Task<IEnumerable<Location>> GetLocationListAsync(Xamarin.Forms.Maps.Position position)
         {
-            var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults);
+            var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults).ConfigureAwait(false);
             return GetLocations(addressList);
         }
         public IEnumerable<Location> GetLocationList(string locationName)
@@ -56,10 +56,10 @@ namespace XamarinTSP.Droid
                 var location = new Location
                 {
                     PostalCode = x.PostalCode,
-                    City = x.SubAdminArea,
+                    City = x.FeatureName,
                     Street = $"{x.Thoroughfare} {x.SubThoroughfare}",
                     Country = x.CountryName,
-                    AdminArea = x.AdminArea,
+                    AdminArea = $"{x.AdminArea} { x.SubAdminArea}",
                     Position = new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude)
                 };
                 return location;
