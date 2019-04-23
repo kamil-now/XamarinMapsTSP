@@ -1,40 +1,49 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
+using XamarinTSP.UI.Models;
 using XamarinTSP.Utilities;
 
-namespace XamarinTSP.UI.ViewModels
+namespace XamarinTSP.UI.CustomControls
 {
-    public class CustomMap : Map
+    public class CustomMapContext : PropertyChangedBase
     {
-
         private IGeolocationService _geolocation;
-        private Distance _mapDistance;
-        public Map Map { get; set; }
         private LocationList _list;
         public LocationList List => _list;
-        public CustomMap() { }
-        public CustomMap(LocationList list, IGeolocationService geolocation)
+        public CustomMap CustomMap { get; set; }
+        public Route CalculatedRoute { get; set; }
+
+        public CustomMapContext(LocationList list, IGeolocationService geolocation)
         {
             _list = list;
             _geolocation = geolocation;
-            _mapDistance = Distance.FromMiles(1000);
-            Map = new Map(MapSpan.FromCenterAndRadius(new Position(0, 0), _mapDistance))
-            {
-                MapType = MapType.Street,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-            };
 
+
+            CalculatedRoute = new Route();
             _list.Locations.CollectionChanged += ListChanged;
-            if (_list?.Locations?.Count != 0)
+        }
+        public void InitLocationPins()
+        {
+            if (_list?.Locations?.Count != 0 && CustomMap != null)
             {
                 _list.Locations.ForEach(location => SetNewLocationPin(location));
+            }
+        }
+        public void DisplayRoute(List<Position> route) => CustomMap.RouteCoordinates = route;
+        public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
+        public async Task MoveToLocation(string locationName)
+        {
+            var positions = await _geolocation.GetLocationCoordinates(locationName);
+            if (positions != null)
+            {
+                var pos = new Position(positions.First().Latitude, positions.First().Longitude);
+                CustomMap.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromKilometers(1)));
             }
         }
         public void ListChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -49,21 +58,7 @@ namespace XamarinTSP.UI.ViewModels
                 }
             }
         }
-        public void FocusOnPins() => Map.MoveToRegion(MapSpanGenerator.Generate(Map.Pins.Select(x => x.Position)));
-        public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
-        public async Task MoveToLocation(string locationName)
-        {
-            var positions = await _geolocation.GetLocationCoordinates(locationName);
-            if (positions != null)
-            {
-                var pos = new Position(positions.First().Latitude, positions.First().Longitude);
-                this.Map.MoveToRegion(MapSpan.FromCenterAndRadius(pos, _mapDistance));
-            }
-        }
-        public void DisplayRoute()
-        {
-            //Map.
-        }
+        public void FocusOnPins() => CustomMap.MoveToRegion(MapSpanGenerator.Generate(CustomMap.Pins.Select(x => x.Position)));
         public void AddPin(Location location)
         {
             var pin = new Pin
@@ -72,12 +67,12 @@ namespace XamarinTSP.UI.ViewModels
                 Position = location.Position,
                 Label = location.MainDisplayString
             };
-            Map.Pins.Add(pin);
+            CustomMap.Pins.Add(pin);
             FocusOnPins();
         }
         public void UpdatePin(Location location)
         {
-            var pin = Map.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
+            var pin = CustomMap.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
             if (pin == null)
                 return;
             pin.Position = location.Position;
@@ -86,10 +81,10 @@ namespace XamarinTSP.UI.ViewModels
         }
         public void RemovePin(Location location)
         {
-            var pin = Map.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
+            var pin = CustomMap.Pins.FirstOrDefault(x => x.AutomationId == location.Id.ToString());
             if (pin == null)
                 return;
-            Map.Pins.Remove(pin);
+            CustomMap.Pins.Remove(pin);
             FocusOnPins();
         }
         private void SetNewLocationPin(Location location)
@@ -112,5 +107,4 @@ namespace XamarinTSP.UI.ViewModels
             };
         }
     }
-
 }

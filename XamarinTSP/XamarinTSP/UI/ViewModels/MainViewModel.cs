@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
+using XamarinTSP.UI.CustomControls;
 using XamarinTSP.Utilities;
 
 namespace XamarinTSP.UI.ViewModels
@@ -18,28 +18,25 @@ namespace XamarinTSP.UI.ViewModels
         private INavigator _navigator;
         private IGeolocationService _geolocation;
 
-        public CustomMap CustomMap { get; set; }
-        public LocationList List { get; set; }
+        public CustomMapContext MapContext { get; private set; }
+        public LocationList List { get; private set; }
 
-        public MainViewModel(INavigator navigator, IGeolocationService geolocation, LocationList list, GoogleMapsService googleMapsService)
+        public MainViewModel(INavigator navigator, IGeolocationService geolocation, CustomMapContext mapContext, LocationList list, GoogleMapsService googleMapsService)
         {
             List = list;
-
+            MapContext = mapContext;
+            _geolocation = geolocation;
             _googleMapsService = googleMapsService;
             _navigator = navigator;
-            _geolocation = geolocation;
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
-            CustomMap = new CustomMap(List, _geolocation);
-        }
-        public void DisplayRoute()
-        {
-            //TODO
+
         }
         public ICommand OnAppearingCommand => new Command(() =>
         {
-            CustomMap.FocusOnPins();
+            List.SetMockData(_geolocation);
+            MapContext.InitLocationPins();
         });
         public ICommand SelectCommand => new Command<Location>(async selected =>
         {
@@ -60,7 +57,6 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
-            button.Image = new FileImageSource() { File = button.Image.File.Replace("black", "blue_light") };
             var dest = List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray();
             var configuration = new DistanceMatrixRequestConfiguration()
             {
@@ -76,14 +72,14 @@ namespace XamarinTSP.UI.ViewModels
                 result = _tspAlgorithm.Run(new DistanceData(data.DistanceMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
 
                 var route = new List<Location>();
-                for (int i = 0; i < result.Length - 1; i++)
+                for (int i = 0; i < result.Length; i++)
                 {
                     route.Add(List.Locations.ElementAt(result[i]));
                 }
                 if (_tspConfiguration.ReturnToOrigin)
                     route.Add(List.Locations.ElementAt(0));
-                
-                List.Locations = new System.Collections.ObjectModel.ObservableCollection<Location>(route);
+
+                MapContext.DisplayRoute(route.Select(x => x.Position).ToList());
             }
             catch (Exception ex)
             {

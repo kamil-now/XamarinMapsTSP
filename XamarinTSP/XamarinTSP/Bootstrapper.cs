@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
+using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.ViewModels;
 using XamarinTSP.UI.Views;
 using XamarinTSP.Utilities;
@@ -38,8 +39,10 @@ namespace XamarinTSP
 
             builder.RegisterType<SetLocationPage>().SingleInstance();
             builder.RegisterType<SetLocationViewModel>().SingleInstance();
-            //temp
-            builder.Register(context => LocationList.GetMockData(Container.Resolve<IGeolocationService>())).As<LocationList>().SingleInstance();
+            
+            builder.RegisterType<LocationList>().AsSelf().SingleInstance();
+            builder.RegisterType<CustomMapContext>().AsSelf().SingleInstance();
+
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
 
             builder.RegisterType<TSPConfiguration>().AsSelf().SingleInstance();

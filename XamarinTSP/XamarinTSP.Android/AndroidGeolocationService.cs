@@ -1,5 +1,6 @@
 ﻿using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
+using Plugin.Permissions.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +16,10 @@ namespace XamarinTSP.Droid
         private GeolocationConfiguration _configuration;
         private IGeolocator _locator;
         private Android.Locations.Geocoder _geocoder;
+        private bool? _permissionGranted = null;
         public AndroidGeolocationService()
         {
             _configuration = new GeolocationConfiguration();
-
             _locator = CrossGeolocator.Current;
             _locator.DesiredAccuracy = _configuration.LocationAccuracy;
             _geocoder = new Android.Locations.Geocoder(Android.App.Application.Context);
@@ -37,11 +38,6 @@ namespace XamarinTSP.Droid
         public async Task<IEnumerable<Location>> GetLocationListAsync(Xamarin.Forms.Maps.Position position)
         {
             var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults).ConfigureAwait(false);
-            return GetLocations(addressList);
-        }
-        public IEnumerable<Location> GetLocationList(string locationName)
-        {
-            var addressList =  _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults).Result;
             return GetLocations(addressList);
         }
         public IEnumerable<Location> GetLocationList(Xamarin.Forms.Maps.Position position)

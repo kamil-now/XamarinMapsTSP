@@ -1,20 +1,16 @@
 ﻿using Android.Content;
 using Android.Gms.Maps.Model;
-using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using XamarinTSP.Droid;
-using XamarinTSP.UI.ViewModels;
+using XamarinTSP.UI.CustomControls;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 namespace XamarinTSP.Droid
 {
     public class CustomMapRenderer : MapRenderer
     {
-        List<Position> routeCoordinates;
-
         public CustomMapRenderer(Context context) : base(context)
         {
         }
@@ -23,33 +19,31 @@ namespace XamarinTSP.Droid
         {
             base.OnElementChanged(e);
 
-            if (e.OldElement != null)
-            {
-                // Unsubscribe
-            }
-
             if (e.NewElement != null)
             {
-                var formsMap = (CustomMap)e.NewElement;
-                routeCoordinates = formsMap?.List?.Locations?.Select(x => x.Position)?.ToList();
+                var map = (CustomMap)e.NewElement;
+
                 Control.GetMapAsync(this);
             }
         }
-
-        protected override void OnMapReady(Android.Gms.Maps.GoogleMap map)
+        protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            base.OnMapReady(map);
-            if (routeCoordinates == null)
-                return;
-
-            var polylineOptions = new PolylineOptions();
-            polylineOptions.InvokeColor(0x66FF0000);
-            foreach (var position in routeCoordinates)
+            if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty))
             {
-                polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-            }
+                var polylineOptions = new PolylineOptions();
+                polylineOptions.InvokeColor(0x66000000);
 
-            NativeMap.AddPolyline(polylineOptions);
+                var coordinates = ((CustomMap)Element).RouteCoordinates;
+
+                if (coordinates != null)
+                {
+                    foreach (var position in coordinates)
+                        polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
+
+                    NativeMap.AddPolyline(polylineOptions);
+                }
+
+            }
         }
     }
 }

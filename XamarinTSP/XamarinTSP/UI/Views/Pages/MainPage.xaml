@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:XamarinTSP.UI.Views"
+             xmlns:customControls="clr-namespace:XamarinTSP.UI.CustomControls"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
              x:Class="XamarinTSP.UI.Views.MainPage"
             NavigationPage.HasNavigationBar="False">
@@ -74,8 +75,8 @@
                         Command="{Binding AddLocationCommand}" />
 
             </Grid>
-
-            <views:MapView  Grid.Row="1" Grid.ColumnSpan="3" BindingContext="{Binding CustomMap}" />
+            <customControls:CustomMap Grid.Row="1"
+                                      Grid.ColumnSpan="3"/>
             <Grid Grid.Row="2" Grid.ColumnSpan="3"  MinimumHeightRequest="10" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

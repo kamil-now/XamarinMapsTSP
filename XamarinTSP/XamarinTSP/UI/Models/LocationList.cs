@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -10,6 +11,7 @@ namespace XamarinTSP.Utilities
     {
         public Location SelectedLocation { get; set; }
         public ObservableCollection<Location> Locations { get; set; }
+
         public LocationList()
         {
             Locations = new ObservableCollection<Location>();
@@ -20,15 +22,11 @@ namespace XamarinTSP.Utilities
             Locations.Remove(location);
             location.Dispose();
         });
-        public static LocationList GetMockData(IGeolocationService geolocation)
+        public void SetMockData(IGeolocationService geolocation)
         {
-            var list = new LocationList()
-            {
-                Locations = new ObservableCollection<Location>() //max 10
-            };
             void addLocation(double latitude, double longitude)
             {
-                list.Locations.Add(geolocation.GetLocationList(new Xamarin.Forms.Maps.Position(latitude, longitude)).FirstOrDefault());
+                Locations.Add(geolocation.GetLocationList(new Xamarin.Forms.Maps.Position(latitude, longitude)).FirstOrDefault());
             }
             addLocation(50.252711, 19.015991);
             addLocation(50.255272, 19.035315);
@@ -40,8 +38,6 @@ namespace XamarinTSP.Utilities
             addLocation(50.242092, 19.028267);
             addLocation(50.254785, 19.004781);
             addLocation(50.269412, 19.035555);
-
-            return list;
         }
     }
 }
