@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
 
@@ -23,16 +24,18 @@ namespace XamarinTSP.Utilities
         {
             get
             {
-                var retval = string.Join(", ", new[] { Street, City, Country });
+                var tmp = new[] { Street, $"{Street}, {City}", $"{City}, {AdminArea}", City, Country };
+                var retval = tmp.FirstOrDefault(x => !string.IsNullOrEmpty(x));
+                if (string.IsNullOrEmpty(retval))
+                {
+                    retval = Coordinates;
+                }
 
-                if (!string.IsNullOrEmpty(retval))
-                    return retval + $"\n{Coordinates}";
-
-                return Coordinates;
+                return retval;
             }
         }
         public string Coordinates => $"{Position.Latitude } {Position.Longitude}";
-        public string AdditionalLocationInfo => string.Join(" ", new[] { PostalCode, City, AdminArea });
+        public string AdditionalLocationInfo => string.Join(" ", new[] { PostalCode, City, AdminArea, Country });
         public Position Position
         {
             get => _position;

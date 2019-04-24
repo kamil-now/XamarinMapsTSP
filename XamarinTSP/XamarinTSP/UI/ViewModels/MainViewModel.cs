@@ -18,25 +18,30 @@ namespace XamarinTSP.UI.ViewModels
         private INavigator _navigator;
         private IGeolocationService _geolocation;
 
-        public CustomMapContext MapContext { get; private set; }
+        public CustomMapController MapController { get; private set; }
         public LocationList List { get; private set; }
 
-        public MainViewModel(INavigator navigator, IGeolocationService geolocation, CustomMapContext mapContext, LocationList list, GoogleMapsService googleMapsService)
+        public MainViewModel(INavigator navigator, IGeolocationService geolocation, CustomMapController mapController, LocationList list, GoogleMapsService googleMapsService)
         {
             List = list;
-            MapContext = mapContext;
+            MapController = mapController;
             _geolocation = geolocation;
             _googleMapsService = googleMapsService;
             _navigator = navigator;
 
             _tspConfiguration = new TSPConfiguration();
             _tspAlgorithm = new TSPAlgorithm(_tspConfiguration);
-
         }
+
+
         public ICommand OnAppearingCommand => new Command(() =>
         {
-            List.SetMockData(_geolocation);
-            MapContext.InitLocationPins();
+            if (List.Locations.Count == 0)
+            {
+                List.SetMockData(_geolocation);
+            }
+            //MapController.CustomMap.UpdatePins();
+            //MapController.CustomMap.FocusPins();
         });
         public ICommand SelectCommand => new Command<Location>(async selected =>
         {
@@ -79,7 +84,7 @@ namespace XamarinTSP.UI.ViewModels
                 if (_tspConfiguration.ReturnToOrigin)
                     route.Add(List.Locations.ElementAt(0));
 
-                MapContext.DisplayRoute(route.Select(x => x.Position).ToList());
+                MapController.DisplayRoute(route.Select(x => x.Position).ToList());
             }
             catch (Exception ex)
             {

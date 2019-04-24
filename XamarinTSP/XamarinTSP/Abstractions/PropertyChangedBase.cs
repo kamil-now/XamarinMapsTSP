@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace XamarinTSP.Abstractions
 {
-    public class PropertyChangedBase
+    public abstract class PropertyChangedBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

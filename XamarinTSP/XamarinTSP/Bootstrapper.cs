@@ -41,7 +41,7 @@ namespace XamarinTSP
             builder.RegisterType<SetLocationViewModel>().SingleInstance();
             
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
-            builder.RegisterType<CustomMapContext>().AsSelf().SingleInstance();
+            builder.RegisterType<CustomMapController>().AsSelf().SingleInstance();
 
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
 

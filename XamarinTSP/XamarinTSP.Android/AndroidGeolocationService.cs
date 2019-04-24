@@ -1,6 +1,5 @@
 ﻿using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
-using Plugin.Permissions.Abstractions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace XamarinTSP.Droid
         private GeolocationConfiguration _configuration;
         private IGeolocator _locator;
         private Android.Locations.Geocoder _geocoder;
-        private bool? _permissionGranted = null;
+
         public AndroidGeolocationService()
         {
             _configuration = new GeolocationConfiguration();
@@ -52,10 +51,10 @@ namespace XamarinTSP.Droid
                 var location = new Location
                 {
                     PostalCode = x.PostalCode,
-                    City = x.FeatureName,
+                    City = x.Locality,//x.FeatureName,
                     Street = $"{x.Thoroughfare} {x.SubThoroughfare}",
                     Country = x.CountryName,
-                    AdminArea = $"{x.AdminArea} { x.SubAdminArea}",
+                    AdminArea = $"{x.AdminArea} ",//{ x.SubAdminArea}",
                     Position = new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude)
                 };
                 return location;

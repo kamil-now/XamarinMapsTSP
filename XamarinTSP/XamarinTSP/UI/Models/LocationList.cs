@@ -15,7 +15,7 @@ namespace XamarinTSP.Utilities
         public LocationList()
         {
             Locations = new ObservableCollection<Location>();
-            Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange(() => Locations);
+            Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange();
         }
         public ICommand DeleteCommand => new Command<Location>(location =>
         {
@@ -24,6 +24,7 @@ namespace XamarinTSP.Utilities
         });
         public void SetMockData(IGeolocationService geolocation)
         {
+            Locations.Clear();
             void addLocation(double latitude, double longitude)
             {
                 Locations.Add(geolocation.GetLocationList(new Xamarin.Forms.Maps.Position(latitude, longitude)).FirstOrDefault());
