@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using XamarinTSP.Utilities;
 
 namespace XamarinTSP.TSP
 {
     public class TSPData : ITSPData
     {
+        public IEnumerable<Location> Input { get; }
         public int ElementSize => distanceData.Length;
         int[][] distanceData;
         int[][] timeData;
         bool returnToOrigin;
 
-        public TSPData(int[][] distanceData, int[][] timeData, bool returnToOrigin)
+        public TSPData(IEnumerable<Location> input, int[][] distanceData, int[][] timeData, bool returnToOrigin)
         {
+            Input = input;
             this.distanceData = distanceData;
             this.timeData = timeData;
             this.returnToOrigin = returnToOrigin;

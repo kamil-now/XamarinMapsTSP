@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xamarin.Forms.Maps;
+using XamarinTSP.UI.Models;
 using XamarinTSP.Utilities;
 
 namespace XamarinTSP.TSP
 {
     public class TSPAlgorithm
     {
-        TSPConfiguration _config;
+        private TSPConfiguration _config;
 
         public TSPAlgorithm(TSPConfiguration configuration)
         {
             _config = configuration;
 
         }
-        public (double time, double distance, int[] waypoints) Run(ITSPData tspData, int populationsCount)
+        public Route Run(ITSPData tspData, int populationsCount)
         {
             var isValid = _config.Validate();
             if (!isValid)
@@ -59,9 +63,9 @@ namespace XamarinTSP.TSP
                 }
             }
 
-            return FormatResult(currentBest);
+            return FormatResult(currentBest, tspData);
         }
-        private (double time, double distance, int[] waypoints) FormatResult(Element element)
+        private Route FormatResult(Element element, ITSPData tspData)
         {
             var waypoints = element.Waypoints;
             var length = waypoints.Length;
@@ -72,7 +76,21 @@ namespace XamarinTSP.TSP
             Array.ConstrainedCopy(waypoints, index, result, 0, length - index);
             Array.ConstrainedCopy(waypoints, 0, result, length - index, index);
 
-            return (element.TimeValue, element.DistanceValue, result);
+            var list = new List<Location>();
+            for (int i = 0; i < result.Length; i++)
+            {
+                list.Add(tspData.Input.ElementAt(result[i]));
+            }
+            if (_config.ReturnToOrigin)
+                list.Add(tspData.Input.ElementAt(0));
+
+            return new Route()
+            {
+                RouteCoordinates = list.Select(x => x.Position).ToList(),
+                Distance = Distance.FromMeters(Math.Round(element.DistanceValue / 10)),
+                Time = TimeSpan.FromSeconds(element.TimeValue)
+
+            };
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
-using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
 using XamarinTSP.UI.CustomControls;
@@ -75,32 +73,15 @@ namespace XamarinTSP.UI.ViewModels
                     Origins = dest,
                     Destinations = dest
                 };
-                int[] result = null;
                 try
                 {
                     var response = await _googleMapsService.GetDistanceMatrix(configuration);
                     var data = new DistanceMatrixData(response);
 
-                    var tsp = _tspAlgorithm.Run(new TSPData(data.DistanceMatrix, data.DurationMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
+                    MapController.CalculatedRoute = _tspAlgorithm.Run(new TSPData(List.Locations, data.DistanceMatrix, data.DurationMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
 
-                    result = tsp.waypoints;
 
-                    var route = new List<Location>();
-                    for (int i = 0; i < result.Length; i++)
-                    {
-                        route.Add(List.Locations.ElementAt(result[i]));
-                    }
-                    if (_tspConfiguration.ReturnToOrigin)
-                        route.Add(List.Locations.ElementAt(0));
-                    await Helper.InvokeOnMainThreadAsync(() =>
-                    {
-                        MapController.DisplayRoute(route.Select(x => x.Position).ToList());
-                        MapController.CalculatedRoute.Distance = Distance.FromMeters(Math.Round(tsp.distance / 10));
-                        MapController.CalculatedRoute.Time = TimeSpan.FromSeconds(tsp.time);
-
-                        NotifyOfPropertyChange(() => MapController.CalculatedRoute.Time);
-                        NotifyOfPropertyChange(() => MapController.CalculatedRoute.Distance);
-                    });
+                    await Helper.InvokeOnMainThreadAsync(() => MapController.DisplayRoute());
 
                 }
                 catch (Exception ex)
@@ -118,7 +99,6 @@ namespace XamarinTSP.UI.ViewModels
                     });
 
                 }
-                //await Helper.InvokeOnMainThreadAsync(async () => await Application.Current.MainPage.DisplayAlert("TSP FINISHED", "Optimal route has been calculated", "OK"));
             }).ConfigureAwait(false);
 
         });

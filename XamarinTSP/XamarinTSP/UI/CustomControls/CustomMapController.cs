@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
@@ -21,7 +20,12 @@ namespace XamarinTSP.UI.CustomControls
             List = list;
             CalculatedRoute = new Route();
         }
-        public void DisplayRoute(List<Position> route) => CustomMap.RouteCoordinates = route;
+        public void DisplayRoute()
+        {
+            CustomMap.RouteCoordinates = CalculatedRoute.RouteCoordinates;
+            NotifyOfPropertyChange(() => CalculatedRoute.Time);
+            NotifyOfPropertyChange(() => CalculatedRoute.Distance);
+        }
         public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
         public async Task MoveToLocation(string locationName)
         {
