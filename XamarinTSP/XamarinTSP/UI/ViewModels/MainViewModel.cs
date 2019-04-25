@@ -77,12 +77,7 @@ namespace XamarinTSP.UI.ViewModels
 
             await Task.Run(async () =>
             {
-                var dest = List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray();
-                var configuration = new DistanceMatrixRequestConfiguration()
-                {
-                    Origins = dest,
-                    Destinations = dest
-                };
+                var configuration = new DistanceMatrixRequestConfiguration(List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray());
                 try
                 {
                     var response = await _googleMapsService.GetDistanceMatrix(configuration);
@@ -93,14 +88,14 @@ namespace XamarinTSP.UI.ViewModels
                         MapController.CalculatedRoute = route;
                         await Helper.InvokeOnMainThreadAsync(() => MapController.DisplayRoute());
                     });
-                    
+
                     _tspAlgorithm.Run(
                         new TSPData(
                             List.Locations,
                             data.DistanceMatrix,
                             data.DurationMatrix,
-                            _tspConfiguration.ReturnToOrigin), 
-                        displayRoute, 
+                            _tspConfiguration.ReturnToOrigin),
+                        displayRoute,
                         List.Locations.Count * 10);
 
                 }

@@ -23,6 +23,23 @@ namespace XamarinTSP.Utilities
         public TrafficModel TrafficModel { get; set; }
         [Description("avoid")]
         public Restriction Restriction { get; set; }
+        public DistanceMatrixRequestConfiguration(string[] locations)
+        {
+            Destinations = locations;
+            Origins = locations;
+        }
+        public DistanceMatrixRequestConfiguration(string[] locations, DistanceMatrixRequestConfiguration config)
+        {
+            Destinations = locations;
+            Origins = locations;
+            TravelMode = config.TravelMode;
+            Region = config.Region;
+            UnitSystem = config.UnitSystem;
+            DepartureTime = config.DepartureTime;
+            ArrivalTime = config.ArrivalTime;
+            TrafficModel = config.TrafficModel;
+            Restriction = config.Restriction;
+        }
     }
     public enum TrafficModel
     {

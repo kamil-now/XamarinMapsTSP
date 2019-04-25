@@ -8,17 +8,46 @@ namespace XamarinTSP.Utilities
 {
     public class GoogleMapsService
     {
+        private const int MAX_REQUEST_ELEMENTS_COUNT = 10;
         public async Task<DistanceMatrixResponse> GetDistanceMatrix(DistanceMatrixRequestConfiguration configuration)
         {
-            var parameters = BuildRequestParameters(configuration);
-            var response = await HttpRequest.Post<DistanceMatrixResponse>($@"https://maps.googleapis.com/maps/api/distancematrix/json?{parameters}");
-            if (response == null)
+            DistanceMatrixResponse response = null;
+            if (configuration.Destinations.Count() > MAX_REQUEST_ELEMENTS_COUNT)
             {
-                throw new Exception("NULL API RESPONSE");
+                var requests = BuildRequests(configuration);
+                requests.ForEach(async request =>
+                {
+                    var res = await HttpRequest.Post<DistanceMatrixResponse>(request);
+                    response.Merge(res);
+                });
+
             }
+            else
+            {
+                var request = BuildSingleRequest(configuration);
+                response = await HttpRequest.Post<DistanceMatrixResponse>(request);
+                if (response == null)
+                {
+                    throw new Exception("NULL API RESPONSE");
+                }
+            }
+
             return response;
         }
-
+        private List<string> BuildRequests(DistanceMatrixRequestConfiguration configuration)
+        {
+            var tmp = MAX_REQUEST_ELEMENTS_COUNT;
+            var count = configuration.Destinations.Count();
+            var retval = new List<string>();
+            for (int i = 0; i < count; i += tmp)
+            {
+                if (i > count)
+                    tmp = count - i - MAX_REQUEST_ELEMENTS_COUNT;
+                else tmp = i;
+                retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(configuration.Destinations.ToList().GetRange(i, tmp).ToArray(), configuration)));
+            }
+            return retval;
+        }
         public void OpenInGoogleMaps(IEnumerable<Location> locations)
         {
             var waypoints = locations.Select(x => $"{x.Position.Latitude}, {x.Position.Longitude}").ToArray();
@@ -28,13 +57,13 @@ namespace XamarinTSP.Utilities
             str += string.Join("|", waypoints.Skip(1).Take(waypoints.Length - 2));
             Device.OpenUri(new Uri(str));
         }
-        private string BuildRequestParameters(DistanceMatrixRequestConfiguration configuration)
+        private string BuildSingleRequest(DistanceMatrixRequestConfiguration configuration)
         {
             //TODO refactor
             if (configuration.Destinations == null || configuration.Origins == null)
                 throw new ArgumentException("Invalid request configuration");
 
-            var request = "";
+            var requestParameters = "";
 
             var props = configuration.GetType().GetProperties();
             foreach (var prop in props)
@@ -71,12 +100,12 @@ namespace XamarinTSP.Utilities
                 }
                 if (!string.IsNullOrEmpty(val) && !string.IsNullOrEmpty(name))
                 {
-                    request += name + val;
+                    requestParameters += name + val;
                 }
             }
 
-            request += $"&key={(Application.Current as App).ApiKey}";
-            return request;
+            requestParameters += $"&key={(Application.Current as App).ApiKey}";
+            return $"https://maps.googleapis.com/maps/api/distancematrix/json?{requestParameters}";
         }
     }
 }
