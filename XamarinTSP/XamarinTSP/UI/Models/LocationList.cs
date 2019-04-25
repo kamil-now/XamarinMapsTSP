@@ -39,6 +39,9 @@ namespace XamarinTSP.Utilities
             addLocation(50.242092, 19.028267);
             addLocation(50.254785, 19.004781);
             addLocation(50.269412, 19.035555);
+            addLocation(50.235788, 18.978714);
+            addLocation(50.266317, 18.995626);
+            addLocation(50.268255, 19.019297);
         }
     }
 }

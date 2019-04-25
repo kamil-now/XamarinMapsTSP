@@ -8,9 +8,10 @@ namespace XamarinTSP.TSP
     {
         public IEnumerable<Location> Input { get; }
         public int ElementSize => distanceData.Length;
-        int[][] distanceData;
-        int[][] timeData;
-        bool returnToOrigin;
+
+        private int[][] distanceData;
+        private int[][] timeData;
+        private bool returnToOrigin;
 
         public TSPData(IEnumerable<Location> input, int[][] distanceData, int[][] timeData, bool returnToOrigin)
         {
@@ -19,7 +20,8 @@ namespace XamarinTSP.TSP
             this.timeData = timeData;
             this.returnToOrigin = returnToOrigin;
         }
-        double CalculateValue(Element element, int[][] data)
+
+        private double CalculateValue(Element element, int[][] data)
         {
             double value = 0;
             int size = data.Length - (returnToOrigin ? 0 : 1);
@@ -34,9 +36,10 @@ namespace XamarinTSP.TSP
             }
             return value;
         }
-        double CalculateFitness(Element element)
+
+        private double CalculateFitness(Element element)
         {
-            return 1 / element.DistanceValue;
+            return 1 / element.DistanceValue + 1 / element.TimeValue;
         }
         public void SetValue(Population population)
         {

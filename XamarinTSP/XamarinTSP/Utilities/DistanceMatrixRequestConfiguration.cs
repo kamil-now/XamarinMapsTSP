@@ -28,10 +28,11 @@ namespace XamarinTSP.Utilities
             Destinations = locations;
             Origins = locations;
         }
-        public DistanceMatrixRequestConfiguration(string[] locations, DistanceMatrixRequestConfiguration config)
+        public DistanceMatrixRequestConfiguration(string origin, string[] locations, DistanceMatrixRequestConfiguration config)
         {
+            Origins = new[] { origin };
             Destinations = locations;
-            Origins = locations;
+
             TravelMode = config.TravelMode;
             Region = config.Region;
             UnitSystem = config.UnitSystem;

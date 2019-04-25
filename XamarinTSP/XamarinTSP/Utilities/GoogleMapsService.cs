@@ -8,46 +8,84 @@ namespace XamarinTSP.Utilities
 {
     public class GoogleMapsService
     {
-        private const int MAX_REQUEST_ELEMENTS_COUNT = 10;
-        public async Task<DistanceMatrixResponse> GetDistanceMatrix(DistanceMatrixRequestConfiguration configuration)
+        private const int MAX_REQUEST_ELEMENTS_COUNT = 10; //destinations * origins
+        private const int MAX_REQUEST_DESTINATIONS_COUNT = 25;
+        public async Task<DistanceMatrixResponse> GetDistanceMatrix(IEnumerable<string> locations, DistanceMatrixRequestConfiguration configuration = null)
         {
-            DistanceMatrixResponse response = null;
-            if (configuration.Destinations.Count() > MAX_REQUEST_ELEMENTS_COUNT)
+            configuration = new DistanceMatrixRequestConfiguration(locations.ToArray());
+            DistanceMatrixResponse response = new DistanceMatrixResponse()
             {
-                var requests = BuildRequests(configuration);
+                Origin_Addresses = Array.Empty<string>(),
+                Destination_Addresses = Array.Empty<string>(),
+                Rows = Array.Empty<Row>(),
+            };
+            if (locations.Count() < MAX_REQUEST_DESTINATIONS_COUNT)
+            {
+                var requests = BuildRequests(locations, configuration);
                 requests.ForEach(async request =>
                 {
                     var res = await HttpRequest.Post<DistanceMatrixResponse>(request);
-                    response.Merge(res);
+                    response = response.Merge(res);
                 });
 
-            }
-            else
-            {
-                var request = BuildSingleRequest(configuration);
-                response = await HttpRequest.Post<DistanceMatrixResponse>(request);
-                if (response == null)
-                {
-                    throw new Exception("NULL API RESPONSE");
-                }
             }
 
             return response;
         }
-        private List<string> BuildRequests(DistanceMatrixRequestConfiguration configuration)
+        private List<string> BuildRequests(IEnumerable<string> locations, DistanceMatrixRequestConfiguration configuration)
         {
-            var tmp = MAX_REQUEST_ELEMENTS_COUNT;
-            var count = configuration.Destinations.Count();
+            var count = locations.Count();
             var retval = new List<string>();
-            for (int i = 0; i < count; i += tmp)
+            for (int i = 0; i < count; i++)
             {
-                if (i > count)
-                    tmp = count - i - MAX_REQUEST_ELEMENTS_COUNT;
-                else tmp = i;
-                retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(configuration.Destinations.ToList().GetRange(i, tmp).ToArray(), configuration)));
+                retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(locations.ElementAt(i), locations.ToArray(), configuration)));
             }
             return retval;
         }
+        //public async Task<DistanceMatrixResponse> GetDistanceMatrix(DistanceMatrixRequestConfiguration configuration)
+        //{
+        //    DistanceMatrixResponse response = new DistanceMatrixResponse()
+        //    {
+        //        Origin_Addresses = Array.Empty<string>(),
+        //        Destination_Addresses = Array.Empty<string>(),
+        //        Rows = Array.Empty<Row>(),
+        //    };
+        //    if (configuration.Destinations.Count() > MAX_REQUEST_ELEMENTS_COUNT)
+        //    {
+        //        var requests = BuildRequests(configuration);
+        //        requests.ForEach(async request =>
+        //        {
+        //            var res = await HttpRequest.Post<DistanceMatrixResponse>(request);
+        //            response = response.Merge(res);
+        //        });
+
+        //    }
+        //    else
+        //    {
+        //        var request = BuildSingleRequest(configuration);
+        //        response = await HttpRequest.Post<DistanceMatrixResponse>(request);
+        //        if (response == null)
+        //        {
+        //            throw new Exception("NULL API RESPONSE");
+        //        }
+        //    }
+
+        //    return response;
+        //}
+        //private List<string> BuildRequests(DistanceMatrixRequestConfiguration configuration)
+        //{
+        //    var tmp = MAX_REQUEST_ELEMENTS_COUNT;
+        //    var count = configuration.Destinations.Count();
+        //    var retval = new List<string>();
+        //    for (int i = 0; i < count; i += MAX_REQUEST_ELEMENTS_COUNT)
+        //    {
+        //        if (i + MAX_REQUEST_ELEMENTS_COUNT > count)
+        //            tmp = count - i;
+
+        //        retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(configuration.Destinations.ToList().GetRange(i, tmp).ToArray(), configuration)));
+        //    }
+        //    return retval;
+        //}
         public void OpenInGoogleMaps(IEnumerable<Location> locations)
         {
             var waypoints = locations.Select(x => $"{x.Position.Latitude}, {x.Position.Longitude}").ToArray();

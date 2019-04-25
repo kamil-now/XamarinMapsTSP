@@ -10,16 +10,16 @@ namespace XamarinTSP.TSP
     public class TSPAlgorithm
     {
         private TSPConfiguration _config;
-        private bool _stop;
+        private bool _run;
         public TSPAlgorithm(TSPConfiguration configuration)
         {
             _config = configuration;
 
         }
-        public void Stop() => _stop = true;
-        public void Run(ITSPData tspData, Action<Route> displayRoute, int displayRoutePopulationsOffset)
+        public void Stop() => _run = false;
+        public void Run(ITSPData tspData, Action<Route> displayRoute)
         {
-            _stop = false;
+            _run = true;
             var isValid = _config.Validate();
             if (!isValid)
             {
@@ -30,7 +30,8 @@ namespace XamarinTSP.TSP
             tspData.SetStats(population);
 
             Element currentBest = population.Best.Copy();
-            for (int populationNumber = 0; !_stop; populationNumber++)
+            displayRoute(FormatResult(currentBest, tspData));
+            while (_run)
             {
                 _config.CrossoverAlgorithm.Crossover(population);
                 foreach (var item in population.Elements)
@@ -62,14 +63,9 @@ namespace XamarinTSP.TSP
                 if (population.Best.DistanceValue < currentBest.DistanceValue)
                 {
                     currentBest = population.Best.Copy();
-                }
-                if (populationNumber == displayRoutePopulationsOffset)
-                {
                     displayRoute(FormatResult(currentBest, tspData));
-                    populationNumber = 0;
                 }
             }
-            _stop = false;
         }
 
         private Route FormatResult(Element element, ITSPData tspData)
@@ -94,7 +90,7 @@ namespace XamarinTSP.TSP
             return new Route()
             {
                 RouteCoordinates = list.Select(x => x.Position).ToList(),
-                Distance = Distance.FromMeters(Math.Round(element.DistanceValue / 10)),
+                Distance = Distance.FromMeters(Math.Round(element.DistanceValue)),
                 Time = TimeSpan.FromSeconds(element.TimeValue)
 
             };
