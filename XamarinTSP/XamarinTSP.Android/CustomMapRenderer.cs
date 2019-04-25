@@ -1,8 +1,6 @@
 ﻿using Android.Content;
 using Android.Gms.Maps.Model;
-using System.Linq;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
 using XamarinTSP.Droid;
@@ -29,10 +27,15 @@ namespace XamarinTSP.Droid
                 Control.GetMapAsync(this);
             }
         }
+
+        private bool _rendering;
         protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty) || e.PropertyName == nameof(CustomMap.LocationsProperty))
             {
+                if (_rendering)
+                    return;
+                _rendering = true;
                 NativeMap.Clear();
 
                 _map.UpdatePins();
@@ -40,6 +43,7 @@ namespace XamarinTSP.Droid
 
                 if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty))
                     DrawRoute();
+                _rendering = false;
 
             }
         }
@@ -51,7 +55,7 @@ namespace XamarinTSP.Droid
             marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.ic_room_black_24dp));
             return marker;
         }
-        
+
 
         private void DrawRoute()
         {

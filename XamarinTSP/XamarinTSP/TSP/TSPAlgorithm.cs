@@ -10,14 +10,16 @@ namespace XamarinTSP.TSP
     public class TSPAlgorithm
     {
         private TSPConfiguration _config;
-
+        private bool _stop;
         public TSPAlgorithm(TSPConfiguration configuration)
         {
             _config = configuration;
 
         }
-        public Route Run(ITSPData tspData, int populationsCount)
+        public void Stop() => _stop = true;
+        public void Run(ITSPData tspData, Action<Route> displayRoute, int displayRoutePopulationsOffset)
         {
+            _stop = false;
             var isValid = _config.Validate();
             if (!isValid)
             {
@@ -28,7 +30,7 @@ namespace XamarinTSP.TSP
             tspData.SetStats(population);
 
             Element currentBest = population.Best.Copy();
-            for (int populationNumber = 0; populationNumber < populationsCount; populationNumber++)
+            for (int populationNumber = 0; !_stop; populationNumber++)
             {
                 _config.CrossoverAlgorithm.Crossover(population);
                 foreach (var item in population.Elements)
@@ -61,10 +63,15 @@ namespace XamarinTSP.TSP
                 {
                     currentBest = population.Best.Copy();
                 }
+                if (populationNumber == displayRoutePopulationsOffset)
+                {
+                    displayRoute(FormatResult(currentBest, tspData));
+                    populationNumber = 0;
+                }
             }
-
-            return FormatResult(currentBest, tspData);
+            _stop = false;
         }
+
         private Route FormatResult(Element element, ITSPData tspData)
         {
             var waypoints = element.Waypoints;

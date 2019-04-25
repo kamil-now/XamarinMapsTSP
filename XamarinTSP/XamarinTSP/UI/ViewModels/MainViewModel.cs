@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
 using XamarinTSP.UI.CustomControls;
+using XamarinTSP.UI.Models;
 using XamarinTSP.Utilities;
 
 namespace XamarinTSP.UI.ViewModels
@@ -59,11 +60,20 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
+            var finished = Helper.InvokeOnMainThreadAsync(() =>
+            {
+                IsTSPRunning = false;
+                button.Image = new FileImageSource() { File = "ic_pause_black_24dp.png" };
+                NotifyOfPropertyChange(() => IsTSPRunning);
+            });
             if (IsTSPRunning)
-                return;
+            {
+                _tspAlgorithm.Stop();
+                await finished;
+            }
             IsTSPRunning = true;
             NotifyOfPropertyChange(() => IsTSPRunning);
-            button.Image = new FileImageSource() { File = button.Image.File.Replace("black", "blue_light") };
+            button.Image = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
 
             await Task.Run(async () =>
             {
@@ -78,10 +88,20 @@ namespace XamarinTSP.UI.ViewModels
                     var response = await _googleMapsService.GetDistanceMatrix(configuration);
                     var data = new DistanceMatrixData(response);
 
-                    MapController.CalculatedRoute = _tspAlgorithm.Run(new TSPData(List.Locations, data.DistanceMatrix, data.DurationMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
-
-
-                    await Helper.InvokeOnMainThreadAsync(() => MapController.DisplayRoute());
+                    Action<Route> displayRoute = new Action<Route>(async route =>
+                    {
+                        MapController.CalculatedRoute = route;
+                        await Helper.InvokeOnMainThreadAsync(() => MapController.DisplayRoute());
+                    });
+                    
+                    _tspAlgorithm.Run(
+                        new TSPData(
+                            List.Locations,
+                            data.DistanceMatrix,
+                            data.DurationMatrix,
+                            _tspConfiguration.ReturnToOrigin), 
+                        displayRoute, 
+                        List.Locations.Count * 10);
 
                 }
                 catch (Exception ex)
@@ -91,13 +111,7 @@ namespace XamarinTSP.UI.ViewModels
                 }
                 finally
                 {
-                    await Helper.InvokeOnMainThreadAsync(() =>
-                    {
-                        IsTSPRunning = false;
-                        button.Image = new FileImageSource() { File = button.Image.File.Replace("blue_light", "black") };
-                        NotifyOfPropertyChange(() => IsTSPRunning);
-                    });
-
+                    await finished;
                 }
             }).ConfigureAwait(false);
 
