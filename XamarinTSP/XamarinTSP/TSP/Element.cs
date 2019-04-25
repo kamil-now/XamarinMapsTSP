@@ -7,41 +7,37 @@ namespace XamarinTSP.TSP
 {
     public class Element
     {
-        public string DataString => string.Join("-", Data);
-        public string Description => $"\tVALUE {Value}\n\t FITNESS {Fitness.ToString("0.############")} \tDATA:\t\n {DataString}";
-
-        public double Value { get; set; } = -1;
+        public double DistanceValue { get; set; } = -1;
         public double Fitness { get; set; } = -1;
+        public double TimeValue { get; set; }
         public int PassCount { get; set; }
-        public int[] Data { get; private set; }
+        public int[] Waypoints { get; private set; }
 
         public Element(int size) : this(Helper.GetRandomData(size)) { }
 
         public Element(IEnumerable<int> data)
         {
-            Data = data.ToArray();
+            Waypoints = data.ToArray();
         }
         public Element(int[] data)
         {
-            Data = data;
+            Waypoints = data;
         }
-        Element(IEnumerable<int> data, double value, double fitness, int passCount)
+
+        private Element(IEnumerable<int> data, double distanceValue, double timeValue, double fitness, int passCount)
         {
-            Data = data.ToArray();
-
-            Value = value;
-
+            Waypoints = data.ToArray();
+            DistanceValue = distanceValue;
+            TimeValue = timeValue;
             Fitness = fitness;
-
             PassCount = passCount;
-
         }
-        public Element Copy() => new Element(Data, Value, Fitness, PassCount);
+        public Element Copy() => new Element(Waypoints, DistanceValue, TimeValue, Fitness, PassCount);
 
         public void Mutate()
         {
-            int gen1 = Helper.Random(0, Data.Length);
-            int gen2 = Helper.Random(0, Data.Length);
+            int gen1 = Helper.Random(0, Waypoints.Length);
+            int gen2 = Helper.Random(0, Waypoints.Length);
 
             if (gen1 > gen2)
             {
@@ -54,14 +50,14 @@ namespace XamarinTSP.TSP
 
             for (int p = gen1, x = 0; p < gen2; p++, x++)
             {
-                tmpArr[x] = Data[p];
+                tmpArr[x] = Waypoints[p];
             }
 
             Array.Reverse(tmpArr);
 
             for (int p = gen1, x = 0; p < gen2; p++, x++)
             {
-                Data[p] = tmpArr[x];
+                Waypoints[p] = tmpArr[x];
             }
 
         }

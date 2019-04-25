@@ -38,7 +38,7 @@ namespace XamarinTSP.TSP
         }
         Element Crossover(Element a, Element b)
         {
-            int length = a.Data.Length;
+            int length = a.Waypoints.Length;
             int cross1 = Helper.Random(length - 1) + 1;
             int cross2 = Helper.Random(length - 1) + 1;
 
@@ -49,7 +49,7 @@ namespace XamarinTSP.TSP
                 cross2 = tmp;
             }
 
-            int[] tab = b.Data;
+            int[] tab = b.Waypoints;
             int size = tab.Length;
             int[] retval = new int[size];
             for (int i = 0; i < size; i++)
@@ -67,13 +67,13 @@ namespace XamarinTSP.TSP
             {
                 if (i < cross1 || i > cross2)
                 {
-                    int tmp = a.Data[i];
+                    int tmp = a.Waypoints[i];
                     while (retval.Contains(tmp))
                     {
                         for (int j = 0; j < retval.Length; j++)
                         {
                             if (retval[j] == tmp)
-                                tmp = a.Data[j];
+                                tmp = a.Waypoints[j];
                         }
 
                     }

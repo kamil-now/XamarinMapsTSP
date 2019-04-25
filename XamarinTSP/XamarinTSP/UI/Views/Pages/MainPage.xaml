@@ -4,8 +4,13 @@
              xmlns:views="clr-namespace:XamarinTSP.UI.Views"
              xmlns:customControls="clr-namespace:XamarinTSP.UI.CustomControls"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
+             xmlns:converters="clr-namespace:XamarinTSP.UI.Converters"
              x:Class="XamarinTSP.UI.Views.MainPage"
             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Resources>
+        <converters:DistanceConverter x:Key="DistanceConverter"/>
+        <converters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+    </ContentPage.Resources>
     <ContentPage.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing"
                                           Command="{Binding OnAppearingCommand}" />
@@ -14,28 +19,31 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            
-            <Grid Grid.Row="0" Grid.Column="0">
+            <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <Button Grid.Row="0"
+                        Grid.Column="0"
                         Image="ic_directions_walk_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"/>
+                
                 <Button Grid.Row="1"
+                        Grid.Column="0"
                         Image="ic_directions_bike_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
@@ -43,29 +51,26 @@
                         VerticalOptions="Center"/>
 
                 <Button Grid.Row="2"
+                        Grid.Column="0"
                         Image="ic_directions_car_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"/>
-
-
-            </Grid>
-            <Frame BackgroundColor="White"
-                   BorderColor="LightGray"
-                   Margin="2"
-                   CornerRadius="10"
-                   Grid.Row="0"  Grid.Column="1">
-                <views:LocationListView Grid.Row="0" 
-                                    Grid.Column="1"
-                                    BindingContext="{Binding List}"/>
-            </Frame>
-            <Grid Grid.Row="0" Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                
+                <Frame  Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.RowSpan="3"
+                        BackgroundColor="White"
+                        BorderColor="LightGray"
+                        Margin="2"
+                        CornerRadius="10">
+                    <views:LocationListView BindingContext="{Binding List}"/>
+                </Frame>
+                
                 <Button Grid.Row="1"
+                        Grid.Column="2"
+                        Grid.RowSpan="2"
                         FontSize="Medium"
                         FontAttributes="Bold"
                         Image="ic_add_circle_outline_black_24dp.png"
@@ -73,11 +78,25 @@
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
                         Command="{Binding AddLocationCommand}" />
-
             </Grid>
-            <customControls:CustomMap Grid.Row="1"
-                                      Grid.ColumnSpan="3"/>
-            <Grid Grid.Row="2" Grid.ColumnSpan="3"  MinimumHeightRequest="10" >
+
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" 
+                       Text="{Binding MapController.CalculatedRoute.Time, Converter={StaticResource TimeSpanConverter}}" 
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="{Binding MapController.CalculatedRoute.Distance, Converter={StaticResource DistanceConverter}}" 
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Grid>
+            <customControls:CustomMap Grid.Row="2"/>
+            <Grid Grid.Row="3" MinimumHeightRequest="10" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>

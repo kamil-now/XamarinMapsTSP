@@ -1,6 +1,6 @@
 ﻿namespace XamarinTSP.TSP
 {
-    public interface IDistanceData
+    public interface ITSPData
     {
         int ElementSize { get; }
         void SetValue(Population population);

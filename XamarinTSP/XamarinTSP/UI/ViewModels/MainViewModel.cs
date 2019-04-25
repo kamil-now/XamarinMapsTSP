@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using XamarinTSP.Abstractions;
 using XamarinTSP.TSP;
 using XamarinTSP.UI.CustomControls;
@@ -74,7 +75,9 @@ namespace XamarinTSP.UI.ViewModels
                 var response = await _googleMapsService.GetDistanceMatrix(configuration);
                 var data = new DistanceMatrixData(response);
 
-                result = _tspAlgorithm.Run(new DistanceData(data.DistanceMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
+                var tsp = _tspAlgorithm.Run(new TSPData(data.DistanceMatrix, data.DurationMatrix, _tspConfiguration.ReturnToOrigin), List.Locations.Count * 200);
+
+                result = tsp.waypoints;
 
                 var route = new List<Location>();
                 for (int i = 0; i < result.Length; i++)
@@ -85,6 +88,11 @@ namespace XamarinTSP.UI.ViewModels
                     route.Add(List.Locations.ElementAt(0));
 
                 MapController.DisplayRoute(route.Select(x => x.Position).ToList());
+                MapController.CalculatedRoute.Distance = Distance.FromMeters(Math.Round(tsp.distance / 1000));
+                MapController.CalculatedRoute.Time = TimeSpan.FromSeconds(tsp.time);
+
+                NotifyOfPropertyChange(() => MapController.CalculatedRoute.Time);
+                NotifyOfPropertyChange(() => MapController.CalculatedRoute.Distance);
             }
             catch (Exception ex)
             {

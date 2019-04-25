@@ -12,16 +12,16 @@ namespace XamarinTSP.TSP
             _config = configuration;
 
         }
-        public int[] Run(IDistanceData distanceData, int populationsCount)
+        public (double time, double distance, int[] waypoints) Run(ITSPData tspData, int populationsCount)
         {
             var isValid = _config.Validate();
             if (!isValid)
             {
                 throw new Exception("INVALID TSP CONFIGURATION");
             }
-            Population population = new Population(_config.PopulationSize, distanceData.ElementSize);
+            Population population = new Population(_config.PopulationSize, tspData.ElementSize);
 
-            distanceData.SetStats(population);
+            tspData.SetStats(population);
 
             Element currentBest = population.Best.Copy();
             for (int populationNumber = 0; populationNumber < populationsCount; populationNumber++)
@@ -34,7 +34,7 @@ namespace XamarinTSP.TSP
                         item.Mutate();
                     }
                 }
-                distanceData.SetStats(population);
+                tspData.SetStats(population);
 
                 population = _config.SelectionAlgorithm.Select(population, _config.PopulationSize);
 
@@ -51,28 +51,28 @@ namespace XamarinTSP.TSP
                 {
                     var diversity = population.Diversity;
                     _config.MutationChance = 1 - diversity - 0.2;
-
                 }
 
-                if (population.Best.Value < currentBest.Value)
+                if (population.Best.DistanceValue < currentBest.DistanceValue)
                 {
                     currentBest = population.Best.Copy();
                 }
             }
 
-            return FormatResult(currentBest.Data);
+            return FormatResult(currentBest);
         }
-        private int[] FormatResult(int[] data)
+        private (double time, double distance, int[] waypoints) FormatResult(Element element)
         {
-            var length = data.Length;
+            var waypoints = element.Waypoints;
+            var length = waypoints.Length;
             var result = new int[length];
 
-            int index = Array.FindIndex(data, x => x == 0);
+            int index = Array.FindIndex(element.Waypoints, x => x == 0);
 
-            Array.ConstrainedCopy(data, index, result, 0, length - index);
-            Array.ConstrainedCopy(data, 0, result, length - index, index);
+            Array.ConstrainedCopy(waypoints, index, result, 0, length - index);
+            Array.ConstrainedCopy(waypoints, 0, result, length - index, index);
 
-            return result;
+            return (element.TimeValue, element.DistanceValue, result);
         }
     }
 }

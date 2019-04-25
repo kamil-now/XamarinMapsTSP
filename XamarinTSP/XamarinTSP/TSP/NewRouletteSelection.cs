@@ -12,7 +12,7 @@ namespace XamarinTSP.TSP
             int size = population.Size;
             var selected = new List<Element>();
             var roulette = new List<Element>();
-            var sorted = population.Elements.OrderBy(x => x.Value).ToList();
+            var sorted = population.Elements.OrderBy(x => x.DistanceValue).ToList();
 
             for (int i = count - 1; i > 0; i--)
             {

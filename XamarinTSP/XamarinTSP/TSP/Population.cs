@@ -11,7 +11,7 @@ namespace XamarinTSP.TSP
 
         public Element Best => Elements.OrderByDescending(x => x.Fitness).First();
         public Element Worst => Elements.OrderBy(x => x.Fitness).First();
-        public double Diversity => Elements.DistinctBy(x => x.Value).Count() / (double)Size;
+        public double Diversity => Elements.DistinctBy(x => x.DistanceValue).Count() / (double)Size;
         /// <summary>
         /// Randomized elements population
         /// </summary>

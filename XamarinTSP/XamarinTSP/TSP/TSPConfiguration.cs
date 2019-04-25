@@ -11,6 +11,7 @@
         public double ElitismChance { get; set; }
         public bool ReturnToOrigin { get; set; }
         public bool MutationBasedOnDiversity { get; set; }
+        public bool CalculateTime { get; set; }
 
         public TSPConfiguration()
         {
@@ -25,6 +26,7 @@
 
             ReturnToOrigin = true;
             MutationBasedOnDiversity = true;
+            CalculateTime = true;
             SelectionAlgorithm = new TournamentSelection(5);
             CrossoverAlgorithm = new PMXCrossover(0.6);
 
