@@ -8,6 +8,7 @@
              x:Class="XamarinTSP.UI.Views.MainPage"
             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
+        <converters:NegateBoolConverter x:Key="NegateBoolConverter"/>
         <converters:DistanceConverter x:Key="DistanceConverter"/>
         <converters:TimeSpanConverter x:Key="TimeSpanConverter"/>
     </ContentPage.Resources>
@@ -16,7 +17,7 @@
                                           Command="{Binding OnAppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.Content>
-        <Grid>
+        <Grid IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -126,6 +127,13 @@
                         VerticalOptions="Center"
                         Command="{Binding OpenInGoogleMapsCommand}" />
             </Grid>
+            <ActivityIndicator Grid.RowSpan="4"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Color="Black"
+                               BackgroundColor="Transparent"
+                               IsVisible="{Binding IsTSPRunning}"
+                               IsRunning="{Binding IsTSPRunning}"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
