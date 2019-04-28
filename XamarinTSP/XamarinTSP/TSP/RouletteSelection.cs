@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.Utilities;
+using XamarinTSP.TSP.Common.Abstractions;
 
 namespace XamarinTSP.TSP
 {
@@ -8,13 +8,14 @@ namespace XamarinTSP.TSP
     {
         public Population Select(Population population, int count)
         {
+            //TODO test
             var selected = new List<Element>();
             var fitnessSum = population.Elements.Sum(x => x.Fitness);
             double[] probs = population.Elements.Select(x => x.Fitness / fitnessSum).ToArray();
             var sm = probs.Sum();
             for (int i = 0; i < count; i++)
             {
-                var rand = Helper.RandomPercent();
+                var rand = Random.RandomPercent();
 
                 double sum = 0.0;
                 Element element;

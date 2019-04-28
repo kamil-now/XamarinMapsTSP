@@ -17,14 +17,15 @@
                                           Command="{Binding OnAppearingCommand}" />
     </ContentPage.Behaviors>
     <ContentPage.Content>
-        <Grid IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0"
+                  IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
@@ -96,7 +97,8 @@
                        HorizontalOptions="Center"
                        VerticalOptions="Center"/>
             </Grid>
-            <customControls:CustomMap Grid.Row="2"/>
+            <customControls:CustomMap Grid.Row="2"
+                                      IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
             <Grid Grid.Row="3" MinimumHeightRequest="10" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -109,7 +111,8 @@
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        Command="{Binding OpenConfigurationCommand}" />
+                        Command="{Binding OpenConfigurationCommand}"
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
                 <Button Grid.Column="1"
                         x:Name="tspButton"
                         Image="ic_play_arrow_black_24dp.png"
@@ -125,7 +128,8 @@
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
-                        Command="{Binding OpenInGoogleMapsCommand}" />
+                        Command="{Binding OpenInGoogleMapsCommand}"
+                        IsEnabled="{Binding RouteCalculated}" />
             </Grid>
             <ActivityIndicator Grid.RowSpan="4"
                                HorizontalOptions="Center"

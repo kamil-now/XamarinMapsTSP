@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using Xamarin.Forms;
-using XamarinTSP.Abstractions;
+using XamarinTSP.UI.Abstractions;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.UI
+
 {
     public class ViewFactory : IViewFactory
     {

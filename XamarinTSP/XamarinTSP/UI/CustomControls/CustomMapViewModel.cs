@@ -2,19 +2,20 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
-using XamarinTSP.Abstractions;
+using XamarinTSP.Common.Abstractions;
+using XamarinTSP.UI.Abstractions;
+using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.Models;
-using XamarinTSP.Utilities;
 
-namespace XamarinTSP.UI.CustomControls
+namespace XamarinTSP.UI.ViewModels
 {
-    public class CustomMapController : PropertyChangedBase
+    public class CustomMapViewModel : PropertyChangedBase
     {
         private IGeolocationService _geolocation;
         public CustomMap CustomMap { get; set; }
         public Route CalculatedRoute { get; set; }
         public LocationList List { get; set; }
-        public CustomMapController(IGeolocationService geolocation, LocationList list)
+        public CustomMapViewModel(IGeolocationService geolocation, LocationList list)
         {
             _geolocation = geolocation;
             List = list;

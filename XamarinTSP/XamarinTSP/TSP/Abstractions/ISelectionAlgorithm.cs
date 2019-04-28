@@ -1,4 +1,4 @@
-﻿namespace XamarinTSP.TSP
+﻿namespace XamarinTSP.TSP.Common.Abstractions
 {
     public interface ISelectionAlgorithm
     {

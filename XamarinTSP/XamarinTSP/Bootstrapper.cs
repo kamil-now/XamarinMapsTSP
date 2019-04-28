@@ -1,11 +1,15 @@
 ﻿using Autofac;
 using Xamarin.Forms;
-using XamarinTSP.Abstractions;
+using XamarinTSP.Common.Abstractions;
+using XamarinTSP.GoogleMapsApi;
 using XamarinTSP.TSP;
+using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.UI;
+using XamarinTSP.UI.Models;
 using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.ViewModels;
 using XamarinTSP.UI.Views;
-using XamarinTSP.Utilities;
+using XamarinTSP.UI.Abstractions;
 
 namespace XamarinTSP
 {
@@ -41,11 +45,12 @@ namespace XamarinTSP
             builder.RegisterType<SetLocationViewModel>().SingleInstance();
             
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
-            builder.RegisterType<CustomMapController>().AsSelf().SingleInstance();
+            builder.RegisterType<CustomMapViewModel>().AsSelf().SingleInstance();
 
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
 
-            builder.RegisterType<TSPConfiguration>().AsSelf().SingleInstance();
+            builder.RegisterType<TSPConfiguration>().As<ITSPConfiguration>().SingleInstance();
+            builder.RegisterType<TSPAlgorithm>().As<ITSPAlgorithm>().SingleInstance();
 
             return builder.Build();
         }

@@ -5,7 +5,8 @@ using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Maps;
-using XamarinTSP.Utilities;
+using XamarinTSP.UI.Models;
+using XamarinTSP.UI.ViewModels;
 
 namespace XamarinTSP.UI.CustomControls
 {
@@ -41,7 +42,7 @@ namespace XamarinTSP.UI.CustomControls
         }
         public CustomMap()
         {
-            var vm = (Application.Current as App).Container.Resolve<CustomMapController>();
+            var vm = (Application.Current as App).Container.Resolve<CustomMapViewModel>();
             Locations = new List<Location>();
             vm.List.Locations.CollectionChanged += Locations_CollectionChanged;
             vm.CustomMap = this;
@@ -66,7 +67,7 @@ namespace XamarinTSP.UI.CustomControls
                     listChanged = true;
                 }
             }
-            if(listChanged)
+            if (listChanged)
             {
                 //TODO aggregate update async queue
                 UpdatePins();

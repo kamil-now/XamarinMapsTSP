@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-namespace XamarinTSP.Abstractions
+namespace XamarinTSP.UI.Abstractions
 {
     public abstract class PropertyChangedBase : INotifyPropertyChanged
     {

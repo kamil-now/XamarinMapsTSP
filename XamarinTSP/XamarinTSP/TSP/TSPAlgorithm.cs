@@ -1,99 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Xamarin.Forms.Maps;
-using XamarinTSP.UI.Models;
-using XamarinTSP.Utilities;
+using XamarinTSP.TSP.Common.Abstractions;
 
 namespace XamarinTSP.TSP
 {
-    public class TSPAlgorithm
+    public class TSPAlgorithm : ITSPAlgorithm
     {
-        private TSPConfiguration _config;
+        
+        public ITSPConfiguration Configuration { get; }
         private bool _run;
-        public TSPAlgorithm(TSPConfiguration configuration)
+        public TSPAlgorithm(ITSPConfiguration configuration)
         {
-            _config = configuration;
+            Configuration = configuration;
 
         }
         public void Stop() => _run = false;
-        public void Run(ITSPData tspData, Action<Route> displayRoute)
+        public void Run(ITSPData tspData, Action<Element, ITSPData> renderRoute)
         {
             _run = true;
-            var isValid = _config.Validate();
+            var isValid = Configuration.Validate();
             if (!isValid)
             {
                 throw new Exception("INVALID TSP CONFIGURATION");
             }
-            Population population = new Population(_config.PopulationSize, tspData.ElementSize);
+            Population population = new Population(Configuration.PopulationSize, tspData.ElementSize);
 
             tspData.SetStats(population);
 
             Element currentBest = population.Best.Copy();
-            displayRoute(FormatResult(currentBest, tspData));
+            renderRoute(currentBest, tspData);
             while (_run)
             {
-                _config.CrossoverAlgorithm.Crossover(population);
+                Configuration.CrossoverAlgorithm.Crossover(population);
                 foreach (var item in population.Elements)
                 {
-                    if (Helper.RandomPercent() < _config.MutationChance)
+                    if (Random.RandomPercent() < Configuration.MutationChance)
                     {
                         item.Mutate();
                     }
                 }
                 tspData.SetStats(population);
 
-                population = _config.SelectionAlgorithm.Select(population, _config.PopulationSize);
+                population = Configuration.SelectionAlgorithm.Select(population, Configuration.PopulationSize);
 
-                if (Helper.RandomPercent() < _config.ElitismChance)
+                if (Random.RandomPercent() < Configuration.ElitismChance)
                 {
-                    int elitism = (int)(_config.ElitismFactor * population.Size);
+                    int elitism = (int)(Configuration.ElitismFactor * population.Size);
                     for (int j = 0; j < elitism; j++)
                     {
                         population.Add(population.Best.Copy());
                     }
                 }
 
-                if (_config.MutationBasedOnDiversity)
+                if (Configuration.MutationBasedOnDiversity)
                 {
                     var diversity = population.Diversity;
-                    _config.MutationChance = 1 - diversity - 0.2;
+                    Configuration.MutationChance = 1 - diversity - 0.2;
                 }
 
                 if (population.Best.DistanceValue < currentBest.DistanceValue)
                 {
                     currentBest = population.Best.Copy();
-                    displayRoute(FormatResult(currentBest, tspData));
+                    renderRoute(currentBest, tspData);
                 }
             }
-        }
-
-        private Route FormatResult(Element element, ITSPData tspData)
-        {
-            var waypoints = element.Waypoints;
-            var length = waypoints.Length;
-            var result = new int[length];
-
-            int index = Array.FindIndex(element.Waypoints, x => x == 0);
-
-            Array.ConstrainedCopy(waypoints, index, result, 0, length - index);
-            Array.ConstrainedCopy(waypoints, 0, result, length - index, index);
-
-            var list = new List<Location>();
-            for (int i = 0; i < result.Length; i++)
-            {
-                list.Add(tspData.Input.ElementAt(result[i]));
-            }
-            if (_config.ReturnToOrigin)
-                list.Add(tspData.Input.ElementAt(0));
-
-            return new Route()
-            {
-                RouteCoordinates = list.Select(x => x.Position).ToList(),
-                Distance = Distance.FromMeters(Math.Round(element.DistanceValue)),
-                Time = TimeSpan.FromSeconds(element.TimeValue)
-
-            };
         }
     }
 }

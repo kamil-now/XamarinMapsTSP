@@ -1,5 +1,5 @@
 ﻿using Xamarin.Forms;
-using XamarinTSP.Abstractions;
+using XamarinTSP.Common.Abstractions;
 
 [assembly: Dependency(typeof(XamarinTSP.Droid.CloseApplication))]
 namespace XamarinTSP.Droid

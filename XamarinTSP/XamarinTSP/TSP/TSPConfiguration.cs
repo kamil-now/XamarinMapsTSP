@@ -1,6 +1,8 @@
-﻿namespace XamarinTSP.TSP
+﻿using XamarinTSP.TSP.Common.Abstractions;
+
+namespace XamarinTSP.TSP
 {
-    public class TSPConfiguration
+    public class TSPConfiguration : ITSPConfiguration
     {
         public ICrossoverAlgorithm CrossoverAlgorithm { get; set; }
         public ISelectionAlgorithm SelectionAlgorithm { get; set; }
@@ -9,13 +11,11 @@
         public double MutationChance { get; set; }
         public double ElitismFactor { get; set; }
         public double ElitismChance { get; set; }
-        public bool ReturnToOrigin { get; set; }
         public bool MutationBasedOnDiversity { get; set; }
         public bool CalculateTime { get; set; }
 
         public TSPConfiguration()
         {
-
             ElitismFactor = 50;
             MutationChance = 0.7;
             CrossoverChance = 0.6;
@@ -24,7 +24,6 @@
             ElitismFactor = 0.1;
             ElitismChance = 0.5;
 
-            ReturnToOrigin = true;
             MutationBasedOnDiversity = true;
             CalculateTime = true;
             SelectionAlgorithm = new TournamentSelection(5);

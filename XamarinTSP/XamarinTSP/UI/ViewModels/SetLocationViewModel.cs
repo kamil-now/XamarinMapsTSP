@@ -1,9 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
-using XamarinTSP.Abstractions;
-using XamarinTSP.Utilities;
+using XamarinTSP.Common.Abstractions;
+using XamarinTSP.UI.Abstractions;
+using XamarinTSP.UI.Models;
 
 namespace XamarinTSP.UI.ViewModels
 {
@@ -27,12 +28,11 @@ namespace XamarinTSP.UI.ViewModels
                 }
                 if (!string.IsNullOrEmpty(value))
                 {
-                    Helper.InvokeOnMainThreadAsync(async () =>
+                    App.InvokeOnMainThreadAsync(async () =>
                     {
-                        var result = await _geolocationService.GetLocationListAsync(value);
-                        Locations = new ObservableCollection<Location>(result);
+                        var result = await _geolocationService.GetAddressListAsync(value);
+                        Locations = new ObservableCollection<Location>(result.Select(address => new Location(address)));
                         NotifyOfPropertyChange(() => Locations);
-                        Locations.ForEach(x => x.DataChanged.Invoke(null, null));
                     }, 100);
                 }
             }

@@ -1,6 +1,5 @@
-﻿using System;
-using System.Linq;
-using XamarinTSP.Utilities;
+﻿using System.Linq;
+using XamarinTSP.TSP.Common.Abstractions;
 
 namespace XamarinTSP.TSP
 {
@@ -13,14 +12,15 @@ namespace XamarinTSP.TSP
         }
         public void Crossover(Population population)
         {
+            //TODO test
             int populationSize = population.Size;
             for (int i = 0; i < populationSize; i++)
             {
-                if (Helper.RandomPercent() < crossoverChance)
+                if (Random.RandomPercent() < crossoverChance)
                 {
-                    int randomIndex = Helper.Random(populationSize);
+                    int randomIndex = Random.RandomValue(populationSize);
                     var a = population.Elements.ElementAt(randomIndex);
-                    var b = population.Elements.ElementAt((randomIndex + Helper.Random(1, populationSize - 1)) % populationSize);
+                    var b = population.Elements.ElementAt((randomIndex + Random.RandomValue(1, populationSize - 1)) % populationSize);
 
                     var element = population.Elements.ElementAt(i);
                     element = Crossover(a, b);
@@ -29,11 +29,9 @@ namespace XamarinTSP.TSP
         }
         Element Crossover(Element a, Element b)
         {
-            //if (a.Data.Length != b.Data.Length)
-            //    throw new Exception("DISTANCE DATA EXCEPTION");
             int length = a.Waypoints.Length;
-            int cross1 = Helper.Random(length - 1) + 1;
-            int cross2 = Helper.Random(length - 1) + 1;
+            int cross1 = Random.RandomValue(length - 1) + 1;
+            int cross2 = Random.RandomValue(length - 1) + 1;
 
             if (cross1 > cross2)
             {
@@ -41,7 +39,7 @@ namespace XamarinTSP.TSP
                 cross1 = cross2;
                 cross2 = tmp;
             }
-            
+
             int[] tab = b.Waypoints;
             int size = tab.Length;
             int[] retval = new int[size];

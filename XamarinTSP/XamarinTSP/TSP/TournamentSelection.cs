@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.Utilities;
+using XamarinTSP.TSP.Common.Abstractions;
 
 namespace XamarinTSP.TSP
 {
@@ -13,6 +13,7 @@ namespace XamarinTSP.TSP
         }
         public Population Select(Population population, int count)
         {
+            //TODO test
             var selected = new List<Element>();
             for (int i = 0; i < count; i++)
             {
@@ -23,12 +24,13 @@ namespace XamarinTSP.TSP
         }
         Element RunTournament(Population population)
         {
+            //TODO test
             int size = population.Size;
             double bestFitness = double.NegativeInfinity;
             Element best = null;
             for (int j = 0; j < tournamentSize; j++)
                 {
-                    var randomIndex = Helper.Random(size);
+                    var randomIndex = Random.RandomValue(size);
                     var randomElement = population.Elements.ElementAt(randomIndex);
                     if (bestFitness < randomElement.Fitness)
                     {

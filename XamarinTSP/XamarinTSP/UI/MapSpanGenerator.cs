@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.Maps;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.UI
 {
-    public static class MapSpanGenerator
+    internal static class MapSpanGenerator
     {
         private const int EARTH_RADIUS_KM = 6371;
         public static MapSpan Generate(IEnumerable<Position> points)

@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace XamarinTSP.Abstractions
+namespace XamarinTSP.UI.Abstractions
 {
     public interface IViewFactory
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.Utilities;
+using XamarinTSP.Extensions;
 
 namespace XamarinTSP.TSP
 {
@@ -12,9 +12,7 @@ namespace XamarinTSP.TSP
         public Element Best => Elements.OrderByDescending(x => x.Fitness).First();
         public Element Worst => Elements.OrderBy(x => x.Fitness).First();
         public double Diversity => Elements.DistinctBy(x => x.DistanceValue).Count() / (double)Size;
-        /// <summary>
-        /// Randomized elements population
-        /// </summary>
+      
         public Population(int populationSize, int elementSize)
         {
             Elements = new List<Element>();

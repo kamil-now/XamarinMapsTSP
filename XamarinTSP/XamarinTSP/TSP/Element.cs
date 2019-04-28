@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.Utilities;
 
 namespace XamarinTSP.TSP
 {
@@ -13,7 +12,7 @@ namespace XamarinTSP.TSP
         public int PassCount { get; set; }
         public int[] Waypoints { get; private set; }
 
-        public Element(int size) : this(Helper.GetRandomData(size)) { }
+        public Element(int size) : this(GetRandomData(size)) { }
 
         public Element(IEnumerable<int> data)
         {
@@ -36,8 +35,8 @@ namespace XamarinTSP.TSP
 
         public void Mutate()
         {
-            int gen1 = Helper.Random(0, Waypoints.Length);
-            int gen2 = Helper.Random(0, Waypoints.Length);
+            int gen1 = Random.RandomValue(0, Waypoints.Length);
+            int gen2 = Random.RandomValue(0, Waypoints.Length);
 
             if (gen1 > gen2)
             {
@@ -60,6 +59,12 @@ namespace XamarinTSP.TSP
                 Waypoints[p] = tmpArr[x];
             }
 
+        }
+        private static IEnumerable<int> GetRandomData(int size)
+        {
+            var data = Enumerable.Range(0, size).ToList();
+            data.Shuffle();
+            return data;
         }
     }
 }

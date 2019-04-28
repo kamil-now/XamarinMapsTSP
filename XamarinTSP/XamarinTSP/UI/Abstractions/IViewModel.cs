@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace XamarinTSP.Abstractions
+namespace XamarinTSP.UI.Abstractions
 {
     public interface IViewModel : INotifyPropertyChanged
     {

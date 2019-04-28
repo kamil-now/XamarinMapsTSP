@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace XamarinTSP.Abstractions
+namespace XamarinTSP.UI.Abstractions
 {
     public interface INavigator
     {

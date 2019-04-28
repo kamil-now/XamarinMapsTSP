@@ -1,30 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using XamarinTSP.Utilities;
+using XamarinTSP.TSP.Common.Abstractions;
 
 namespace XamarinTSP.TSP
 {
     public class TSPData : ITSPData
     {
-        public IEnumerable<Location> Input { get; }
+        public IEnumerable<object> Input { get; }
         public int ElementSize => distanceData.Length;
 
         private int[][] distanceData;
         private int[][] timeData;
-        private bool returnToOrigin;
 
-        public TSPData(IEnumerable<Location> input, int[][] distanceData, int[][] timeData, bool returnToOrigin)
+        public TSPData(IEnumerable<object> input, int[][] distanceData, int[][] timeData)
         {
             Input = input;
             this.distanceData = distanceData;
             this.timeData = timeData;
-            this.returnToOrigin = returnToOrigin;
         }
 
         private double CalculateValue(Element element, int[][] data)
         {
+            //TODO test
             double value = 0;
-            int size = data.Length - (returnToOrigin ? 0 : 1);
+            int size = data.Length; 
 
             for (int i = 0; i < size; i++)
             {

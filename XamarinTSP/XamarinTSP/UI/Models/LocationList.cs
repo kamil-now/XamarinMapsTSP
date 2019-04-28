@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
-using XamarinTSP.Abstractions;
+using XamarinTSP.Common.Abstractions;
+using XamarinTSP.UI.Abstractions;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.UI.Models
 {
     public class LocationList : PropertyChangedBase
     {
@@ -27,21 +27,21 @@ namespace XamarinTSP.Utilities
             Locations.Clear();
             void addLocation(double latitude, double longitude)
             {
-                Locations.Add(geolocation.GetLocationList(new Xamarin.Forms.Maps.Position(latitude, longitude)).FirstOrDefault());
+                Locations.Add(new Location(geolocation.GetAddressList(new Xamarin.Forms.Maps.Position(latitude, longitude)).FirstOrDefault()));
             }
             addLocation(50.252711, 19.015991);
             addLocation(50.255272, 19.035315);
             addLocation(50.261930, 19.008051);
             addLocation(50.241313, 19.017488);
-            addLocation(50.247246, 18.997965);
-            addLocation(50.247866, 19.025751);
-            addLocation(50.254237, 19.019152);
-            addLocation(50.242092, 19.028267);
-            addLocation(50.254785, 19.004781);
-            addLocation(50.269412, 19.035555);
-            addLocation(50.235788, 18.978714);
-            addLocation(50.266317, 18.995626);
-            addLocation(50.268255, 19.019297);
+            //addLocation(50.247246, 18.997965);
+            //addLocation(50.247866, 19.025751);
+            //addLocation(50.254237, 19.019152);
+            //addLocation(50.242092, 19.028267);
+            //addLocation(50.254785, 19.004781);
+            //addLocation(50.269412, 19.035555);
+            //addLocation(50.235788, 18.978714);
+            //addLocation(50.266317, 18.995626);
+            //addLocation(50.268255, 19.019297);
         }
     }
 }

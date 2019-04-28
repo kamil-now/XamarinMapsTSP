@@ -1,64 +1,62 @@
-﻿using Plugin.Geolocator;
-using Plugin.Geolocator.Abstractions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using XamarinTSP.Abstractions;
-using XamarinTSP.Utilities;
+using XamarinTSP.Common;
+using XamarinTSP.Common.Abstractions;
 
 [assembly: Dependency(typeof(XamarinTSP.Droid.AndroidGeolocationService))]
 namespace XamarinTSP.Droid
 {
     public class AndroidGeolocationService : IGeolocationService
     {
-        private GeolocationConfiguration _configuration;
-        private IGeolocator _locator;
+        public int MaxResults { get; set; } = 10;
         private Android.Locations.Geocoder _geocoder;
 
         public AndroidGeolocationService()
         {
-            _configuration = new GeolocationConfiguration();
-            _locator = CrossGeolocator.Current;
-            _locator.DesiredAccuracy = _configuration.LocationAccuracy;
             _geocoder = new Android.Locations.Geocoder(Android.App.Application.Context);
         }
         public async Task<IEnumerable<Xamarin.Forms.Maps.Position>> GetLocationCoordinates(string locationName)
         {
-            var positions = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults);
+            var positions = await _geocoder.GetFromLocationNameAsync(locationName, MaxResults);
             return positions?.Select(p => new Xamarin.Forms.Maps.Position(p.Latitude, p.Longitude));
         }
 
-        public async Task<IEnumerable<Location>> GetLocationListAsync(string locationName)
+        public async Task<IEnumerable<Address>> GetAddressListAsync(string locationName)
         {
-            var addressList = await _geocoder.GetFromLocationNameAsync(locationName, _configuration.MaxResults).ConfigureAwait(false);
-            return GetLocations(addressList);
+            var addressList = await _geocoder.GetFromLocationNameAsync(locationName, MaxResults).ConfigureAwait(false);
+            return Map(addressList);
         }
-        public async Task<IEnumerable<Location>> GetLocationListAsync(Xamarin.Forms.Maps.Position position)
+        public async Task<IEnumerable<Address>> GetAddressListAsync(Xamarin.Forms.Maps.Position position)
         {
-            var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults).ConfigureAwait(false);
-            return GetLocations(addressList);
+            var addressList = await _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, MaxResults).ConfigureAwait(false);
+            return Map(addressList);
         }
-        public IEnumerable<Location> GetLocationList(Xamarin.Forms.Maps.Position position)
+        public IEnumerable<Address> GetAddressList(Xamarin.Forms.Maps.Position position)
         {
-            var addressList = _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, _configuration.MaxResults).Result;
-            return GetLocations(addressList);
+            var addressList = _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, MaxResults).Result;
+            return Map(addressList);
         }
-        private IEnumerable<Location> GetLocations(IList<Android.Locations.Address> addressList)
+        private IEnumerable<Address> Map(IList<Android.Locations.Address> addressList)
         {
             return addressList.Select(x =>
-            {
-                var location = new Location
+                new Address()
                 {
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude,
+                    CountryCode = x.CountryCode,
+                    CountryName = x.CountryName,
+                    FeatureName = x.FeatureName,
                     PostalCode = x.PostalCode,
-                    City = x.Locality,//x.FeatureName,
-                    Street = $"{x.Thoroughfare} {x.SubThoroughfare}",
-                    Country = x.CountryName,
-                    AdminArea = $"{x.AdminArea} ",//{ x.SubAdminArea}",
-                    Position = new Xamarin.Forms.Maps.Position(x.Latitude, x.Longitude)
-                };
-                return location;
-            });
+                    SubLocality = x.SubLocality,
+                    Thoroughfare = x.Thoroughfare,
+                    SubThoroughfare = x.SubThoroughfare,
+                    Locality = x.Locality,
+                    AdminArea = x.AdminArea,
+                    SubAdminArea = x.SubAdminArea
+                }
+            );
         }
     }
 }

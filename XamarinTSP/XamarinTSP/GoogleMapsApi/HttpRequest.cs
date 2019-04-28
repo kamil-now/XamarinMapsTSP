@@ -5,9 +5,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.GoogleMapsApi
 {
-    public static class HttpRequest
+    internal class HttpRequest
     {
         public static async Task<T> Post<T>(string request, bool tryReauthenticate = true)
         {

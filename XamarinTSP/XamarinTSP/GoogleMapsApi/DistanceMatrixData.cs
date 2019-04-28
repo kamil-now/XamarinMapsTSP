@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.GoogleMapsApi
 {
-    public class DistanceMatrixData
+    internal class DistanceMatrixData
     {
         public int[][] DurationMatrix { get; }
         public int[][] DistanceMatrix { get; }

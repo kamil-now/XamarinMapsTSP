@@ -1,29 +1,27 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace XamarinTSP.Utilities
+namespace XamarinTSP.GoogleMapsApi
 {
-    public class DistanceMatrixRequestConfiguration
+    internal class DistanceMatrixRequestConfiguration
     {
-        [Description("destinations")]
         public string[] Destinations { get; set; }
-        [Description("origins")]
         public string[] Origins { get; set; }
-        [Description("mode")]
         public TravelMode TravelMode { get; set; }
-        [Description("region")]
         public string Region { get; set; } //region ccTLD code
-        [Description("units")]
         public UnitSystem UnitSystem { get; set; }
-        [Description("departure_time")]
-        public DateTime? DepartureTime { get; set; } //max 100 elements per request when mode = driving
-        [Description("arrival_time")]
+        public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
-        [Description("traffic_model")]
         public TrafficModel TrafficModel { get; set; }
-        [Description("avoid")]
         public Restriction Restriction { get; set; }
-        public DistanceMatrixRequestConfiguration(string[] locations)
+
+        public DistanceMatrixRequestConfiguration()
+        {
+            TravelMode = TravelMode.Driving;
+            UnitSystem = UnitSystem.Metric;
+            TrafficModel = TrafficModel.Optimistic;
+        }
+        public DistanceMatrixRequestConfiguration(string[] locations) : this()
         {
             Destinations = locations;
             Origins = locations;
@@ -42,7 +40,7 @@ namespace XamarinTSP.Utilities
             Restriction = config.Restriction;
         }
     }
-    public enum TrafficModel
+    internal enum TrafficModel
     {
         Undefined,
         [Description("best_guess")]
@@ -52,7 +50,7 @@ namespace XamarinTSP.Utilities
         [Description("optimistic")]
         Optimistic
     }
-    public enum TravelMode
+    internal enum TravelMode
     {
         Undefined,
         [Description("driving")]
@@ -74,7 +72,7 @@ namespace XamarinTSP.Utilities
         [Description("indoor")]
         AvoidIndoor,
     }
-    public enum UnitSystem
+    internal enum UnitSystem
     {
         Undefined,
         [Description("metric")]

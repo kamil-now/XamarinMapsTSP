@@ -4,7 +4,6 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Support.V4.App;
 using Android.Support.V4.Content;
-using XamarinTSP.Utilities;
 
 namespace XamarinTSP.Droid
 {
