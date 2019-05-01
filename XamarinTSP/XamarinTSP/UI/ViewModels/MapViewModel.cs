@@ -13,6 +13,7 @@ namespace XamarinTSP.UI.ViewModels
         private IGeolocationService _geolocation;
         private Position _mapPosition;
 
+        public bool IsRouteVisible { get; set; }
         public Route CalculatedRoute { get; set; }
         public LocationList List { get; set; }
 
@@ -34,6 +35,7 @@ namespace XamarinTSP.UI.ViewModels
         
         public void DisplayRoute()
         {
+            IsRouteVisible = true;
             NotifyOfPropertyChange(() => CalculatedRoute.RouteCoordinates);
             NotifyOfPropertyChange(() => CalculatedRoute.Time);
             NotifyOfPropertyChange(() => CalculatedRoute.Distance);

@@ -13,7 +13,7 @@ namespace XamarinTSP.UI.Models
         public ObservableCollection<Location> Locations { get; set; }
 
         public LocationList()
-        { 
+        {
             Locations = new ObservableCollection<Location>();
             Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange();
         }
@@ -22,7 +22,17 @@ namespace XamarinTSP.UI.Models
             Locations.Remove(location);
             location.Dispose();
         });
-        
+        public void Reorder(int[] positions)
+        {
+            var tmp = new Location[Locations.Count];
+            for (int i = 0; i < positions.Length; i++)
+            {
+                tmp[i] = Locations.ElementAt(positions[i]);
+            }
+            //Locations.Clear();
+            //tmp.ForEach(x => Locations.Add(x));
+            Locations = new ObservableCollection<Location>(tmp);
+        }
         public void SetMockData(IGeolocationService geolocation)
         {
             Locations.Clear();

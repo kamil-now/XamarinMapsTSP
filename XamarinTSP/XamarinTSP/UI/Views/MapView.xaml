@@ -7,6 +7,7 @@
         <customControls:CustomMap BindingContext="{Binding }"
                                   RouteCoordinates="{Binding CalculatedRoute.RouteCoordinates}"
                                   Position="{Binding MapPosition}"
-                                  Locations="{Binding List.Locations}"/>
+                                  Locations="{Binding List.Locations}"
+                                  IsRouteVisible="{Binding IsRouteVisible}"/>
     </ContentView.Content>
 </ContentView>

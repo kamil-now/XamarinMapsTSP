@@ -1,8 +1,6 @@
 ﻿using Android.Content;
-using Android.Content.Res;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
-using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.Android;
@@ -15,9 +13,8 @@ namespace XamarinTSP.Droid
     public class CustomMapRenderer : MapRenderer
     {
         private CustomMap _map;
-        public CustomMapRenderer(Context context) : base(context)
-        {
-        }
+        private bool _isRendering;
+        public CustomMapRenderer(Context context) : base(context) { }
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Map> e)
         {
@@ -31,22 +28,26 @@ namespace XamarinTSP.Droid
             }
         }
 
-        private bool _rendering;
         protected override void OnElementPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty) || e.PropertyName == nameof(CustomMap.LocationsProperty))
+            if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty) 
+                || e.PropertyName == nameof(CustomMap.LocationsProperty)
+                || e.PropertyName == nameof(CustomMap.IsRouteVisibleProperty))
             {
-                if (_rendering)
+                if (_isRendering)
+                {
                     return;
-                _rendering = true;
+                }
+                _isRendering = true;
                 NativeMap.Clear();
 
                 _map.UpdatePins();
                 _map.FocusPins();
-
-                if (e.PropertyName == nameof(CustomMap.RouteCoordinatesProperty))
+                if (_map.IsRouteVisible)
+                {
                     DrawRoute();
-                _rendering = false;
+                }
+                _isRendering = false;
 
             }
         }
@@ -54,8 +55,8 @@ namespace XamarinTSP.Droid
         {
             var marker = new MarkerOptions();
             marker.SetPosition(new LatLng(pin.Position.Latitude, pin.Position.Longitude));
-            
-            Bitmap bitmap = GetBitmapMarker(Context, pin.Label ?? "---");
+
+            Bitmap bitmap = GetBitmapMarker(Context, Resource.Drawable.black_pin_full, pin.Label);
             marker.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmap));
             return marker;
         }
@@ -68,49 +69,43 @@ namespace XamarinTSP.Droid
 
             var coordinates = _map.RouteCoordinates;
 
+            coordinates?.ForEach(position => polylineOptions.Add(new LatLng(position.Latitude, position.Longitude)));
+
             if (coordinates != null)
             {
-                foreach (var position in coordinates)
-                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-
                 NativeMap.AddPolyline(polylineOptions);
             }
         }
-        private Bitmap GetBitmapMarker(Context mContext, string mText)
+        private Bitmap GetBitmapMarker(Context context, int icon, string text)
         {
-            try
+            var resources = context.Resources;
+            float scale = resources.DisplayMetrics.Density;
+            var bitmap = BitmapFactory.DecodeResource(resources, icon);
+
+            Bitmap.Config bitmapConfig = bitmap.GetConfig();
+
+            if (bitmapConfig == null)
             {
-                Resources resources = mContext.Resources;
-                float scale = resources.DisplayMetrics.Density;
-                int w = 20, h = 20;
-
-                Bitmap.Config bitmapConfig = Bitmap.Config.Argb8888; 
-                Bitmap bitmap = Bitmap.CreateBitmap(w, h, bitmapConfig);
-                
-                bitmap = bitmap.Copy(bitmapConfig, true);
-
-                Canvas canvas = new Canvas(bitmap);
-                Paint paint = new Paint(PaintFlags.AntiAlias)
-                {
-                    Color = Android.Graphics.Color.Black,
-                    TextSize = ((int)(10 * scale))
-                };
-                paint.SetShadowLayer(1f, 0f, 1f, Android.Graphics.Color.DarkGray);
-                
-                Rect bounds = new Rect();
-                paint.GetTextBounds(mText, 0, mText.Length, bounds);
-                int x = (bitmap.Width - bounds.Width()) / 2;
-                int y = (bitmap.Height + bounds.Height()) / 2;
-
-                canvas.DrawText(mText, x * scale, y * scale, paint);
-
-                return bitmap;
-
+                bitmapConfig = Bitmap.Config.Argb8888;
             }
-            catch (Exception e)
+            bitmap = bitmap.Copy(bitmapConfig, true);
+
+            var canvas = new Canvas(bitmap);
+            var paint = new Paint(PaintFlags.AntiAlias | PaintFlags.FakeBoldText)
             {
-                throw e;
-            }
+                Color = Android.Graphics.Color.White,
+                TextSize = (int)(12 * scale),
+            };
+            paint.SetShadowLayer(1f, 0f, 1f, Android.Graphics.Color.DarkGray);
+            var bounds = new Rect();
+            paint.GetTextBounds(text, 0, text.Length, bounds);
+
+            //center in full pin icon top circle
+            float x = (float)((bitmap.Width - bounds.Width()) / 2.2);
+            float y = (float)((bitmap.Height + bounds.Height()) / 2.5);
+            canvas.DrawText(text, x, y, paint);
+
+            return bitmap;
         }
     }
 }

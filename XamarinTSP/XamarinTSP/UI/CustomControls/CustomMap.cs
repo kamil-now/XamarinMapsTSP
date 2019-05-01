@@ -11,6 +11,21 @@ namespace XamarinTSP.UI.CustomControls
 {
     public class CustomMap : Map
     {
+        public static readonly BindableProperty IsRouteVisibleProperty =
+            BindableProperty.Create(
+                propertyName: "IsRouteVisibleProperty",
+                returnType: typeof(bool),
+                declaringType: typeof(CustomMap),
+                defaultValue: null,
+                defaultBindingMode: BindingMode.TwoWay,
+                validateValue: null
+            );
+
+        public bool IsRouteVisible
+        {
+            get { return (bool)GetValue(IsRouteVisibleProperty); }
+            set { SetValue(IsRouteVisibleProperty, value); }
+        }
 
         public static readonly BindableProperty PositionProperty =
             BindableProperty.Create(

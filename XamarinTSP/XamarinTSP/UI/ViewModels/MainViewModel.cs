@@ -42,12 +42,10 @@ namespace XamarinTSP.UI.ViewModels
             _googleMapsService = googleMapsService;
             _navigator = navigator;
             _tspAlgorithm = tspAlgorithm;
-            List.Locations.CollectionChanged += (s, e) =>
-            {
-                RouteCalculated = false;
-                NotifyOfPropertyChange(() => RouteCalculated);
-            };
+            List.Locations.CollectionChanged += Locations_CollectionChanged;
         }
+        
+
         public ICommand OnAppearingCommand => new Command(async () =>
         {
             //temp
@@ -67,12 +65,10 @@ namespace XamarinTSP.UI.ViewModels
             {
                 _tspAlgorithm.Stop();
                 IsTSPRunning = false;
-                //button.SetValue(Button.TextProperty, "&#xF40A;");
                 NotifyOfPropertyChange(() => IsTSPRunning);
                 return;
             }
             IsTSPRunning = true;
-            //button.SetValue(Button.TextProperty, "&#xF3E4;");
             NotifyOfPropertyChange(() => IsTSPRunning);
 
             await Task.Run(async () =>
@@ -89,34 +85,23 @@ namespace XamarinTSP.UI.ViewModels
                             data.DurationMatrix),
                         new Action<TSP.Element, ITSPData>(async (element, tspData) =>
                         {
-                            var waypoints = element.Waypoints;
-                            var length = waypoints.Length;
-                            var result = new int[length];
-
-                            int index = Array.FindIndex(element.Waypoints, x => x == 0);
-
-                            Array.ConstrainedCopy(waypoints, index, result, 0, length - index);
-                            Array.ConstrainedCopy(waypoints, 0, result, length - index, index);
-
-                            var list = new List<Location>();
-                            for (int i = 0; i < result.Length; i++)
-                            {
-                                list.Add(tspData.Input.ElementAt(result[i]) as Location);
-                            }
-                            list.Add(tspData.Input.ElementAt(0) as Location);
-
-                            var route = new Route()
-                            {
-                                RouteCoordinates = list.Select(x => x.Position).ToList(),
-                                Distance = Distance.FromMeters(Math.Round(element.DistanceValue)),
-                                Time = TimeSpan.FromSeconds(element.TimeValue)
-
-                            };
-                            MapViewModel.CalculatedRoute = route;
-                            RouteCalculated = true;
-
                             await App.InvokeOnMainThreadAsync(() =>
                             {
+                                ReaorderLocations(element.Waypoints);
+
+                                var route = new Route()
+                                {
+                                    RouteCoordinates = List.Locations.Select(x => x.Position).ToList(),
+                                    Distance = Distance.FromMeters(Math.Round(element.DistanceValue)),
+                                    Time = TimeSpan.FromSeconds(element.TimeValue)
+
+                                };
+                                route.RouteCoordinates.Add(List.Locations.ElementAt(0).Position);
+
+                                MapViewModel.CalculatedRoute = route;
+                                RouteCalculated = true;
+
+
                                 NotifyOfPropertyChange(() => RouteCalculated);
                                 MapViewModel.DisplayRoute();
                             });
@@ -129,7 +114,6 @@ namespace XamarinTSP.UI.ViewModels
                     await App.InvokeOnMainThreadAsync(async () =>
                     {
                         await Application.Current.MainPage.DisplayAlert("TSP ERROR", ex.Message, "OK");
-                        //button.SetValue(Button.TextProperty, "&#xF40A;");
                         NotifyOfPropertyChange(() => IsTSPRunning);
                     });
                     return;
@@ -168,5 +152,26 @@ namespace XamarinTSP.UI.ViewModels
         {
             _googleMapsService.OpenInGoogleMaps(MapViewModel.CalculatedRoute.RouteCoordinates.Select(x => $"{x.Latitude}, {x.Longitude}").ToArray());
         });
+        private void Locations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            MapViewModel.IsRouteVisible = false;
+            NotifyOfPropertyChange(() => MapViewModel.IsRouteVisible);
+            RouteCalculated = false;
+            NotifyOfPropertyChange(() => RouteCalculated);
+        }
+        private void ReaorderLocations(int[] waypoints)
+        {
+            var length = waypoints.Length;
+            var result = new int[length];
+
+            int index = Array.FindIndex(waypoints, x => x == 0);
+
+            Array.ConstrainedCopy(waypoints, index, result, 0, length - index);
+            Array.ConstrainedCopy(waypoints, 0, result, length - index, index);
+
+            List.Locations.CollectionChanged -= Locations_CollectionChanged;
+            List.Reorder(result);
+            List.Locations.CollectionChanged += Locations_CollectionChanged;
+        }
     }
 }

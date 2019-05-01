@@ -41,7 +41,6 @@ namespace XamarinTSP.UI.Models
             var street = $"{address.Thoroughfare} {address.SubThoroughfare}";
             var tmp = new[] {
                     string.Join(" ", street,address.PostalCode, address.Locality,address.SubLocality),
-                    //string.Join(" ", address.Locality, address.SubLocality),
                     string.Join(" ", address.AdminArea, address.SubAdminArea),
                     string.Join(" ", address.CountryName, address.CountryCode),
                     address.FeatureName,
