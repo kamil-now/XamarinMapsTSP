@@ -1,16 +1,12 @@
 ﻿using System.Linq;
-using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
 {
     public class PMXCrossover : ICrossoverAlgorithm
     {
-        double crossoverChance;
-        public PMXCrossover(double crossoverChance)
-        {
-            this.crossoverChance = crossoverChance;
-        }
-        public void Crossover(Population population)
+        public string Name => "PMX";
+        public void Crossover(Population population, double crossoverChance)
         {
             //TODO test
             int populationSize = population.Size;

@@ -3,14 +3,12 @@ using Xamarin.Forms;
 using XamarinTSP.Common.Abstractions;
 using XamarinTSP.GoogleMapsApi;
 using XamarinTSP.TSP;
-using XamarinTSP.TSP.Common.Abstractions;
-using XamarinTSP.UI;
+using XamarinTSP.TSP.Abstractions;
+using XamarinTSP.UI.Abstractions;
 using XamarinTSP.UI.Models;
-using XamarinTSP.UI.CustomControls;
+using XamarinTSP.UI.Utilities;
 using XamarinTSP.UI.ViewModels;
 using XamarinTSP.UI.Views;
-using XamarinTSP.UI.Abstractions;
-using XamarinTSP.UI.Utilities;
 
 namespace XamarinTSP
 {
@@ -52,6 +50,11 @@ namespace XamarinTSP
 
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
+
+
+            builder.RegisterType<PMXCrossover>().AsImplementedInterfaces();
+            builder.RegisterType<RouletteSelection>().AsImplementedInterfaces();
+            builder.RegisterType<TournamentSelection>().AsImplementedInterfaces();
 
             builder.RegisterType<TSPConfiguration>().As<ITSPConfiguration>().SingleInstance();
             builder.RegisterType<TSPAlgorithm>().As<ITSPAlgorithm>().SingleInstance();

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace XamarinTSP.TSP.Common.Abstractions
+namespace XamarinTSP.TSP.Abstractions
 {
     public interface ITSPData
     {

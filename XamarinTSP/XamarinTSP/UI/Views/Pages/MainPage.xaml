@@ -38,33 +38,28 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Row="0"
                         Grid.Column="0"
-                        Image="ic_directions_car_blue_dark_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
+                        Text="&#xF10B;"
+                        TextColor="CornflowerBlue"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetCarModeCommand}"
-                        IsEnabled="False"/>
+                        IsEnabled="False" />
 
                 <Button Grid.Row="1"
                         Grid.Column="0"
-                        Image="ic_directions_bike_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
+                        Text="&#xF0A3;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetBikeModeCommand}"
-                        IsEnabled="False"/>
+                        IsEnabled="False" />
 
                 <Button Grid.Row="2"
                         Grid.Column="0"
-                        Image="ic_directions_walk_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
+                        Text="&#xF583;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetWalkModeCommand}"
-                        IsEnabled="False"/>
+                        IsEnabled="False" />
 
                 <Frame  Grid.Row="0"
                         Grid.Column="1"
@@ -72,6 +67,7 @@
                         BackgroundColor="White"
                         BorderColor="LightGray"
                         Margin="2"
+                        Padding="5,1"
                         CornerRadius="10">
                     <ListView x:Name="List"
                               ItemsSource="{Binding List.Locations, UpdateSourceEventName=CollectionChanged}">
@@ -79,9 +75,6 @@
                             <behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                               CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
                                                               Command="{Binding SelectLocationCommand}" />
-                            <!--<behaviors:ListViewAutoSizeBehavior ItemsCount="{Binding List.Locations.Count, UpdateSourceEventName=CollectionChanged}"
-                                                                MinRowsCount="1"
-                                                                MaxRowsCount="4" />-->
                         </ListView.Behaviors>
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -101,13 +94,10 @@
                                                    Margin="0" />
                                             <Button Grid.Column="1"
                                                     Margin="0"
-                                                    FontSize="Medium"
-                                                    FontAttributes="Bold"
-                                                    HorizontalOptions="Center"
-                                                    VerticalOptions="Center"
-                                                    Image="ic_clear_black_24dp.png"
-                                                    BackgroundColor="Transparent"
-                                                    BorderColor="Transparent"
+                                                    Text="&#xF377;"
+                                                    FontSize="20"
+                                                    Style="{StaticResource IconButton}"
+                                                    FontFamily="{StaticResource MaterialDesignFont}"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding Path=BindingContext.DeleteLocationCommand, Source={x:Reference Name=List}}" />
 
@@ -122,13 +112,18 @@
                 <Button Grid.Row="1"
                         Grid.Column="2"
                         Grid.RowSpan="2"
-                        FontSize="Medium"
-                        FontAttributes="Bold"
-                        Image="ic_add_circle_outline_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="Center"
+                        Text="&#xF419;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding AddLocationCommand}" />
+                <Button Grid.Row="0"
+                        Grid.Column="2"
+                        Grid.RowSpan="2"
+                        Text="&#xF651;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}">
+
+                </Button>
             </Grid>
 
             <Grid Grid.Row="1"
@@ -149,46 +144,62 @@
             <views:MapView BindingContext="{Binding MapViewModel}"
                            Grid.Row="2"
                            IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-            <ActivityIndicator Grid.Row="2"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               Color="Black"
-                               BackgroundColor="Transparent"
-                               IsVisible="{Binding IsTSPRunning}"
-                               IsRunning="{Binding IsTSPRunning}" />
+            
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ImageButton Grid.Column="0"
-                             Source="ic_settings_black_24dp.png"
-                             BackgroundColor="Transparent"
-                             HorizontalOptions="CenterAndExpand"
-                             VerticalOptions="CenterAndExpand"
-                             Margin="5"
-                             Command="{Binding OpenConfigurationCommand}"
-                             IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-                <ImageButton Grid.Column="1"
-                             x:Name="tspButton"
-                             Source="ic_play_arrow_black_24dp.png"
-                             BackgroundColor="Transparent"
-                             HorizontalOptions="CenterAndExpand"
-                             VerticalOptions="CenterAndExpand"
-                             Margin="5"
-                             CommandParameter="{x:Reference tspButton}"
-                             Command="{Binding RunTSPCommand}" />
-                <ImageButton Grid.Column="2"
-                             Source="ic_map_black_24dp.png"
-                             BackgroundColor="Transparent"
-                             HorizontalOptions="CenterAndExpand"
-                             VerticalOptions="CenterAndExpand"
-                             Margin="5"
-                             Command="{Binding OpenInGoogleMapsCommand}"
-                             IsEnabled="{Binding RouteCalculated}" />
+                <Button Grid.Column="0"
+                        Text="&#xF493;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
+                        Command="{Binding OpenConfigurationCommand}"
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
+                <Button Grid.Column="1"
+                        x:Name="tspButton"
+                        CommandParameter="{x:Reference tspButton}"
+                        Command="{Binding RunTSPCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                            <Setter Property="Text"
+                                    Value="&#xF40A;" />
+                            <Setter Property="FontFamily"
+                                    Value="{StaticResource MaterialDesignFont}" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsTSPRunning}" Value="True">
+                                    <Setter Property="Text"
+                                            Value="&#xF3E4;" />
+                                    <Setter Property="FontFamily"
+                                            Value="{StaticResource MaterialDesignFont}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsTSPRunning}"
+                                             Value="False">
+                                    <Setter Property="Text"
+                                            Value="&#xF40A;" />
+                                    <Setter Property="FontFamily"
+                                            Value="{StaticResource MaterialDesignFont}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <ActivityIndicator Grid.Column="1"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Color="Black"
+                                   BackgroundColor="Transparent"
+                                   IsVisible="{Binding IsTSPRunning}"
+                                   IsRunning="{Binding IsTSPRunning}" />
+                <Button Grid.Column="2"
+                        Text="&#xF34D;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
+                        Command="{Binding OpenInGoogleMapsCommand}"
+                        IsEnabled="{Binding RouteCalculated}" />
             </Grid>
-            
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

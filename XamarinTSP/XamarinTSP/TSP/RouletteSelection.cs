@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
 {
     public class RouletteSelection : ISelectionAlgorithm
     {
+        public string Name => "Roulette";
         public Population Select(Population population, int count)
         {
             //TODO test

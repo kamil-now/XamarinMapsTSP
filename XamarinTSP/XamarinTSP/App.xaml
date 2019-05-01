@@ -5,7 +5,33 @@
              x:Class="XamarinTSP.App">
     <Application.Resources>
         <ResourceDictionary>
-            <sys:Int32 x:Key="FontSize">10</sys:Int32>
+            
+            <OnPlatform x:Key="DefaultFontSize"
+                        x:TypeArguments="Font"
+                        Android="25" />
+
+            <OnPlatform x:Key="SmallFontSize"
+                        x:TypeArguments="Font"
+                        Android="20" />
+
+            <OnPlatform x:Key="MaterialDesignFont"
+                        x:TypeArguments="x:String">
+                <On Platform="Android"
+                    Value="materialdesignicons.ttf#Material Design Icons" />
+            </OnPlatform>
+            <Style x:Key="IconButton"
+                   TargetType="Button">
+                <Setter Property="HorizontalOptions"
+                        Value="Center" />
+                <Setter Property="VerticalOptions"
+                        Value="Center" />
+                <Setter Property="BorderColor"
+                        Value="Transparent" />
+                <Setter Property="BackgroundColor"
+                        Value="Transparent" />
+                <Setter Property="Font"
+                        Value="{StaticResource DefaultFontSize}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

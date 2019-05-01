@@ -8,7 +8,7 @@ using Xamarin.Forms.Maps;
 using XamarinTSP.Common.Abstractions;
 using XamarinTSP.GoogleMapsApi;
 using XamarinTSP.TSP;
-using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.TSP.Abstractions;
 using XamarinTSP.UI.Abstractions;
 using XamarinTSP.UI.Models;
 
@@ -60,19 +60,19 @@ namespace XamarinTSP.UI.ViewModels
                 await MapViewModel.MoveToUserRegion();
         });
 
-        public ICommand RunTSPCommand => new Command<ImageButton>(async button =>
+        public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
             //TODO run unchanged with saved route
             if (IsTSPRunning)
             {
                 _tspAlgorithm.Stop();
                 IsTSPRunning = false;
-                button.Source = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
+                //button.SetValue(Button.TextProperty, "&#xF40A;");
                 NotifyOfPropertyChange(() => IsTSPRunning);
                 return;
             }
             IsTSPRunning = true;
-            button.Source = new FileImageSource() { File = "ic_pause_black_24dp.png" };
+            //button.SetValue(Button.TextProperty, "&#xF3E4;");
             NotifyOfPropertyChange(() => IsTSPRunning);
 
             await Task.Run(async () =>
@@ -129,7 +129,7 @@ namespace XamarinTSP.UI.ViewModels
                     await App.InvokeOnMainThreadAsync(async () =>
                     {
                         await Application.Current.MainPage.DisplayAlert("TSP ERROR", ex.Message, "OK");
-                        button.Source = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
+                        //button.SetValue(Button.TextProperty, "&#xF40A;");
                         NotifyOfPropertyChange(() => IsTSPRunning);
                     });
                     return;

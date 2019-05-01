@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XamarinTSP.TSP.Common.Abstractions
+namespace XamarinTSP.TSP.Abstractions
 {
     public interface ITSPAlgorithm
     {

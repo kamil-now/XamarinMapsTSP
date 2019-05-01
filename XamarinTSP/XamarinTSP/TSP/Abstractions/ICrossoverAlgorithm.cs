@@ -1,7 +1,8 @@
-﻿namespace XamarinTSP.TSP.Common.Abstractions
+﻿namespace XamarinTSP.TSP.Abstractions
 {
     public interface ICrossoverAlgorithm
     {
-        void Crossover(Population population);
+        string Name { get; }
+        void Crossover(Population population, double crossoverChance);
     }
 }

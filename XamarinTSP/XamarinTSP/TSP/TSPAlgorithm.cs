@@ -1,11 +1,11 @@
 ﻿using System;
-using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
 {
     public class TSPAlgorithm : ITSPAlgorithm
     {
-        
+
         public ITSPConfiguration Configuration { get; }
         private bool _run;
         public TSPAlgorithm(ITSPConfiguration configuration)
@@ -17,11 +17,6 @@ namespace XamarinTSP.TSP
         public void Run(ITSPData tspData, Action<Element, ITSPData> renderRoute)
         {
             _run = true;
-            var isValid = Configuration.Validate();
-            if (!isValid)
-            {
-                throw new Exception("INVALID TSP CONFIGURATION");
-            }
             Population population = new Population(Configuration.PopulationSize, tspData.ElementSize);
 
             tspData.SetStats(population);
@@ -30,7 +25,7 @@ namespace XamarinTSP.TSP
             renderRoute(currentBest, tspData);
             while (_run)
             {
-                Configuration.CrossoverAlgorithm.Crossover(population);
+                Configuration.CrossoverAlgorithm.Crossover(population, Configuration.CrossoverChance);
                 foreach (var item in population.Elements)
                 {
                     if (Random.RandomPercent() < Configuration.MutationChance)

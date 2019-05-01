@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using XamarinTSP.TSP.Common.Abstractions;
+using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
 {
@@ -23,7 +23,7 @@ namespace XamarinTSP.TSP
         {
             //TODO test
             double value = 0;
-            int size = data.Length; 
+            int size = data.Length;
 
             for (int i = 0; i < size; i++)
             {

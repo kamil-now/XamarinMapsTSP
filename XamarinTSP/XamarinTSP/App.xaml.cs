@@ -15,6 +15,8 @@ namespace XamarinTSP
         public IContainer Container => _bootstrapper?.Container;
         public App(string apiKey)
         {
+            InitializeComponent();
+
             ApiKey = apiKey;
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";

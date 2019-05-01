@@ -12,7 +12,7 @@
                 <RowDefinition Height="9*" />
             </Grid.RowDefinitions>
             <Frame BackgroundColor="White"
-                   BorderColor="Black"
+                   BorderColor="LightGray"
                    Margin="2"
                    Padding="0"
                    CornerRadius="10">
@@ -21,11 +21,10 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="10*" />
                     </Grid.ColumnDefinitions>
-                    <ImageButton Source="ic_arrow_back_black_24dp.png"
-                                 BackgroundColor="Transparent"
-                                 HorizontalOptions="CenterAndExpand"
-                                 VerticalOptions="CenterAndExpand"
-                                 Command="{Binding ReturnCommand}" />
+                    <Button Text="&#xF04D;"
+                            Style="{StaticResource IconButton}"
+                            FontFamily="{StaticResource MaterialDesignFont}"
+                            Command="{Binding ReturnCommand}" />
                     <Entry  Grid.Column="1"
                             Text="{Binding SearchString, Mode=OneWayToSource}">
                     </Entry>
