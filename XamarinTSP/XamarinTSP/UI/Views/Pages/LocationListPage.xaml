@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:views="clr-namespace:XamarinTSP.UI.Views"
+             xmlns:custom="clr-namespace:XamarinTSP.UI.CustomControls"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
              x:Class="XamarinTSP.UI.Views.LocationListPage"
              NavigationPage.HasNavigationBar="False">
@@ -21,10 +21,11 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="10*" />
                     </Grid.ColumnDefinitions>
-                    <Button Image="ic_arrow_back_black_24dp.png"
-                            BackgroundColor="Transparent"
-                            HorizontalOptions="Center"
-                            Command="{Binding ReturnCommand}" />
+                    <ImageButton Source="ic_arrow_back_black_24dp.png"
+                                 BackgroundColor="Transparent"
+                                 HorizontalOptions="CenterAndExpand"
+                                 VerticalOptions="CenterAndExpand"
+                                 Command="{Binding ReturnCommand}" />
                     <Entry  Grid.Column="1"
                             Text="{Binding SearchString, Mode=OneWayToSource}">
                     </Entry>
@@ -43,11 +44,15 @@
                     <DataTemplate>
                         <ViewCell>
                             <ViewCell.View>
-                                <StackLayout>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
                                     <Label Text="{Binding MainDisplayString}"
                                            FontAttributes="Bold" />
-                                    <Label Text="{Binding AdditionalLocationInfo}" />
-                                </StackLayout>
+                                    <Label Grid.Row="1" Text="{Binding AdditionalLocationInfo}" />
+                                </Grid>
                             </ViewCell.View>
                         </ViewCell>
                     </DataTemplate>

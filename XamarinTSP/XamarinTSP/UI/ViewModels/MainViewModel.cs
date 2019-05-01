@@ -60,20 +60,20 @@ namespace XamarinTSP.UI.ViewModels
                 await MapViewModel.MoveToUserRegion();
         });
 
-        public ICommand RunTSPCommand => new Command<Button>(async button =>
+        public ICommand RunTSPCommand => new Command<ImageButton>(async button =>
         {
             //TODO run unchanged with saved route
             if (IsTSPRunning)
             {
                 _tspAlgorithm.Stop();
                 IsTSPRunning = false;
-                button.Image = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
+                button.Source = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
                 NotifyOfPropertyChange(() => IsTSPRunning);
                 return;
             }
             IsTSPRunning = true;
+            button.Source = new FileImageSource() { File = "ic_pause_black_24dp.png" };
             NotifyOfPropertyChange(() => IsTSPRunning);
-            button.Image = new FileImageSource() { File = "ic_pause_black_24dp.png" };
 
             await Task.Run(async () =>
             {
@@ -129,7 +129,7 @@ namespace XamarinTSP.UI.ViewModels
                     await App.InvokeOnMainThreadAsync(async () =>
                     {
                         await Application.Current.MainPage.DisplayAlert("TSP ERROR", ex.Message, "OK");
-                        button.Image = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
+                        button.Source = new FileImageSource() { File = "ic_play_arrow_black_24dp.png" };
                         NotifyOfPropertyChange(() => IsTSPRunning);
                     });
                     return;
@@ -151,6 +151,18 @@ namespace XamarinTSP.UI.ViewModels
         public ICommand OpenConfigurationCommand => new Command(async () =>
         {
             await _navigator.PushAsync<ConfigurationViewModel>();
+        });
+        public ICommand SetWalkModeCommand => new Command(() =>
+        {
+            //TODO
+        });
+        public ICommand SetBikeModeCommand => new Command(() =>
+        {
+            //TODO
+        });
+        public ICommand SetCarModeCommand => new Command(() =>
+        {
+            //TODO
         });
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {

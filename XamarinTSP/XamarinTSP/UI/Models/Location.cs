@@ -40,8 +40,8 @@ namespace XamarinTSP.UI.Models
             Coordinates = $"{address.Latitude } {address.Longitude}";
             var street = $"{address.Thoroughfare} {address.SubThoroughfare}";
             var tmp = new[] {
-                    string.Join(" ", street),
-                    string.Join(" ", address.PostalCode, address.Locality, address.SubLocality),
+                    string.Join(" ", street,address.PostalCode, address.Locality,address.SubLocality),
+                    //string.Join(" ", address.Locality, address.SubLocality),
                     string.Join(" ", address.AdminArea, address.SubAdminArea),
                     string.Join(" ", address.CountryName, address.CountryCode),
                     address.FeatureName,
@@ -51,7 +51,7 @@ namespace XamarinTSP.UI.Models
 
             MainDisplayString = retval ?? "---";
 
-            AdditionalLocationInfo = string.Join("\n", tmp.Select(x => !string.IsNullOrEmpty(x) && !string.IsNullOrWhiteSpace(x)));
+            AdditionalLocationInfo = string.Join("\n", tmp.Where(x => !string.IsNullOrEmpty(x) && !string.IsNullOrWhiteSpace(x)).ToArray());
 
             NotifyOfPropertyChange(() => Coordinates);
             NotifyOfPropertyChange(() => MainDisplayString);

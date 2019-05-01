@@ -38,11 +38,13 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Row="0"
                         Grid.Column="0"
-                        Image="ic_directions_walk_black_24dp.png"
+                        Image="ic_directions_car_blue_dark_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"
+                        Command="{Binding SetCarModeCommand}"
+                        IsEnabled="False"/>
 
                 <Button Grid.Row="1"
                         Grid.Column="0"
@@ -50,15 +52,19 @@
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"
+                        Command="{Binding SetBikeModeCommand}"
+                        IsEnabled="False"/>
 
                 <Button Grid.Row="2"
                         Grid.Column="0"
-                        Image="ic_directions_car_black_24dp.png"
+                        Image="ic_directions_walk_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"
+                        Command="{Binding SetWalkModeCommand}"
+                        IsEnabled="False"/>
 
                 <Frame  Grid.Row="0"
                         Grid.Column="1"
@@ -143,45 +149,46 @@
             <views:MapView BindingContext="{Binding MapViewModel}"
                            Grid.Row="2"
                            IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-            <Grid Grid.Row="3"
-                  MinimumHeightRequest="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
-                        Image="ic_settings_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center"
-                        Command="{Binding OpenConfigurationCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-                <Button Grid.Column="1"
-                        x:Name="tspButton"
-                        Image="ic_play_arrow_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"
-                        CommandParameter="{x:Reference tspButton}"
-                        Command="{Binding RunTSPCommand}" />
-                <Button Grid.Column="2"
-                        Image="ic_map_black_24dp.png"
-                        BackgroundColor="Transparent"
-                        BorderColor="Transparent"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"
-                        Command="{Binding OpenInGoogleMapsCommand}"
-                        IsEnabled="{Binding RouteCalculated}" />
-            </Grid>
-            <ActivityIndicator Grid.RowSpan="4"
+            <ActivityIndicator Grid.Row="2"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"
                                Color="Black"
                                BackgroundColor="Transparent"
                                IsVisible="{Binding IsTSPRunning}"
                                IsRunning="{Binding IsTSPRunning}" />
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ImageButton Grid.Column="0"
+                             Source="ic_settings_black_24dp.png"
+                             BackgroundColor="Transparent"
+                             HorizontalOptions="CenterAndExpand"
+                             VerticalOptions="CenterAndExpand"
+                             Margin="5"
+                             Command="{Binding OpenConfigurationCommand}"
+                             IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
+                <ImageButton Grid.Column="1"
+                             x:Name="tspButton"
+                             Source="ic_play_arrow_black_24dp.png"
+                             BackgroundColor="Transparent"
+                             HorizontalOptions="CenterAndExpand"
+                             VerticalOptions="CenterAndExpand"
+                             Margin="5"
+                             CommandParameter="{x:Reference tspButton}"
+                             Command="{Binding RunTSPCommand}" />
+                <ImageButton Grid.Column="2"
+                             Source="ic_map_black_24dp.png"
+                             BackgroundColor="Transparent"
+                             HorizontalOptions="CenterAndExpand"
+                             VerticalOptions="CenterAndExpand"
+                             Margin="5"
+                             Command="{Binding OpenInGoogleMapsCommand}"
+                             IsEnabled="{Binding RouteCalculated}" />
+            </Grid>
+            
         </Grid>
     </ContentPage.Content>
 </ContentPage>
