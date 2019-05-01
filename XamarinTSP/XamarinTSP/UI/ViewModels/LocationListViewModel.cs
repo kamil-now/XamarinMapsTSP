@@ -8,41 +8,39 @@ using XamarinTSP.UI.Models;
 
 namespace XamarinTSP.UI.ViewModels
 {
-    public class SetLocationViewModel : ViewModelBase
+    public class LocationListViewModel : ViewModelBase
     {
         private IGeolocationService _geolocationService;
         private INavigator _navigator;
         private LocationList _list;
-        public Location SelectedLocation { get; set; } //temp
-        public ObservableCollection<Location> Locations { get; set; }
+        private string _searchString;
+        public ObservableCollection<Location> FoundLocations { get; set; }
 
-        public string EditedLocation
+        public string SearchString
         {
-            get => _list?.SelectedLocation?.MainDisplayString ?? "";
+            get => _searchString;
             set
             {
-                if (_list.SelectedLocation == null)
-                {
-                    var newLocation = new Location();
-                    _list.SelectedLocation = newLocation;
-                }
                 if (!string.IsNullOrEmpty(value))
                 {
+                    _searchString = value;
                     App.InvokeOnMainThreadAsync(async () =>
                     {
                         var result = await _geolocationService.GetAddressListAsync(value);
-                        Locations = new ObservableCollection<Location>(result.Select(address => new Location(address)));
-                        NotifyOfPropertyChange(() => Locations);
+                        FoundLocations = new ObservableCollection<Location>(result.Select(address => new Location(address)));
+                        NotifyOfPropertyChange(() => FoundLocations);
                     }, 100);
                 }
             }
         }
-        public SetLocationViewModel(LocationList list, INavigator navigator)
+        public LocationListViewModel(LocationList list, INavigator navigator)
         {
             _list = list;
             _navigator = navigator;
             _geolocationService = DependencyService.Get<IGeolocationService>();
-            Locations = new ObservableCollection<Location>();
+
+            _searchString = "";
+            FoundLocations = new ObservableCollection<Location>();
         }
         public ICommand SelectCommand => new Command<Location>(selected =>
         {
@@ -51,7 +49,8 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand ReturnCommand => new Command(() =>
         {
-            Locations.Clear();
+            _searchString = "";
+            FoundLocations.Clear();
             _navigator.PopToRootAsync();
         });
 

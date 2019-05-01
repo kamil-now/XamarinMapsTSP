@@ -13,7 +13,7 @@ namespace XamarinTSP.UI.Models
         public ObservableCollection<Location> Locations { get; set; }
 
         public LocationList()
-        {
+        { 
             Locations = new ObservableCollection<Location>();
             Locations.CollectionChanged += (s, e) => NotifyOfPropertyChange();
         }
@@ -22,6 +22,7 @@ namespace XamarinTSP.UI.Models
             Locations.Remove(location);
             location.Dispose();
         });
+        
         public void SetMockData(IGeolocationService geolocation)
         {
             Locations.Clear();
@@ -33,15 +34,15 @@ namespace XamarinTSP.UI.Models
             addLocation(50.255272, 19.035315);
             addLocation(50.261930, 19.008051);
             addLocation(50.241313, 19.017488);
-            //addLocation(50.247246, 18.997965);
-            //addLocation(50.247866, 19.025751);
-            //addLocation(50.254237, 19.019152);
-            //addLocation(50.242092, 19.028267);
-            //addLocation(50.254785, 19.004781);
-            //addLocation(50.269412, 19.035555);
-            //addLocation(50.235788, 18.978714);
-            //addLocation(50.266317, 18.995626);
-            //addLocation(50.268255, 19.019297);
+            addLocation(50.247246, 18.997965);
+            addLocation(50.247866, 19.025751);
+            addLocation(50.254237, 19.019152);
+            addLocation(50.242092, 19.028267);
+            addLocation(50.254785, 19.004781);
+            addLocation(50.269412, 19.035555);
+            addLocation(50.235788, 18.978714);
+            addLocation(50.266317, 18.995626);
+            addLocation(50.268255, 19.019297);
         }
     }
 }

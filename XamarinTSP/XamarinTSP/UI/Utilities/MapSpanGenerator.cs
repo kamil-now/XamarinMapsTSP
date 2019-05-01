@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms.Maps;
 
-namespace XamarinTSP.UI
+namespace XamarinTSP.UI.Utilities
 {
     internal static class MapSpanGenerator
     {
@@ -13,6 +13,10 @@ namespace XamarinTSP.UI
             var result = Calculate(points);
 
             return MapSpan.FromCenterAndRadius(result.center, Distance.FromKilometers(result.radius));
+        }
+        public static MapSpan Generate(Position point)
+        {
+            return MapSpan.FromCenterAndRadius(point, Distance.FromKilometers(5));
         }
         public static double MeasureDistanceKm(Position a, Position b)
         {

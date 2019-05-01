@@ -10,7 +10,6 @@ using XamarinTSP.GoogleMapsApi;
 using XamarinTSP.TSP;
 using XamarinTSP.TSP.Common.Abstractions;
 using XamarinTSP.UI.Abstractions;
-using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.Models;
 
 namespace XamarinTSP.UI.ViewModels
@@ -27,48 +26,40 @@ namespace XamarinTSP.UI.ViewModels
         public bool IsTSPRunning { get; private set; }
         public bool RouteCalculated { get; private set; }
 
-        public CustomMapViewModel MapController { get; private set; }
+        public MapViewModel MapViewModel { get; private set; }
         public LocationList List { get; private set; }
 
         public MainViewModel(INavigator navigator,
                              IGeolocationService geolocation,
                              ITSPAlgorithm tspAlgorithm,
-                             CustomMapViewModel mapController,
+                             MapViewModel mapViewModel,
                              LocationList list,
                              GoogleMapsService googleMapsService)
         {
             List = list;
-            MapController = mapController;
+            MapViewModel = mapViewModel;
             _geolocation = geolocation;
             _googleMapsService = googleMapsService;
             _navigator = navigator;
             _tspAlgorithm = tspAlgorithm;
-            List.Locations.CollectionChanged += (s, e) => { RouteCalculated = false; NotifyOfPropertyChange(() => RouteCalculated); };
+            List.Locations.CollectionChanged += (s, e) =>
+            {
+                RouteCalculated = false;
+                NotifyOfPropertyChange(() => RouteCalculated);
+            };
         }
-        public ICommand OnAppearingCommand => new Command(() =>
+        public ICommand OnAppearingCommand => new Command(async () =>
         {
+            //temp
             if (List.Locations.Count == 0)
             {
                 List.SetMockData(_geolocation);
             }
+            //
+            if (List.Locations?.Count == 0)
+                await MapViewModel.MoveToUserRegion();
         });
-        public ICommand SelectCommand => new Command<Location>(async selected =>
-        {
-            List.SelectedLocation = selected;
-            await _navigator.PushAsync<SetLocationViewModel>();
-        });
-        public ICommand AddLocationCommand => new Command(async () =>
-        {
-            await _navigator.PushAsync<SetLocationViewModel>();
-        });
-        public ICommand OpenConfigurationCommand => new Command(async () =>
-        {
-            await _navigator.PushAsync<SetLocationViewModel>();
-        });
-        public ICommand OpenInGoogleMapsCommand => new Command(() =>
-        {
-            _googleMapsService.OpenInGoogleMaps(MapController.CalculatedRoute.RouteCoordinates.Select(x => $"{x.Latitude}, {x.Longitude}").ToArray());
-        });
+
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
             //TODO run unchanged with saved route
@@ -121,13 +112,13 @@ namespace XamarinTSP.UI.ViewModels
                                 Time = TimeSpan.FromSeconds(element.TimeValue)
 
                             };
-                            MapController.CalculatedRoute = route;
+                            MapViewModel.CalculatedRoute = route;
                             RouteCalculated = true;
 
                             await App.InvokeOnMainThreadAsync(() =>
                             {
                                 NotifyOfPropertyChange(() => RouteCalculated);
-                                MapController.DisplayRoute();
+                                MapViewModel.DisplayRoute();
                             });
                         }));
 
@@ -144,6 +135,26 @@ namespace XamarinTSP.UI.ViewModels
                     return;
                 }
             }).ConfigureAwait(false);
+        });
+        public ICommand SelectLocationCommand => new Command<Location>(selected =>
+        {
+            MapViewModel.MapPosition = selected.Position;
+        });
+        public ICommand DeleteLocationCommand => new Command<Location>(selected =>
+        {
+            List.Locations.Remove(selected);
+        });
+        public ICommand AddLocationCommand => new Command(async () =>
+        {
+            await _navigator.PushAsync<LocationListViewModel>();
+        });
+        public ICommand OpenConfigurationCommand => new Command(async () =>
+        {
+            await _navigator.PushAsync<ConfigurationViewModel>();
+        });
+        public ICommand OpenInGoogleMapsCommand => new Command(() =>
+        {
+            _googleMapsService.OpenInGoogleMaps(MapViewModel.CalculatedRoute.RouteCoordinates.Select(x => $"{x.Latitude}, {x.Longitude}").ToArray());
         });
     }
 }

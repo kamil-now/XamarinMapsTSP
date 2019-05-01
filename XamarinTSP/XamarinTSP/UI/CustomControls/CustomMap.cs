@@ -1,29 +1,49 @@
-﻿using Autofac;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Maps;
 using XamarinTSP.UI.Models;
-using XamarinTSP.UI.ViewModels;
+using XamarinTSP.UI.Utilities;
 
 namespace XamarinTSP.UI.CustomControls
 {
     public class CustomMap : Map
     {
+
+        public static readonly BindableProperty PositionProperty =
+            BindableProperty.Create(
+                propertyName: "PositionProperty",
+                returnType: typeof(Position),
+                declaringType: typeof(CustomMap),
+                defaultValue: null,
+                defaultBindingMode: BindingMode.TwoWay,
+                validateValue: null,
+                propertyChanged: PositionChanged
+            );
+
+        public Position Position
+        {
+            get { return (Position)GetValue(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
+        }
+
         public static readonly BindableProperty LocationsProperty =
             BindableProperty.Create(
                 propertyName: "LocationsProperty",
-                returnType: typeof(List<Location>),
+                returnType: typeof(IEnumerable<Location>),
                 declaringType: typeof(CustomMap),
                 defaultValue: null,
-                defaultBindingMode: BindingMode.OneWay
+                defaultBindingMode: BindingMode.OneWay,
+                validateValue: null,
+                propertyChanged: LocationsChanged
+
             );
 
-        public List<Location> Locations
+        public IEnumerable<Location> Locations
         {
-            get { return (List<Location>)GetValue(LocationsProperty); }
+            get { return (IEnumerable<Location>)GetValue(LocationsProperty); }
             set { SetValue(LocationsProperty, value); }
         }
         public static readonly BindableProperty RouteCoordinatesProperty =
@@ -40,47 +60,13 @@ namespace XamarinTSP.UI.CustomControls
             get { return (List<Position>)GetValue(RouteCoordinatesProperty); }
             set { SetValue(RouteCoordinatesProperty, value); }
         }
-        public CustomMap()
-        {
-            var vm = (Application.Current as App).Container.Resolve<CustomMapViewModel>();
-            Locations = new List<Location>();
-            vm.List.Locations.CollectionChanged += Locations_CollectionChanged;
-            vm.CustomMap = this;
-        }
-        private void Locations_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            bool listChanged = false;
-            if (e.OldItems != null)
-            {
-                foreach (Location item in e.OldItems)
-                {
-                    var itemToRemove = Locations.First(x => x.Id == item.Id);
-                    Locations.Remove(itemToRemove);
-                    listChanged = true;
-                }
-            }
-            if (e.NewItems != null)
-            {
-                foreach (Location item in e.NewItems)
-                {
-                    Locations.Add(item);
-                    listChanged = true;
-                }
-            }
-            if (listChanged)
-            {
-                //TODO aggregate update async queue
-                UpdatePins();
-                FocusPins();
-            }
-        }
 
         public void UpdatePins()
         {
-            Pins.Clear();
-            var coordinates = Locations.Select(x => x.Position);
+            Pins?.Clear();
+            var coordinates = Locations?.Select(x => x.Position);
             int i = 1;
-            coordinates.ForEach(x => Pins.Add(new Pin() { Position = x, Label = i++.ToString() }));
+            coordinates?.ForEach(x => Pins.Add(new Pin() { Position = x, Label = i++.ToString() }));
         }
         public void FocusPins()
         {
@@ -90,6 +76,35 @@ namespace XamarinTSP.UI.CustomControls
                 MoveToRegion(MapSpanGenerator.Generate(pins));
             }
         }
+        public void FocusPosition(Position position) => MoveToRegion(MapSpanGenerator.Generate(position));
+        private void Locations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdatePins();
+            FocusPins();
+        }
+        private static void PositionChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is CustomMap map)
+            {
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(map.Position, Distance.FromKilometers(1)));
+            }
+        }
+        private static void LocationsChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            if (bindable is CustomMap map)
+            {
+                if (newValue is ObservableCollection<Location> locations)
+                {
+                    locations.CollectionChanged += map.Locations_CollectionChanged;
+                }
+                if (oldValue is ObservableCollection<LocationList> oldLocations)
+                {
+                    oldLocations.CollectionChanged -= map.Locations_CollectionChanged;
+                }
+            }
+        }
+
+       
     }
 
 }

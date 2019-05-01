@@ -70,6 +70,7 @@
     <Compile Include="CloseAppAndroid.cs" />
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MaterialIconButtonRenderer.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

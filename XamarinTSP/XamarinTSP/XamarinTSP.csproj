@@ -19,19 +19,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="UI\Views\Pages\SetLocationPage.xaml.cs">
-      <DependentUpon>SetLocationPage.xaml</DependentUpon>
+    <Compile Update="UI\Views\Pages\LocationListPage.xaml.cs">
+      <DependentUpon>LocationListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Views\MapView.xaml.cs">
+      <DependentUpon>MapView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="UI\Views\LocationListView.xaml">
+    <EmbeddedResource Update="UI\Views\Pages\ConfigurationPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UI\Views\Pages\MainPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="UI\Views\Pages\SetLocationPage.xaml">
+    <EmbeddedResource Update="UI\Views\Pages\LocationListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Views\MapView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

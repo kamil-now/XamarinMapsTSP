@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using XamarinTSP.UI.Abstractions;
 
-namespace XamarinTSP.UI
+namespace XamarinTSP.UI.Utilities
 {
     public class Navigator : INavigator
     {

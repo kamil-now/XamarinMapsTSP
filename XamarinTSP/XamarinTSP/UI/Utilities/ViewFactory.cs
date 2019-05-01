@@ -1,10 +1,11 @@
 ﻿using Autofac;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 using XamarinTSP.UI.Abstractions;
 
-namespace XamarinTSP.UI
+namespace XamarinTSP.UI.Utilities
 
 {
     public class ViewFactory : IViewFactory
@@ -30,6 +31,14 @@ namespace XamarinTSP.UI
 
             view.BindingContext = viewModel;
             return view;
+        }
+        public ViewModelBase ResolveViewModel<TView>() where TView : Page
+        {
+            var view = componentContext.Resolve<TView>();
+            var viewModelType = map.FirstOrDefault(x => x.Value == typeof(TView)).Key;
+            var viewModel = componentContext.Resolve(viewModelType) as ViewModelBase;
+            
+            return viewModel;
         }
     }
 }

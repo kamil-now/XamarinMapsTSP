@@ -10,6 +10,7 @@ using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.ViewModels;
 using XamarinTSP.UI.Views;
 using XamarinTSP.UI.Abstractions;
+using XamarinTSP.UI.Utilities;
 
 namespace XamarinTSP
 {
@@ -41,12 +42,15 @@ namespace XamarinTSP
             builder.RegisterType<MainPage>().SingleInstance();
             builder.RegisterType<MainViewModel>().SingleInstance();
 
-            builder.RegisterType<SetLocationPage>().SingleInstance();
-            builder.RegisterType<SetLocationViewModel>().SingleInstance();
-            
-            builder.RegisterType<LocationList>().AsSelf().SingleInstance();
-            builder.RegisterType<CustomMapViewModel>().AsSelf().SingleInstance();
+            builder.RegisterType<LocationListPage>().SingleInstance();
+            builder.RegisterType<LocationListViewModel>().SingleInstance();
 
+            builder.RegisterType<ConfigurationPage>().SingleInstance();
+            builder.RegisterType<ConfigurationViewModel>().SingleInstance();
+
+            builder.RegisterType<MapViewModel>().AsSelf().SingleInstance();
+
+            builder.RegisterType<LocationList>().AsSelf().SingleInstance();
             builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
 
             builder.RegisterType<TSPConfiguration>().As<ITSPConfiguration>().SingleInstance();
@@ -68,7 +72,8 @@ namespace XamarinTSP
         private void MapViews(IViewFactory viewFactory)
         {
             viewFactory.Register<MainViewModel, MainPage>();
-            viewFactory.Register<SetLocationViewModel, SetLocationPage>();
+            viewFactory.Register<LocationListViewModel, LocationListPage>();
+            viewFactory.Register<ConfigurationViewModel, ConfigurationPage>();
         }
 
     }

@@ -4,26 +4,37 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Common.Abstractions;
 using XamarinTSP.UI.Abstractions;
-using XamarinTSP.UI.CustomControls;
 using XamarinTSP.UI.Models;
 
 namespace XamarinTSP.UI.ViewModels
 {
-    public class CustomMapViewModel : PropertyChangedBase
+    public class MapViewModel : ViewModelBase
     {
         private IGeolocationService _geolocation;
-        public CustomMap CustomMap { get; set; }
+        private Position _mapPosition;
+
         public Route CalculatedRoute { get; set; }
         public LocationList List { get; set; }
-        public CustomMapViewModel(IGeolocationService geolocation, LocationList list)
+
+        public Position MapPosition
+        {
+            get => _mapPosition; set
+            {
+                _mapPosition = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
+        public MapViewModel(IGeolocationService geolocation, LocationList list)
         {
             _geolocation = geolocation;
             List = list;
             CalculatedRoute = new Route();
         }
+        
         public void DisplayRoute()
         {
-            CustomMap.RouteCoordinates = CalculatedRoute.RouteCoordinates;
+            NotifyOfPropertyChange(() => CalculatedRoute.RouteCoordinates);
             NotifyOfPropertyChange(() => CalculatedRoute.Time);
             NotifyOfPropertyChange(() => CalculatedRoute.Distance);
         }
@@ -33,8 +44,8 @@ namespace XamarinTSP.UI.ViewModels
             var positions = await _geolocation.GetLocationCoordinates(locationName);
             if (positions != null)
             {
-                var pos = new Position(positions.First().Latitude, positions.First().Longitude);
-                CustomMap.MoveToRegion(MapSpan.FromCenterAndRadius(pos, Distance.FromKilometers(1)));
+                MapPosition = new Position(positions.First().Latitude, positions.First().Longitude);
+                NotifyOfPropertyChange(() => MapPosition);
             }
         }
     }

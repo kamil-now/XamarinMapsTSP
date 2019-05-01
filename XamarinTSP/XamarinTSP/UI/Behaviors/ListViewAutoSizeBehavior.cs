@@ -56,6 +56,10 @@ namespace XamarinTSP.UI.Behaviors
         }
         void SetHeight(int numberOfElements)
         {
+            if (ItemsCount < MinRowsCount || ItemsCount > MaxRowsCount)
+                return;
+
+
             var cellHeight = MeasureCellHeight();
             var minHeight = MinRowsCount * cellHeight;
             var maxHeight = MaxRowsCount * cellHeight;

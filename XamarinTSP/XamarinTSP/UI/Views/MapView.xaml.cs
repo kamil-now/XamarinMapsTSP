@@ -1,12 +1,13 @@
-﻿using Xamarin.Forms;
+﻿
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace XamarinTSP.UI.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class SetLocationPage : ContentPage
+    public partial class MapView : ContentView
     {
-        public SetLocationPage()
+        public MapView()
         {
             InitializeComponent();
         }

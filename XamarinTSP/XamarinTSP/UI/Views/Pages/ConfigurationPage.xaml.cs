@@ -1,12 +1,13 @@
-﻿using Xamarin.Forms;
+﻿
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace XamarinTSP.UI.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class LocationListView : ContentView
+    public partial class ConfigurationPage : ContentPage
     {
-        public LocationListView()
+        public ConfigurationPage()
         {
             InitializeComponent();
         }

@@ -6,11 +6,11 @@
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
              xmlns:converters="clr-namespace:XamarinTSP.UI.Converters"
              x:Class="XamarinTSP.UI.Views.MainPage"
-            NavigationPage.HasNavigationBar="False">
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
-        <converters:NegateBoolConverter x:Key="NegateBoolConverter"/>
-        <converters:DistanceConverter x:Key="DistanceConverter"/>
-        <converters:TimeSpanConverter x:Key="TimeSpanConverter"/>
+        <converters:NegateBoolConverter x:Key="NegateBoolConverter" />
+        <converters:DistanceConverter x:Key="DistanceConverter" />
+        <converters:TimeSpanConverter x:Key="TimeSpanConverter" />
     </ContentPage.Resources>
     <ContentPage.Behaviors>
         <behaviors:EventToCommandBehavior EventName="Appearing"
@@ -32,9 +32,9 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="5*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Row="0"
                         Grid.Column="0"
@@ -42,15 +42,15 @@
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center"/>
-                
+                        VerticalOptions="Center" />
+
                 <Button Grid.Row="1"
                         Grid.Column="0"
                         Image="ic_directions_bike_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
-                        HorizontalOptions="Center" 
-                        VerticalOptions="Center"/>
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center" />
 
                 <Button Grid.Row="2"
                         Grid.Column="0"
@@ -58,8 +58,8 @@
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center"/>
-                
+                        VerticalOptions="Center" />
+
                 <Frame  Grid.Row="0"
                         Grid.Column="1"
                         Grid.RowSpan="3"
@@ -67,9 +67,52 @@
                         BorderColor="LightGray"
                         Margin="2"
                         CornerRadius="10">
-                    <views:LocationListView BindingContext="{Binding List}"/>
+                    <ListView x:Name="List"
+                              ItemsSource="{Binding List.Locations, UpdateSourceEventName=CollectionChanged}">
+                        <ListView.Behaviors>
+                            <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                                                              CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
+                                                              Command="{Binding SelectLocationCommand}" />
+                            <!--<behaviors:ListViewAutoSizeBehavior ItemsCount="{Binding List.Locations.Count, UpdateSourceEventName=CollectionChanged}"
+                                                                MinRowsCount="1"
+                                                                MaxRowsCount="4" />-->
+                        </ListView.Behaviors>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <ViewCell.View>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label Grid.Column="0"
+                                                   HorizontalOptions="Start"
+                                                   VerticalOptions="Center"
+                                                   Text="{Binding MainDisplayString}"
+                                                   FontSize="Small"
+                                                   LineBreakMode="NoWrap"
+                                                   Margin="0" />
+                                            <Button Grid.Column="1"
+                                                    Margin="0"
+                                                    FontSize="Medium"
+                                                    FontAttributes="Bold"
+                                                    HorizontalOptions="Center"
+                                                    VerticalOptions="Center"
+                                                    Image="ic_clear_black_24dp.png"
+                                                    BackgroundColor="Transparent"
+                                                    BorderColor="Transparent"
+                                                    CommandParameter="{Binding}"
+                                                    Command="{Binding Path=BindingContext.DeleteLocationCommand, Source={x:Reference Name=List}}" />
+
+                                        </Grid>
+                                    </ViewCell.View>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Frame>
-                
+
                 <Button Grid.Row="1"
                         Grid.Column="2"
                         Grid.RowSpan="2"
@@ -82,33 +125,34 @@
                         Command="{Binding AddLocationCommand}" />
             </Grid>
 
-
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1"
+                  MinimumHeightRequest="10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" 
-                       Text="{Binding MapController.CalculatedRoute.Time, Converter={StaticResource TimeSpanConverter}}" 
+                <Label Grid.Column="0"
+                       Text="{Binding MapViewModel.CalculatedRoute.Time, Converter={StaticResource TimeSpanConverter}}"
                        HorizontalOptions="Center"
-                       VerticalOptions="Center"/>
+                       VerticalOptions="Center" />
                 <Label Grid.Column="1"
-                       Text="{Binding MapController.CalculatedRoute.Distance, Converter={StaticResource DistanceConverter}}" 
+                       Text="{Binding MapViewModel.CalculatedRoute.Distance, Converter={StaticResource DistanceConverter}}"
                        HorizontalOptions="Center"
-                       VerticalOptions="Center"/>
+                       VerticalOptions="Center" />
             </Grid>
-            <customControls:CustomMap Grid.Row="2"
-                                      IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-            <Grid Grid.Row="3" MinimumHeightRequest="10" >
+            <views:MapView BindingContext="{Binding MapViewModel}"
+                           Grid.Row="2"
+                           IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
+            <Grid Grid.Row="3"
+                  MinimumHeightRequest="10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                         Image="ic_settings_black_24dp.png"
                         BackgroundColor="Transparent"
-                        BorderColor="Transparent"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         Command="{Binding OpenConfigurationCommand}"
@@ -118,15 +162,15 @@
                         Image="ic_play_arrow_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="End"
                         VerticalOptions="Center"
                         CommandParameter="{x:Reference tspButton}"
-                        Command="{Binding RunTSPCommand}"  />
+                        Command="{Binding RunTSPCommand}" />
                 <Button Grid.Column="2"
                         Image="ic_map_black_24dp.png"
                         BackgroundColor="Transparent"
                         BorderColor="Transparent"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="End"
                         VerticalOptions="Center"
                         Command="{Binding OpenInGoogleMapsCommand}"
                         IsEnabled="{Binding RouteCalculated}" />
@@ -137,7 +181,7 @@
                                Color="Black"
                                BackgroundColor="Transparent"
                                IsVisible="{Binding IsTSPRunning}"
-                               IsRunning="{Binding IsTSPRunning}"/>
+                               IsRunning="{Binding IsTSPRunning}" />
         </Grid>
     </ContentPage.Content>
 </ContentPage>
