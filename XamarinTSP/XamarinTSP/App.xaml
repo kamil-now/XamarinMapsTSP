@@ -5,7 +5,7 @@
              x:Class="XamarinTSP.App">
     <Application.Resources>
         <ResourceDictionary>
-            
+
             <OnPlatform x:Key="DefaultFontSize"
                         x:TypeArguments="Font"
                         Android="25" />
@@ -29,6 +29,10 @@
                         Value="Transparent" />
                 <Setter Property="BackgroundColor"
                         Value="Transparent" />
+                <Setter Property="Margin"
+                        Value="0" />
+                <Setter Property="Padding"
+                        Value="0" />
                 <Setter Property="Font"
                         Value="{StaticResource DefaultFontSize}" />
             </Style>
