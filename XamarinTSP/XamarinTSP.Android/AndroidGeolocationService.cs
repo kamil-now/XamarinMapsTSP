@@ -10,7 +10,7 @@ namespace XamarinTSP.Droid
 {
     public class AndroidGeolocationService : IGeolocationService
     {
-        public int MaxResults { get; set; } = 10;
+        public int MaxResults { get; set; } = 5;
         private Android.Locations.Geocoder _geocoder;
 
         public AndroidGeolocationService()
@@ -38,6 +38,11 @@ namespace XamarinTSP.Droid
             var addressList = _geocoder.GetFromLocationAsync(position.Latitude, position.Longitude, MaxResults).Result;
             return Map(addressList);
         }
+        public IEnumerable<Address> GetAddressList(string locationName)
+        {
+            var addressList = _geocoder.GetFromLocationNameAsync(locationName, MaxResults).Result;
+            return Map(addressList);
+        }
         private IEnumerable<Address> Map(IList<Android.Locations.Address> addressList)
         {
             return addressList.Select(x =>
@@ -58,5 +63,7 @@ namespace XamarinTSP.Droid
                 }
             );
         }
+
+       
     }
 }

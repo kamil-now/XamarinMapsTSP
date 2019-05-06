@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:XamarinTSP.UI.Views"
-             xmlns:customControls="clr-namespace:XamarinTSP.UI.CustomControls"
+             xmlns:enums="clr-namespace:XamarinTSP.GoogleMapsApi.Enums"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
              xmlns:converters="clr-namespace:XamarinTSP.UI.Converters"
              x:Class="XamarinTSP.UI.Views.MainPage"
@@ -24,8 +24,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0"
-                  IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+            <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
@@ -39,27 +38,78 @@
                 <Button Grid.Row="0"
                         Grid.Column="0"
                         Text="&#xF10B;"
-                        TextColor="CornflowerBlue"
-                        Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetCarModeCommand}"
-                        IsEnabled="False" />
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
+                            <Setter Property="TextColor"
+                                    Value="Black" />
+                            <Setter Property="FontSize"
+                                    Value="25" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding TravelMode}"
+                                             Value="{x:Static enums:TravelMode.Driving}">
+                                    <Setter Property="TextColor"
+                                            Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <Button Grid.Row="1"
                         Grid.Column="0"
                         Text="&#xF0A3;"
-                        Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetBikeModeCommand}"
-                        IsEnabled="False" />
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
+                            <Setter Property="TextColor"
+                                    Value="Black" />
+                            <Setter Property="FontSize"
+                                    Value="25" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding TravelMode}"
+                                             Value="{x:Static enums:TravelMode.Bicycling}">
+                                    <Setter Property="TextColor"
+                                            Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <Button Grid.Row="2"
                         Grid.Column="0"
                         Text="&#xF583;"
-                        Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetWalkModeCommand}"
-                        IsEnabled="False" />
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
+                            <Setter Property="TextColor"
+                                    Value="Black" />
+                            <Setter Property="FontSize"
+                                    Value="25" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding TravelMode}"
+                                             Value="{x:Static enums:TravelMode.Walking}">
+                                    <Setter Property="TextColor"
+                                            Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <Frame  Grid.Row="0"
                         Grid.Column="1"
@@ -115,11 +165,13 @@
                         Text="&#xF419;"
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
-                        Command="{Binding AddLocationCommand}" />
+                        Command="{Binding AddLocationCommand}"
+                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}"/>
                 <Button Grid.Row="0"
                         Grid.Column="2"
                         Grid.RowSpan="2"
                         Text="&#xF651;"
+                        IsVisible="False"
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}">
 
@@ -144,7 +196,7 @@
             <views:MapView BindingContext="{Binding MapViewModel}"
                            Grid.Row="2"
                            IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
-            
+
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -162,19 +214,23 @@
                         CommandParameter="{x:Reference tspButton}"
                         Command="{Binding RunTSPCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
                             <Setter Property="Text"
                                     Value="&#xF40A;" />
                             <Setter Property="FontFamily"
                                     Value="{StaticResource MaterialDesignFont}" />
                             <Style.Triggers>
-                                <DataTrigger TargetType="Button" Binding="{Binding IsTSPRunning}" Value="True">
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsTSPRunning}"
+                                             Value="True">
                                     <Setter Property="Text"
                                             Value="&#xF3E4;" />
                                     <Setter Property="FontFamily"
                                             Value="{StaticResource MaterialDesignFont}" />
                                 </DataTrigger>
-                                <DataTrigger TargetType="Button" Binding="{Binding IsTSPRunning}"
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsTSPRunning}"
                                              Value="False">
                                     <Setter Property="Text"
                                             Value="&#xF40A;" />

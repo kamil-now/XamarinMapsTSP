@@ -1,39 +1,40 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using XamarinTSP.Extensions;
+using XamarinTSP.Common.Extensions;
+using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
 {
-    public class Population
+    public class Population<TElement> where TElement : IElement
     {
         public int Size => Elements.Count;
-        public List<Element> Elements { get; }
+        public List<IElement> Elements { get; }
 
-        public Element Best => Elements.OrderByDescending(x => x.Fitness).First();
-        public Element Worst => Elements.OrderBy(x => x.Fitness).First();
-        public double Diversity => Elements.DistinctBy(x => x.DistanceValue).Count() / (double)Size;
-      
+        public IElement Best => Elements.OrderByDescending(x => x.Fitness).First();
+        public IElement Worst => Elements.OrderBy(x => x.Fitness).First();
+        public double Diversity => Elements.DistinctBy(x => x.Value).Count() / (double)Size;
+
         public Population(int populationSize, int elementSize)
         {
-            Elements = new List<Element>();
+            Elements = new List<IElement>();
             for (int i = 0; i < populationSize; i++)
             {
-                Add(new Element(elementSize));
+                Add(ElementFactory.Create<TElement>(elementSize));
             }
         }
-        public Population(List<Element> elements)
+        public Population(List<IElement> elements)
         {
             Elements = elements;
         }
-        public void Add(Element element)
+        public void Add(IElement element)
         {
             Elements.Add(element);
         }
-        public void Remove(Element element)
+        public void Remove(IElement element)
         {
             if (Elements.Contains(element))
                 Elements.Remove(element);
         }
-        public Population Copy() => new Population(Elements.Select(x => x.Copy()).ToList());
+        public Population<TElement> Copy() => new Population<TElement>(Elements.Select(x => x.Copy()).ToList());
     }
 }

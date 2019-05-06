@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using XamarinTSP.Common.Abstractions;
 using XamarinTSP.GoogleMapsApi;
+using XamarinTSP.GoogleMapsApi.Abstractions;
 using XamarinTSP.TSP;
 using XamarinTSP.TSP.Abstractions;
 using XamarinTSP.UI.Abstractions;
@@ -49,16 +50,17 @@ namespace XamarinTSP
             builder.RegisterType<MapViewModel>().AsSelf().SingleInstance();
 
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
-            builder.RegisterType<GoogleMapsService>().AsSelf().SingleInstance();
 
 
-            builder.RegisterType<PMXCrossover>().AsImplementedInterfaces();
-            builder.RegisterType<RouletteSelection>().AsImplementedInterfaces();
-            builder.RegisterType<TournamentSelection>().AsImplementedInterfaces();
+            builder.RegisterType<GoogleMapsService>().As<IGoogleMapsService>().SingleInstance();
 
-            builder.RegisterType<TSPConfiguration>().As<ITSPConfiguration>().SingleInstance();
-            builder.RegisterType<TSPAlgorithm>().As<ITSPAlgorithm>().SingleInstance();
+            builder.RegisterType<BasicGeneticAlgorithmConfiguration>().As<IBasicGeneticAlgorithmConfiguration>().SingleInstance();
 
+            builder.RegisterType<DurationFitnessFunction>().As<IDurationFitnessFunction>().SingleInstance();
+            builder.RegisterType<DistanceFitnessFunction>().As<IDistanceFitnessFunction>().SingleInstance();
+
+            builder.RegisterType<RouteGeneticAlgorithm>().As<IRouteGeneticAlgorithm>().SingleInstance();
+            builder.RegisterType<BasicGeneticAlgorithm>().As<IBasicGeneticAlgorithm>().SingleInstance();
             return builder.Build();
         }
 

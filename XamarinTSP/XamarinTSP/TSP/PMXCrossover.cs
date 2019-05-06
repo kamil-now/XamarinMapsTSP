@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
@@ -6,9 +7,8 @@ namespace XamarinTSP.TSP
     public class PMXCrossover : ICrossoverAlgorithm
     {
         public string Name => "PMX";
-        public void Crossover(Population population, double crossoverChance)
+        public int[] Crossover<T>(Population<T> population, double crossoverChance) where T : IElement
         {
-            //TODO test
             int populationSize = population.Size;
             for (int i = 0; i < populationSize; i++)
             {
@@ -19,13 +19,14 @@ namespace XamarinTSP.TSP
                     var b = population.Elements.ElementAt((randomIndex + Random.RandomValue(1, populationSize - 1)) % populationSize);
 
                     var element = population.Elements.ElementAt(i);
-                    element = Crossover(a, b);
+                    return Crossover(a, b);
                 }
             }
+            throw new Exception("CROSSOVER EXCEPTION");
         }
-        Element Crossover(Element a, Element b)
+        private int[] Crossover(IElement a, IElement b)
         {
-            int length = a.Waypoints.Length;
+            int length = a.Data.Length;
             int cross1 = Random.RandomValue(length - 1) + 1;
             int cross2 = Random.RandomValue(length - 1) + 1;
 
@@ -36,7 +37,7 @@ namespace XamarinTSP.TSP
                 cross2 = tmp;
             }
 
-            int[] tab = b.Waypoints;
+            int[] tab = b.Data;
             int size = tab.Length;
             int[] retval = new int[size];
             for (int i = 0; i < size; i++)
@@ -54,20 +55,20 @@ namespace XamarinTSP.TSP
             {
                 if (i < cross1 || i > cross2)
                 {
-                    int tmp = a.Waypoints[i];
+                    int tmp = a.Data[i];
                     while (retval.Contains(tmp))
                     {
                         for (int j = 0; j < retval.Length; j++)
                         {
                             if (retval[j] == tmp)
-                                tmp = a.Waypoints[j];
+                                tmp = a.Data[j];
                         }
 
                     }
                     retval[i] = tmp;
                 }
             }
-            return new Element(retval);
+            return retval;
         }
     }
 }

@@ -11,9 +11,9 @@ namespace XamarinTSP.UI.Converters
             var retval = "";
             if (value is TimeSpan span)
             {
-                retval += GetString(span.Days, "day");
-                retval += GetString(span.Hours, "hour");
-                retval += GetString(span.Minutes, "minute");
+                retval += GetString(span.Days, "d");
+                retval += GetString(span.Hours, "h");
+                retval += GetString(span.Minutes, "min");
             }
             return retval;
         }

@@ -11,26 +11,25 @@ namespace XamarinTSP.TSP
 
         public int TournamentSize { get; set; }
 
-        public Population Select(Population population, int count)
+        public Population<T> Select<T>(Population<T> population, int count) where T : IElement
         {
             if (TournamentSize <= 0)
                 throw new ArgumentException("Tournament size is incorrect");
-            //TODO test
-            var selected = new List<Element>();
+
+            var selected = new List<IElement>();
             for (int i = 0; i < count; i++)
             {
                 var best = RunTournament(population);
                 selected.Add(best.Copy());
             }
-            return new Population(selected);
+            return new Population<T>(selected);
         }
 
-        Element RunTournament(Population population)
+        private IElement RunTournament<T>(Population<T> population) where T : IElement
         {
-            //TODO test
             int size = population.Size;
             double bestFitness = double.NegativeInfinity;
-            Element best = null;
+            IElement best = null;
             for (int j = 0; j < TournamentSize; j++)
             {
                 var randomIndex = Random.RandomValue(size);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace XamarinTSP.TSP
 {
@@ -19,6 +20,12 @@ namespace XamarinTSP.TSP
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+        public static IEnumerable<int> GetRandomData(int size)
+        {
+            var data = Enumerable.Range(0, size).ToList();
+            data.Shuffle();
+            return data;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace XamarinTSP.UI.ViewModels
         private IEnumerable<ICrossoverAlgorithm> _crossoverAlgorithms;
         private IEnumerable<ISelectionAlgorithm> _selectionAlgorithms;
 
-        public ITSPConfiguration Configuration { get; set; }
+        public IBasicGeneticAlgorithmConfiguration Configuration { get; set; }
 
         public IList<string> CrossoverAlgorithms => _crossoverAlgorithms.Select(x => x.Name).ToList();
         public IList<string> SelectionAlgorithms => _selectionAlgorithms.Select(x => x.Name).ToList();
@@ -27,7 +27,7 @@ namespace XamarinTSP.UI.ViewModels
         }
 
 
-        public ConfigurationViewModel(ITSPConfiguration configuration
+        public ConfigurationViewModel(IBasicGeneticAlgorithmConfiguration configuration
                                     , IEnumerable<ICrossoverAlgorithm> crossoverAlgorithms
                                     , IEnumerable<ISelectionAlgorithm> selectionAlgorithms)
         {

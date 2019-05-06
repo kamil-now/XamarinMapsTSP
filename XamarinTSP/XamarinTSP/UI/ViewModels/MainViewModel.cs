@@ -6,8 +6,8 @@ using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using XamarinTSP.Common.Abstractions;
-using XamarinTSP.GoogleMapsApi;
-using XamarinTSP.TSP;
+using XamarinTSP.GoogleMapsApi.Abstractions;
+using XamarinTSP.GoogleMapsApi.Enums;
 using XamarinTSP.TSP.Abstractions;
 using XamarinTSP.UI.Abstractions;
 using XamarinTSP.UI.Models;
@@ -18,10 +18,11 @@ namespace XamarinTSP.UI.ViewModels
     {
         private static volatile object _lck = new object();
 
-        private GoogleMapsService _googleMapsService;
-        private ITSPAlgorithm _tspAlgorithm;
+        private IGoogleMapsService _googleMapsService;
+        private IRouteGeneticAlgorithm _tspAlgorithm;
         private INavigator _navigator;
         private IGeolocationService _geolocation;
+        private TravelMode _travelMode;
 
         public bool IsTSPRunning { get; private set; }
         public bool RouteCalculated { get; private set; }
@@ -29,12 +30,22 @@ namespace XamarinTSP.UI.ViewModels
         public MapViewModel MapViewModel { get; private set; }
         public LocationList List { get; private set; }
 
+        public TravelMode TravelMode
+        {
+            get => _travelMode;
+            set
+            {
+                _travelMode = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public MainViewModel(INavigator navigator,
                              IGeolocationService geolocation,
-                             ITSPAlgorithm tspAlgorithm,
+                             IRouteGeneticAlgorithm tspAlgorithm,
+                             IGoogleMapsService googleMapsService,
                              MapViewModel mapViewModel,
-                             LocationList list,
-                             GoogleMapsService googleMapsService)
+                             LocationList list)
         {
             List = list;
             MapViewModel = mapViewModel;
@@ -42,25 +53,25 @@ namespace XamarinTSP.UI.ViewModels
             _googleMapsService = googleMapsService;
             _navigator = navigator;
             _tspAlgorithm = tspAlgorithm;
+
+            _travelMode = TravelMode.Driving;
+
             List.Locations.CollectionChanged += Locations_CollectionChanged;
         }
-        
+
 
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-            //temp
             if (List.Locations.Count == 0)
             {
                 List.SetMockData(_geolocation);
             }
-            //
             if (List.Locations?.Count == 0)
                 await MapViewModel.MoveToUserRegion();
         });
 
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
-            //TODO run unchanged with saved route
             if (IsTSPRunning)
             {
                 _tspAlgorithm.Stop();
@@ -68,42 +79,52 @@ namespace XamarinTSP.UI.ViewModels
                 NotifyOfPropertyChange(() => IsTSPRunning);
                 return;
             }
+
             IsTSPRunning = true;
             NotifyOfPropertyChange(() => IsTSPRunning);
 
+            MapViewModel.CalculatedRoute = new Route()
+            {
+                RouteCoordinates = List.Locations.Select(x => x.Position).ToList(),
+                Distance = Distance.FromMeters(0),
+                Time = TimeSpan.MinValue
+
+            };
+            MapViewModel.DisplayRoute();
             await Task.Run(async () =>
             {
                 try
                 {
-                    var data = _googleMapsService.GetDistanceMatrix(List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray());
+                    var data = _googleMapsService.GetDistanceMatrix(List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray(), TravelMode);
 
 
-                    _tspAlgorithm.Run(
-                        new TSPData(
-                            List.Locations as IEnumerable<object>,
-                            data.DistanceMatrix,
-                            data.DurationMatrix),
-                        new Action<TSP.Element, ITSPData>(async (element, tspData) =>
+                    _tspAlgorithm.RUN(
+                        data,
+                        List.Locations as IEnumerable<object>,
+                        new Action<IRouteElement, IFitnessFunction>(async (element, tspData) =>
                         {
                             await App.InvokeOnMainThreadAsync(() =>
                             {
-                                ReaorderLocations(element.Waypoints);
-
-                                var route = new Route()
+                                lock (_lck)
                                 {
-                                    RouteCoordinates = List.Locations.Select(x => x.Position).ToList(),
-                                    Distance = Distance.FromMeters(Math.Round(element.DistanceValue)),
-                                    Time = TimeSpan.FromSeconds(element.TimeValue)
+                                    ReaorderLocations(element.Data);
 
-                                };
-                                route.RouteCoordinates.Add(List.Locations.ElementAt(0).Position);
+                                    var route = new Route()
+                                    {
+                                        RouteCoordinates = List.Locations.Select(x => x.Position).ToList(),
+                                        Distance = Distance.FromMeters(Math.Round(element.Value)),
+                                        Time = TimeSpan.FromSeconds(element.DurationValue)
 
-                                MapViewModel.CalculatedRoute = route;
-                                RouteCalculated = true;
+                                    };
+                                    route.RouteCoordinates.Add(List.Locations.ElementAt(0).Position);
+
+                                    MapViewModel.CalculatedRoute = route;
+                                    RouteCalculated = true;
 
 
-                                NotifyOfPropertyChange(() => RouteCalculated);
-                                MapViewModel.DisplayRoute();
+                                    NotifyOfPropertyChange(() => RouteCalculated);
+                                    MapViewModel.DisplayRoute();
+                                }
                             });
                         }));
 
@@ -120,34 +141,15 @@ namespace XamarinTSP.UI.ViewModels
                 }
             }).ConfigureAwait(false);
         });
-        public ICommand SelectLocationCommand => new Command<Location>(selected =>
-        {
-            MapViewModel.MapPosition = selected.Position;
-        });
-        public ICommand DeleteLocationCommand => new Command<Location>(selected =>
-        {
-            List.Locations.Remove(selected);
-        });
-        public ICommand AddLocationCommand => new Command(async () =>
-        {
-            await _navigator.PushAsync<LocationListViewModel>();
-        });
-        public ICommand OpenConfigurationCommand => new Command(async () =>
-        {
-            await _navigator.PushAsync<ConfigurationViewModel>();
-        });
-        public ICommand SetWalkModeCommand => new Command(() =>
-        {
-            //TODO
-        });
-        public ICommand SetBikeModeCommand => new Command(() =>
-        {
-            //TODO
-        });
-        public ICommand SetCarModeCommand => new Command(() =>
-        {
-            //TODO
-        });
+        public ICommand SelectLocationCommand => new Command<Location>(selected => MapViewModel.MapPosition = selected.Position);
+        public ICommand DeleteLocationCommand => new Command<Location>(selected => List.Locations.Remove(selected));
+        public ICommand AddLocationCommand => new Command(async () => await _navigator.PushAsync<LocationListViewModel>());
+        public ICommand OpenConfigurationCommand => new Command(async () => await _navigator.PushAsync<ConfigurationViewModel>());
+
+        public ICommand SetWalkModeCommand => new Command(() => TravelMode = TravelMode.Walking);
+        public ICommand SetBikeModeCommand => new Command(() => TravelMode = TravelMode.Bicycling);
+        public ICommand SetCarModeCommand => new Command(() => TravelMode = TravelMode.Driving);
+
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
             _googleMapsService.OpenInGoogleMaps(MapViewModel.CalculatedRoute.RouteCoordinates.Select(x => $"{x.Latitude}, {x.Longitude}").ToArray());

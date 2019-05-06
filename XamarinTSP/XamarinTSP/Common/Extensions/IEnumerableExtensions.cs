@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace XamarinTSP.Extensions
+namespace XamarinTSP.Common.Extensions
 {
     public static class IEnumerableExtensions
     {

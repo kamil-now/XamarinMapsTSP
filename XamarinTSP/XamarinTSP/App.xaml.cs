@@ -20,6 +20,7 @@ namespace XamarinTSP
             ApiKey = apiKey;
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            customCulture.NumberFormat.NumberGroupSeparator = " ";
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
             _bootstrapper = new Bootstrapper(this);

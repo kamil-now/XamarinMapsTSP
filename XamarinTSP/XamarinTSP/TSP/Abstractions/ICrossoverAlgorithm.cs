@@ -3,6 +3,6 @@
     public interface ICrossoverAlgorithm
     {
         string Name { get; }
-        void Crossover(Population population, double crossoverChance);
+        int[] Crossover<T>(Population<T> population, double crossoverChance) where T : IElement;
     }
 }

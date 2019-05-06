@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinTSP.Android", "Xamar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamarinTSP", "XamarinTSP\XamarinTSP\XamarinTSP.csproj", "{FBE6E465-DDBA-432C-B6DC-6459D155F9EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E472BF6C-895C-46C9-AE75-01D8F93EFB5E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{FBE6E465-DDBA-432C-B6DC-6459D155F9EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBE6E465-DDBA-432C-B6DC-6459D155F9EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FBE6E465-DDBA-432C-B6DC-6459D155F9EF}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{E472BF6C-895C-46C9-AE75-01D8F93EFB5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E472BF6C-895C-46C9-AE75-01D8F93EFB5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E472BF6C-895C-46C9-AE75-01D8F93EFB5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E472BF6C-895C-46C9-AE75-01D8F93EFB5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

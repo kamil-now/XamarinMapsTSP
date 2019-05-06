@@ -1,9 +1,10 @@
 ﻿using System;
-using System.ComponentModel;
+using XamarinTSP.GoogleMapsApi.Abstractions;
+using XamarinTSP.GoogleMapsApi.Enums;
 
 namespace XamarinTSP.GoogleMapsApi
 {
-    internal class DistanceMatrixRequestConfiguration
+    internal class DistanceMatrixRequestConfiguration : IDistanceMatrixRequestConfiguration
     {
         public string[] Destinations { get; set; }
         public string[] Origins { get; set; }
@@ -39,45 +40,5 @@ namespace XamarinTSP.GoogleMapsApi
             TrafficModel = config.TrafficModel;
             Restriction = config.Restriction;
         }
-    }
-    internal enum TrafficModel
-    {
-        Undefined,
-        [Description("best_guess")]
-        BestGuess,
-        [Description("pessimistic")]
-        Pessimistic,
-        [Description("optimistic")]
-        Optimistic
-    }
-    internal enum TravelMode
-    {
-        Undefined,
-        [Description("driving")]
-        Driving,
-        [Description("walking")]
-        Walking,
-        [Description("bicycling")]
-        Bicycling
-    }
-    public enum Restriction
-    {
-        Undefined,
-        [Description("tolls")]
-        AvoidTolls,
-        [Description("highways")]
-        AvoidHighways,
-        [Description("ferries")]
-        AvoidFerries,
-        [Description("indoor")]
-        AvoidIndoor,
-    }
-    internal enum UnitSystem
-    {
-        Undefined,
-        [Description("metric")]
-        Metric,
-        [Description("imperial")]
-        Imperial
     }
 }

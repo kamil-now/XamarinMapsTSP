@@ -3,6 +3,6 @@
     public interface ISelectionAlgorithm
     {
         string Name { get; }
-        Population Select(Population population, int count);
+        Population<T> Select<T>(Population<T> population, int count) where T : IElement;
     }
 }

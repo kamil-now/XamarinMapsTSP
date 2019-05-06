@@ -26,6 +26,28 @@ namespace XamarinTSP.UI.Utilities
             var c = 2 * Math.Atan2(Math.Sqrt(x), Math.Sqrt(1 - x));
             return EARTH_RADIUS_KM * c;
         }
+        public static double[][] GetDistanceMatrix(IEnumerable<Position> points)
+        {
+            var length = points.Count();
+            var matrix = new double[length][];
+            for (int i = 0; i < length; i++)
+            {
+                matrix[i] = new double[length];
+
+                for (int j = 0; j < length; j++)
+                {
+                    if (i == j)
+                    {
+                        matrix[i][j] = 0;
+                    }
+                    else
+                    {
+                        matrix[j][i] = matrix[i][j] = MeasureDistanceKm(points.ElementAt(i), points.ElementAt(j)) / 1000;
+                    }
+                }
+            }
+            return matrix;
+        }
         private static (Position center, double radius) Calculate(IEnumerable<Position> points)
         {
             var maxX = points.Aggregate((a, b) => a.Latitude > b.Latitude ? a : b);

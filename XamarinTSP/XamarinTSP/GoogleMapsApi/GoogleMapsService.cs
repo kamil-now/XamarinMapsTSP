@@ -2,16 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
-using XamarinTSP.Extensions;
+using XamarinTSP.Common.Extensions;
+using XamarinTSP.GoogleMapsApi.Abstractions;
+using XamarinTSP.GoogleMapsApi.Enums;
 
 namespace XamarinTSP.GoogleMapsApi
 {
-    public class GoogleMapsService
+    public class GoogleMapsService : IGoogleMapsService
     {
         private const int MAX_REQUEST_DESTINATIONS_COUNT = 25;
-        internal DistanceMatrixData GetDistanceMatrix(IEnumerable<string> locations)
+
+        public IDistanceMatrixData GetDistanceMatrix(IEnumerable<string> locations, TravelMode travelMode)
         {
-            var configuration = new DistanceMatrixRequestConfiguration(locations.ToArray());
+            var configuration = new DistanceMatrixRequestConfiguration(locations.ToArray())
+            {
+                TravelMode = travelMode
+            };
+
             DistanceMatrixResponse response = new DistanceMatrixResponse()
             {
                 Origin_Addresses = Array.Empty<string>(),
@@ -33,6 +40,16 @@ namespace XamarinTSP.GoogleMapsApi
             }
             return new DistanceMatrixData(response);
         }
+
+        public void OpenInGoogleMaps(string[] waypoints)
+        {
+            var origin = waypoints[0];
+            var destination = waypoints[waypoints.Length - 1];
+            string str = $"https://www.google.com/maps/dir/?api=1&origin={origin}&destination={destination}&waypoints=";
+            var tmp = waypoints.Skip(1).Take(waypoints.Length - 2).ToArray();
+            str += string.Join("|", tmp);
+            Device.OpenUri(new Uri(str));
+        }
         private List<string> BuildRequests(IEnumerable<string> locations, DistanceMatrixRequestConfiguration configuration)
         {
             var count = locations.Count();
@@ -42,15 +59,6 @@ namespace XamarinTSP.GoogleMapsApi
                 retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(locations.ElementAt(i), locations.ToArray(), configuration)));
             }
             return retval;
-        }
-        public void OpenInGoogleMaps(string[] waypoints)
-        {
-            var origin = waypoints[0];
-            var destination = waypoints[waypoints.Length - 1];
-            string str = $"https://www.google.com/maps/dir/?api=1&origin={origin}&destination={destination}&waypoints=";
-            var tmp = waypoints.Skip(1).Take(waypoints.Length - 2).ToArray();
-            str += string.Join("|", tmp);
-            Device.OpenUri(new Uri(str));
         }
         private string BuildSingleRequest(DistanceMatrixRequestConfiguration configuration)
         {
@@ -74,7 +82,7 @@ namespace XamarinTSP.GoogleMapsApi
                 requestParameters += "&departure_time=" + ((int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
 
             }
-             if (configuration.ArrivalTime != null && configuration.ArrivalTime != DateTime.MinValue)
+            if (configuration.ArrivalTime != null && configuration.ArrivalTime != DateTime.MinValue)
             {
                 requestParameters += "&arrival_time=" + ((int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
             }
@@ -101,7 +109,7 @@ namespace XamarinTSP.GoogleMapsApi
             }
             if (configuration.TravelMode != TravelMode.Undefined)
             {
-                requestParameters += "&traffic_model=" + (configuration.TravelMode as Enum).GetDescription();
+                requestParameters += "&mode=" + (configuration.TravelMode as Enum).GetDescription();
             }
             if (configuration.UnitSystem != UnitSystem.Undefined)
             {

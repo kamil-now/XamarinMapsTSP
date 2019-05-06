@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace XamarinTSP.Extensions
+namespace XamarinTSP.Common.Extensions
 {
     public static class PropertyInfoExtensions
     {

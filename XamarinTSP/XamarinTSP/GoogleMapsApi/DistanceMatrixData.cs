@@ -1,8 +1,9 @@
 ﻿using System.Linq;
+using XamarinTSP.GoogleMapsApi.Abstractions;
 
 namespace XamarinTSP.GoogleMapsApi
 {
-    internal class DistanceMatrixData
+    internal class DistanceMatrixData : IDistanceMatrixData
     {
         public int[][] DurationMatrix { get; }
         public int[][] DistanceMatrix { get; }

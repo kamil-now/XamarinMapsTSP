@@ -7,10 +7,9 @@ namespace XamarinTSP.TSP
     public class RouletteSelection : ISelectionAlgorithm
     {
         public string Name => "Roulette";
-        public Population Select(Population population, int count)
+        public Population<T> Select<T>(Population<T> population, int count) where T : IElement
         {
-            //TODO test
-            var selected = new List<Element>();
+            var selected = new List<IElement>();
             var fitnessSum = population.Elements.Sum(x => x.Fitness);
             double[] probs = population.Elements.Select(x => x.Fitness / fitnessSum).ToArray();
             var sm = probs.Sum();
@@ -19,7 +18,7 @@ namespace XamarinTSP.TSP
                 var rand = Random.RandomPercent();
 
                 double sum = 0.0;
-                Element element;
+                IElement element;
                 for (int k = 0; ; k++)
                 {
                     sum += probs[k];
@@ -34,7 +33,7 @@ namespace XamarinTSP.TSP
                 selected.Add(element.Copy());
             }
             selected.Add(population.Best);
-            return new Population(selected);
+            return new Population<T>(selected);
         }
     }
 }
