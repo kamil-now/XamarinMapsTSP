@@ -17,13 +17,27 @@ namespace XamarinTSP.UI.ViewModels
         public string SelectedCrossoverAlgorithm
         {
             get => Configuration.CrossoverAlgorithm.Name;
-            set => Configuration.CrossoverAlgorithm = _crossoverAlgorithms.FirstOrDefault(x => x.Name == value);
+            set
+            {
+                var val = _crossoverAlgorithms.FirstOrDefault(x => x.Name == value);
+                if (val != null)
+                {
+                    Configuration.CrossoverAlgorithm = val;
+                }
+            }
 
         }
         public string SelectedSelectionAlgorithm
         {
             get => Configuration.SelectionAlgorithm.Name;
-            set => Configuration.SelectionAlgorithm = _selectionAlgorithms.FirstOrDefault(x => x.Name == value);
+            set
+            {
+                var val = _selectionAlgorithms.FirstOrDefault(x => x.Name == value);
+                if (val != null)
+                {
+                    Configuration.SelectionAlgorithm = val;
+                }
+            }
         }
 
 

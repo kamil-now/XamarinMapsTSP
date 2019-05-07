@@ -40,7 +40,7 @@
                         Text="&#xF10B;"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetCarModeCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}">
                     <Button.Style>
                         <Style TargetType="Button"
                                BasedOn="{StaticResource IconButton}">
@@ -65,7 +65,7 @@
                         Text="&#xF0A3;"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetBikeModeCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}">
                     <Button.Style>
                         <Style TargetType="Button"
                                BasedOn="{StaticResource IconButton}">
@@ -90,7 +90,7 @@
                         Text="&#xF583;"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding SetWalkModeCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}">
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}">
 
                     <Button.Style>
                         <Style TargetType="Button"
@@ -122,9 +122,9 @@
                     <ListView x:Name="List"
                               ItemsSource="{Binding List.Locations, UpdateSourceEventName=CollectionChanged}">
                         <ListView.Behaviors>
-                            <behaviors:EventToCommandBehavior EventName="ItemTapped"
+                            <!--<behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                               CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
-                                                              Command="{Binding SelectLocationCommand}" />
+                                                              Command="{Binding SelectLocationCommand}" />-->
                         </ListView.Behaviors>
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -132,25 +132,34 @@
                                     <ViewCell.View>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="4*" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <Label Grid.Column="0"
+                                                   HorizontalOptions="End"
+                                                   VerticalOptions="End"
+                                                   Text="{Binding Index}"
+                                                   FontSize="Small"
+                                                   TextColor="Black" />
+                                            <Label Grid.Column="1"
                                                    HorizontalOptions="Start"
-                                                   VerticalOptions="Center"
+                                                   VerticalOptions="End"
                                                    Text="{Binding MainDisplayString}"
                                                    FontSize="Small"
-                                                   LineBreakMode="NoWrap"
-                                                   Margin="0" />
-                                            <Button Grid.Column="1"
+                                                   TextColor="Black"
+                                                   LineBreakMode="NoWrap" />
+                                            <Button Grid.Column="2"
                                                     Margin="0"
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="End"
                                                     Text="&#xF377;"
                                                     FontSize="20"
                                                     Style="{StaticResource IconButton}"
                                                     FontFamily="{StaticResource MaterialDesignFont}"
                                                     CommandParameter="{Binding}"
                                                     Command="{Binding Path=BindingContext.DeleteLocationCommand, Source={x:Reference Name=List}}"
-                                                    IsEnabled="{Binding Path=BindingContext.IsTSPRunning, Converter={StaticResource NegateBoolConverter}, Source={x:Reference Name=List}}" />
+                                                    IsEnabled="{Binding Path=BindingContext.IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}, Source={x:Reference Name=List}}" />
 
                                         </Grid>
                                     </ViewCell.View>
@@ -167,7 +176,7 @@
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding AddLocationCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}"/>
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}" />
                 <Button Grid.Row="0"
                         Grid.Column="2"
                         Grid.RowSpan="2"
@@ -179,24 +188,41 @@
                 </Button>
             </Grid>
 
+            <StackLayout Grid.Row="1"
+                         IsVisible="{Binding RetrievingDistanceMatrix}"
+                         HorizontalOptions="CenterAndExpand"
+                         Orientation="Horizontal">
+                <Label Text="Loading distance matrix..."
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <ActivityIndicator HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Color="Black"
+                                   HeightRequest="10"
+                                   BackgroundColor="Transparent"
+                                   IsRunning="True" />
+            </StackLayout>
             <Grid Grid.Row="1"
-                  MinimumHeightRequest="10">
+                  MinimumHeightRequest="10"
+                  IsVisible="{Binding RetrievingDistanceMatrix, Converter={StaticResource NegateBoolConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0"
+                       IsVisible="{Binding RouteCalculated}"
                        Text="{Binding MapViewModel.CalculatedRoute.Time, Converter={StaticResource TimeSpanConverter}}"
                        HorizontalOptions="Center"
                        VerticalOptions="Center" />
                 <Label Grid.Column="1"
+                       IsVisible="{Binding RouteCalculated}"
                        Text="{Binding MapViewModel.CalculatedRoute.Distance, Converter={StaticResource DistanceConverter}}"
                        HorizontalOptions="Center"
                        VerticalOptions="Center" />
             </Grid>
             <views:MapView BindingContext="{Binding MapViewModel}"
                            Grid.Row="2"
-                           IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
+                           IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}" />
 
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
@@ -209,7 +235,7 @@
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding OpenConfigurationCommand}"
-                        IsEnabled="{Binding IsTSPRunning, Converter={StaticResource NegateBoolConverter}}" />
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}" />
                 <Button Grid.Column="1"
                         x:Name="tspButton"
                         CommandParameter="{x:Reference tspButton}"
@@ -223,7 +249,7 @@
                                     Value="{StaticResource MaterialDesignFont}" />
                             <Style.Triggers>
                                 <DataTrigger TargetType="Button"
-                                             Binding="{Binding IsTSPRunning}"
+                                             Binding="{Binding IsAlgorithmRunning}"
                                              Value="True">
                                     <Setter Property="Text"
                                             Value="&#xF3E4;" />
@@ -231,7 +257,7 @@
                                             Value="{StaticResource MaterialDesignFont}" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Button"
-                                             Binding="{Binding IsTSPRunning}"
+                                             Binding="{Binding IsAlgorithmRunning}"
                                              Value="False">
                                     <Setter Property="Text"
                                             Value="&#xF40A;" />
@@ -247,8 +273,8 @@
                                    VerticalOptions="Center"
                                    Color="Black"
                                    BackgroundColor="Transparent"
-                                   IsVisible="{Binding IsTSPRunning}"
-                                   IsRunning="{Binding IsTSPRunning}" />
+                                   IsVisible="{Binding RetrievingDistanceMatrix, Converter={StaticResource NegateBoolConverter}}"
+                                   IsRunning="{Binding IsAlgorithmRunning}" />
                 <Button Grid.Column="2"
                         Text="&#xF34D;"
                         Style="{StaticResource IconButton}"

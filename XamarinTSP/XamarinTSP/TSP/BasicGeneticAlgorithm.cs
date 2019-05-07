@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using XamarinTSP.TSP.Abstractions;
 
@@ -17,13 +16,13 @@ namespace XamarinTSP.TSP
             Configuration = configuration;
 
         }
-        public void Stop() => _run = false;
+        public void STOP() => _run = false;
 
-        public void Run<TElement, TFitnessFunction>(IEnumerable<object> input, int[][] data, Action<TElement, IFitnessFunction> renderRouteAction)
+        public void RUN<TElement, TFitnessFunction>(IEnumerable<object> input, int[][] data, Action<TElement, IFitnessFunction> renderRouteAction)
             where TElement : class, IElement where TFitnessFunction : IFitnessFunction
         {
             var fitnessFunction = FitnessFunctionFactory.Create<TFitnessFunction>(input, data);
-            
+
 
             RUN(fitnessFunction, renderRouteAction);
 
@@ -39,7 +38,7 @@ namespace XamarinTSP.TSP
 
             var initElement = ElementFactory.CreateElement<TElement>(Enumerable.Range(0, fitnessFunction.ElementSize).ToList());
             renderRoute(initElement as TElement, fitnessFunction);
-            
+
             while (_run)
             {
                 Configuration.CrossoverAlgorithm.Crossover(population, Configuration.CrossoverChance);

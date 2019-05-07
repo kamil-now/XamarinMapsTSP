@@ -22,9 +22,38 @@ namespace XamarinTSP.UI.ViewModels
         private INavigator _navigator;
         private IGeolocationService _geolocation;
         private TravelMode _travelMode;
+        private bool _isAlgorithmRunning;
+        private bool _routeCalculated;
+        private bool _retrievingDistanceMatrix;
 
-        public bool IsTSPRunning { get; private set; }
-        public bool RouteCalculated { get; private set; }
+        public bool IsAlgorithmRunning
+        {
+            get => _isAlgorithmRunning || _retrievingDistanceMatrix;
+            private set
+            {
+                _isAlgorithmRunning = value;
+                NotifyOfPropertyChange();
+            }
+        }
+        public bool RouteCalculated
+        {
+            get => _routeCalculated;
+            private set
+            {
+                _routeCalculated = value;
+                NotifyOfPropertyChange();
+            }
+        }
+        public bool RetrievingDistanceMatrix
+        {
+            get => _retrievingDistanceMatrix;
+            private set
+            {
+                _retrievingDistanceMatrix = value;
+                NotifyOfPropertyChange(() => IsAlgorithmRunning);
+                NotifyOfPropertyChange();
+            }
+        }
 
         public MapViewModel MapViewModel { get; private set; }
         public LocationList List { get; private set; }
@@ -71,34 +100,35 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
-            var renderActionQueue = new DelegateInvocationQueue() { MillisecondsTimeout = 1500 };
+            var renderActionQueue = new DelegateInvocationQueue() { MillisecondsTimeout = 2000 };
 
-            if (IsTSPRunning)
+            if (IsAlgorithmRunning || RetrievingDistanceMatrix)
             {
-                _tspAlgorithm.Stop();
+                _tspAlgorithm.STOP();
                 renderActionQueue.ClearQueue();
 
-                IsTSPRunning = false;
-                NotifyOfPropertyChange(() => IsTSPRunning);
+                IsAlgorithmRunning = false;
+                RetrievingDistanceMatrix = false;
                 return;
             }
 
-            IsTSPRunning = true;
-            NotifyOfPropertyChange(() => IsTSPRunning);
-
-
+            RetrievingDistanceMatrix = true;
             await Task.Run(async () =>
             {
-
                 try
                 {
                     var data = _googleMapsService.GetDistanceMatrix(List.Locations.Select(x => $"{x.Position.Latitude},{x.Position.Longitude}").ToArray(), TravelMode);
-
+                    await App.InvokeOnMainThreadAsync(() =>
+                    {
+                        RetrievingDistanceMatrix = false;
+                        IsAlgorithmRunning = true;
+                    });
                     var renderAction = new Action<IRouteElement, IFitnessFunction>(async (element, fitnessFunction) =>
                      {
                          await App.InvokeOnMainThreadAsync(() =>
                          {
                              ReaorderLocations(element.Data);
+                             NotifyOfPropertyChange(() => List.Locations);
 
                              var route = new Route()
                              {
@@ -113,7 +143,6 @@ namespace XamarinTSP.UI.ViewModels
                              RouteCalculated = true;
 
 
-                             NotifyOfPropertyChange(() => RouteCalculated);
                              MapViewModel.DisplayRoute();
 
                          });
@@ -131,12 +160,14 @@ namespace XamarinTSP.UI.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    IsTSPRunning = false;
+                    _tspAlgorithm.STOP();
                     renderActionQueue.ClearQueue();
                     await App.InvokeOnMainThreadAsync(async () =>
                     {
+                        IsAlgorithmRunning = false;
+                        RetrievingDistanceMatrix = false;
                         await Application.Current.MainPage.DisplayAlert("TSP ERROR", ex.Message, "OK");
-                        NotifyOfPropertyChange(() => IsTSPRunning);
+
                     });
                     return;
                 }
@@ -158,9 +189,8 @@ namespace XamarinTSP.UI.ViewModels
         private void Locations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             MapViewModel.IsRouteVisible = false;
-            NotifyOfPropertyChange(() => MapViewModel.IsRouteVisible);
+            MapViewModel.NotifyOfPropertyChange(() => MapViewModel.IsRouteVisible);
             RouteCalculated = false;
-            NotifyOfPropertyChange(() => RouteCalculated);
         }
         private void ReaorderLocations(int[] waypoints)
         {

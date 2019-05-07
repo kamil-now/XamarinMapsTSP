@@ -16,6 +16,8 @@ namespace XamarinTSP.UI.Models
         public string MainDisplayString { get; private set; }
         public string AdditionalLocationInfo { get; private set; }
         public string Coordinates { get; private set; }
+        public string Index { get; private set; }
+
         public Position Position
         {
             get => _position;
@@ -26,13 +28,17 @@ namespace XamarinTSP.UI.Models
             }
         }
         public Location() { }
-        public Location(Address address)
+        public Location(int index, Address address)
         {
+            SetIndex(index);
             Id = Guid.NewGuid();
             BuildStrings(address);
             Position = new Position(address.Latitude, address.Longitude);
         }
-
+        public void SetIndex(int index)
+        {
+            Index = $"{index}.";
+        }
         public void Dispose() => OnDispose?.Invoke(this, null);
 
         private void BuildStrings(Address address)

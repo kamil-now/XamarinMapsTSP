@@ -43,9 +43,14 @@ namespace XamarinTSP.Droid
 
                 _map.UpdatePins();
                 _map.FocusPins();
+
                 if (_map.IsRouteVisible)
                 {
                     DrawRoute();
+                }
+                else
+                {
+                    ClearRoute();
                 }
                 _isRendering = false;
 
@@ -75,6 +80,11 @@ namespace XamarinTSP.Droid
             {
                 NativeMap.AddPolyline(polylineOptions);
             }
+        }
+        private void ClearRoute()
+        {
+            var polylineOptions = new PolylineOptions();
+            NativeMap.AddPolyline(polylineOptions);
         }
         private Bitmap GetBitmapMarker(Context context, int icon, string text)
         {

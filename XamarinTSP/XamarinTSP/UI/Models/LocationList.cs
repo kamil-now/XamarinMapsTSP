@@ -28,6 +28,7 @@ namespace XamarinTSP.UI.Models
             for (int i = 0; i < positions.Length; i++)
             {
                 tmp[i] = Locations.ElementAt(positions[i]);
+                tmp[i].SetIndex(i+1);
             }
             Locations = new ObservableCollection<Location>(tmp);
         }
@@ -36,31 +37,31 @@ namespace XamarinTSP.UI.Models
             Locations.Clear();
             void addLocation(string location)
             {
-                Locations.Add(new Location(geolocation.GetAddressList(location).FirstOrDefault()));
+                Locations.Add(new Location(Locations.Count + 1, geolocation.GetAddressList(location).FirstOrDefault()));
             }
-            addLocation("Warszawa"); 
-            addLocation("Wrocław"); 
-            addLocation("Bydgoszcz"); 
-            addLocation("Białystok"); 
-            addLocation("Rzeszów"); 
-            addLocation("Gdańsk"); 
-            addLocation("Poznań"); 
-            addLocation("Kraków"); 
-            addLocation("Szczecin"); 
-            addLocation("Lublin"); 
-            addLocation("Katowice"); 
-            addLocation("Łódź"); 
-            addLocation("Koszalin"); 
-            addLocation("Częstochowa"); 
-            addLocation("Radom"); 
-            addLocation("Płock"); 
-            addLocation("Zamość"); 
-            addLocation("Chojnice"); 
-            addLocation("Świnoujście"); 
-            addLocation("Słupsk"); 
-            addLocation("Opole"); 
-            addLocation("Zielona Góra"); 
-            addLocation("Olsztyn"); 
+            addLocation("Warszawa");
+            addLocation("Wrocław");
+            addLocation("Bydgoszcz");
+            addLocation("Białystok");
+            addLocation("Rzeszów");
+            addLocation("Gdańsk");
+            addLocation("Poznań");
+            addLocation("Kraków");
+            addLocation("Szczecin");
+            addLocation("Lublin");
+            addLocation("Katowice");
+            addLocation("Łódź");
+            addLocation("Koszalin");
+            addLocation("Częstochowa");
+            addLocation("Radom");
+            addLocation("Płock");
+            addLocation("Zamość");
+            addLocation("Chojnice");
+            addLocation("Świnoujście");
+            addLocation("Słupsk");
+            addLocation("Opole");
+            addLocation("Zielona Góra");
+            addLocation("Olsztyn");
         }
     }
 }

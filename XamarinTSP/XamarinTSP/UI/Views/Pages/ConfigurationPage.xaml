@@ -58,7 +58,45 @@
                            Grid.Column="0" />
                     <Entry Grid.Row="3"
                            Grid.Column="1"
-                           Keyboard="Numeric" />
+                           Keyboard="Numeric"
+                           Text="{Binding Configuration.PopulationSize}" />
+
+                    <Label Text="Crossover chance:"
+                           Grid.Row="4"
+                           Grid.Column="0" />
+                    <Entry Grid.Row="4"
+                           Grid.Column="1"
+                           Keyboard="Numeric"
+                           Text="{Binding Configuration.CrossoverChance}" />
+
+                    <Label Text="Mutation chance:"
+                           Grid.Row="5"
+                           Grid.Column="0" />
+                    <Entry Grid.Row="5"
+                           Grid.Column="1"
+                           Keyboard="Numeric"
+                           Text="{Binding Configuration.MutationChance}" />
+
+                    <Label Text="Mutation based on diversity:"
+                           Grid.Row="6"
+                           Grid.Column="0" />
+                    <Switch Grid.Row="6"
+                            Grid.Column="1"
+                            IsToggled="{Binding Configuration.MutationBasedOnDiversity}" />
+
+                    <Label Text="Time based fitness:"
+                           Grid.Row="7"
+                           Grid.Column="0" />
+                    <Switch Grid.Row="7"
+                            Grid.Column="1"
+                            IsToggled="{Binding Configuration.TimeBasedFitness}" />
+
+                    <Label Text="Distance based fitness:"
+                           Grid.Row="8"
+                           Grid.Column="0" />
+                    <Switch Grid.Row="8"
+                            Grid.Column="1"
+                            IsToggled="{Binding Configuration.DistanceBasedFitness}" />
 
                 </Grid>
             </ScrollView>

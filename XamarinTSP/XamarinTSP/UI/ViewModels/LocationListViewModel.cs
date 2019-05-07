@@ -27,7 +27,7 @@ namespace XamarinTSP.UI.ViewModels
                     App.InvokeOnMainThreadAsync(async () =>
                     {
                         var result = await _geolocationService.GetAddressListAsync(value);
-                        FoundLocations = new ObservableCollection<Location>(result.Select(address => new Location(address)));
+                        FoundLocations = new ObservableCollection<Location>(result.Select(address => new Location(FoundLocations.Count + 1, address)));
                         NotifyOfPropertyChange(() => FoundLocations);
                     }, 100);
                 }
@@ -44,7 +44,9 @@ namespace XamarinTSP.UI.ViewModels
         }
         public ICommand SelectCommand => new Command<Location>(selected =>
         {
+            selected.SetIndex(_list.Locations.Count + 1);
             _list.Locations.Add(selected);
+            NotifyOfPropertyChange(() => _list.Locations);
             ReturnCommand.Execute(null);
         });
         public ICommand ReturnCommand => new Command(() =>
