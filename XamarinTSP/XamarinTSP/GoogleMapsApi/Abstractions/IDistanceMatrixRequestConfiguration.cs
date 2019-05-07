@@ -8,7 +8,6 @@ namespace XamarinTSP.GoogleMapsApi.Abstractions
         string[] Destinations { get; set; }
         string[] Origins { get; set; }
         TravelMode TravelMode { get; set; }
-        string Region { get; set; } //region ccTLD code
         UnitSystem UnitSystem { get; set; }
         DateTime? DepartureTime { get; set; }
         DateTime? ArrivalTime { get; set; }

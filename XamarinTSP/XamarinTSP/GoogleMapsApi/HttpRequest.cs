@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ namespace XamarinTSP.GoogleMapsApi
 {
     internal class HttpRequest
     {
-        public static async Task<T> Post<T>(string request, bool tryReauthenticate = true)
+        internal static async Task<T> Post<T>(string request, bool tryReauthenticate = true)
         {
             var client = new HttpClient();
             try
@@ -24,9 +23,11 @@ namespace XamarinTSP.GoogleMapsApi
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)
                 {
-                    //TODO reauthenticate
                     if (tryReauthenticate)
-                        return await Post<T>(request, false);
+                    {
+                        await App.InvokeOnMainThreadAsync(async () => await Post<T>(request, false), 1000);
+                    }
+
 
                     return default(T);
                 }

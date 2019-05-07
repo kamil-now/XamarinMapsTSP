@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
@@ -14,6 +15,18 @@ namespace XamarinTSP.TSP
             else if(typeof(T) == typeof(IElement))
             {
                 return new Element(size);
+            }
+            throw new ArgumentException();
+        }
+        public static IElement CreateElement<T>(IEnumerable<int> data) where T : IElement
+        {
+            if (typeof(T) == typeof(IRouteElement))
+            {
+                return new RouteElement(data);
+            }
+            else if (typeof(T) == typeof(IElement))
+            {
+                return new Element(data);
             }
             throw new ArgumentException();
         }

@@ -149,7 +149,8 @@
                                                     Style="{StaticResource IconButton}"
                                                     FontFamily="{StaticResource MaterialDesignFont}"
                                                     CommandParameter="{Binding}"
-                                                    Command="{Binding Path=BindingContext.DeleteLocationCommand, Source={x:Reference Name=List}}" />
+                                                    Command="{Binding Path=BindingContext.DeleteLocationCommand, Source={x:Reference Name=List}}"
+                                                    IsEnabled="{Binding Path=BindingContext.IsTSPRunning, Converter={StaticResource NegateBoolConverter}, Source={x:Reference Name=List}}" />
 
                                         </Grid>
                                     </ViewCell.View>

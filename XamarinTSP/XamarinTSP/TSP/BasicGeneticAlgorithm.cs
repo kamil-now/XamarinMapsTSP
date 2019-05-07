@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using XamarinTSP.TSP.Abstractions;
 
 namespace XamarinTSP.TSP
@@ -9,6 +11,7 @@ namespace XamarinTSP.TSP
 
         public IBasicGeneticAlgorithmConfiguration Configuration { get; }
         private bool _run;
+
         public BasicGeneticAlgorithm(IBasicGeneticAlgorithmConfiguration configuration)
         {
             Configuration = configuration;
@@ -16,23 +19,27 @@ namespace XamarinTSP.TSP
         }
         public void Stop() => _run = false;
 
-        public void Run<TElement, TFitnessFunction>(IEnumerable<object> input, int[][] data, Action<TElement, IFitnessFunction> renderRouteAction) 
-            where TElement : IElement where TFitnessFunction : IFitnessFunction
+        public void Run<TElement, TFitnessFunction>(IEnumerable<object> input, int[][] data, Action<TElement, IFitnessFunction> renderRouteAction)
+            where TElement : class, IElement where TFitnessFunction : IFitnessFunction
         {
             var fitnessFunction = FitnessFunctionFactory.Create<TFitnessFunction>(input, data);
+            
 
             RUN(fitnessFunction, renderRouteAction);
-           
+
         }
-        protected void RUN<TElement>(IFitnessFunction fitnessFunction, Action<TElement, IFitnessFunction> renderRoute) where TElement : IElement
+        protected void RUN<TElement>(IFitnessFunction fitnessFunction, Action<TElement, IFitnessFunction> renderRoute) where TElement : class, IElement
         {
             _run = true;
-            Population<TElement> population = new Population<TElement>(Configuration.PopulationSize, fitnessFunction.ElementSize);
+            Population<TElement> population = Population<TElement>.GetRandomElementsPopulation(Configuration.PopulationSize, fitnessFunction.ElementSize);
 
             fitnessFunction.SetFitness(population);
 
             TElement currentBest = (TElement)population.Best.Copy();
-            renderRoute(currentBest, fitnessFunction);
+
+            var initElement = ElementFactory.CreateElement<TElement>(Enumerable.Range(0, fitnessFunction.ElementSize).ToList());
+            renderRoute(initElement as TElement, fitnessFunction);
+            
             while (_run)
             {
                 Configuration.CrossoverAlgorithm.Crossover(population, Configuration.CrossoverChance);

@@ -9,7 +9,6 @@ namespace XamarinTSP.GoogleMapsApi
         public string[] Destinations { get; set; }
         public string[] Origins { get; set; }
         public TravelMode TravelMode { get; set; }
-        public string Region { get; set; } //region ccTLD code
         public UnitSystem UnitSystem { get; set; }
         public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
@@ -33,7 +32,6 @@ namespace XamarinTSP.GoogleMapsApi
             Destinations = locations;
 
             TravelMode = config.TravelMode;
-            Region = config.Region;
             UnitSystem = config.UnitSystem;
             DepartureTime = config.DepartureTime;
             ArrivalTime = config.ArrivalTime;

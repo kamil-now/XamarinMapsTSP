@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Xamarin.Forms;
 using XamarinTSP.Common.Extensions;
@@ -86,10 +87,7 @@ namespace XamarinTSP.GoogleMapsApi
             {
                 requestParameters += "&arrival_time=" + ((int)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds).ToString();
             }
-            if (!string.IsNullOrEmpty(configuration.Region))
-            {
-                requestParameters += "&region=" + configuration.Region;
-            }
+
             if (configuration.Restriction != Restriction.Undefined)
             {
 
@@ -116,7 +114,7 @@ namespace XamarinTSP.GoogleMapsApi
                 requestParameters += "&units=" + (configuration.UnitSystem as Enum).GetDescription();
             }
 
-
+            requestParameters += "&region=" + RegionInfo.CurrentRegion.ThreeLetterISORegionName;
 
             return $"https://maps.googleapis.com/maps/api/distancematrix/json?{requestParameters}";
         }

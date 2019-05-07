@@ -13,15 +13,7 @@ namespace XamarinTSP.TSP
         public IElement Best => Elements.OrderByDescending(x => x.Fitness).First();
         public IElement Worst => Elements.OrderBy(x => x.Fitness).First();
         public double Diversity => Elements.DistinctBy(x => x.Value).Count() / (double)Size;
-
-        public Population(int populationSize, int elementSize)
-        {
-            Elements = new List<IElement>();
-            for (int i = 0; i < populationSize; i++)
-            {
-                Add(ElementFactory.Create<TElement>(elementSize));
-            }
-        }
+        
         public Population(List<IElement> elements)
         {
             Elements = elements;
@@ -36,5 +28,14 @@ namespace XamarinTSP.TSP
                 Elements.Remove(element);
         }
         public Population<TElement> Copy() => new Population<TElement>(Elements.Select(x => x.Copy()).ToList());
+        public static Population<TElement> GetRandomElementsPopulation(int populationSize, int elementSize)
+        {
+            var elements = new List<IElement>();
+            for (int i = 0; i < populationSize; i++)
+            {
+                elements.Add(ElementFactory.Create<TElement>(elementSize));
+            }
+            return new Population<TElement>(elements);
+        }
     }
 }

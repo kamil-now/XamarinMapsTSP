@@ -11,9 +11,10 @@ namespace XamarinTSP.TSP
         {
         }
 
-        public void RUN<T>(IDistanceMatrixData distanceMatrixData, IEnumerable<object> input, Action<T, IFitnessFunction> renderRouteAction) where T : IElement
+        public void RUN<T>(IDistanceMatrixData distanceMatrixData, IEnumerable<object> input, Action<T, IFitnessFunction> renderRouteAction) where T : class, IElement
         {
             var fitnessFunction = new RouteFitnessFunction(input, distanceMatrixData.DistanceMatrix, distanceMatrixData.DurationMatrix);
+
             base.RUN(fitnessFunction, renderRouteAction);
         }
     }

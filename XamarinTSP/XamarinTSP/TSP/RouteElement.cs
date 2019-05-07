@@ -9,7 +9,7 @@ namespace XamarinTSP.TSP
     {
         public double Value
         {
-            get => throw new NotImplementedException();
+            get => DistanceValue + DurationValue;
             set => throw new NotImplementedException();
         }
         public double DistanceValue { get; set; } = -1;

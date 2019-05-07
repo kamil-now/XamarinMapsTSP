@@ -12,12 +12,11 @@ namespace XamarinTSP.UI.Converters
             var retval = "";
             if (value is Distance dist)
             {
-                var km = dist.Meters / 1000;
-                var m = Math.Round(dist.Meters % 1000,2);
-                
-                if (km > 0 || m > 0)
+                var val = Math.Round(dist.Meters / 1000, 2);
+
+                if (val > 0)
                 {
-                    retval += $"{km}{System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator}{m}";
+                    retval += $"{val} km";
                 }
             }
             return retval;

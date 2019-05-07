@@ -7,7 +7,7 @@ namespace XamarinTSP.TSP.Abstractions
     {
         IBasicGeneticAlgorithmConfiguration Configuration { get; }
         void Run<TElement, TFitnessFunction>(IEnumerable<object> input, int[][] data, Action<TElement, IFitnessFunction> renderRoute)
-            where TElement : IElement where TFitnessFunction : IFitnessFunction;
+            where TElement : class, IElement where TFitnessFunction : IFitnessFunction;
         void Stop();
     }
 }

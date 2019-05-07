@@ -19,10 +19,8 @@ namespace XamarinTSP.UI.Converters
         }
         public static string GetString(int val, string str)
         {
-            if (val == 1)
-                return val + $" {str} ";
-            else if (val > 1)
-                return val + $" {str}s ";
+            if (val >= 1)
+                return $" {val}{str}";
             return "";
         }
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
