@@ -40,13 +40,12 @@ namespace XamarinTSP.UI.Models
             Index = $"{index}.";
         }
         public void Dispose() => OnDispose?.Invoke(this, null);
-
         private void BuildStrings(Address address)
         {
             Coordinates = $"{address.Latitude } {address.Longitude}";
             var street = $"{address.Thoroughfare} {address.SubThoroughfare}";
             var tmp = new[] {
-                    string.Join(" ", /*street,address.PostalCode, */address.Locality,address.SubLocality),
+                    string.Join(" ", address.Locality,address.SubLocality),
                     string.Join(" ", address.AdminArea, address.SubAdminArea),
                     string.Join(" ", address.CountryName, address.CountryCode),
                     address.FeatureName,

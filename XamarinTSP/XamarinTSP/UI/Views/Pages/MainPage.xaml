@@ -279,8 +279,7 @@
                         Text="&#xF34D;"
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
-                        Command="{Binding OpenInGoogleMapsCommand}"
-                        IsEnabled="{Binding RouteCalculated}" />
+                        Command="{Binding OpenInGoogleMapsCommand}"/>
             </Grid>
 
         </Grid>

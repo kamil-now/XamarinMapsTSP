@@ -179,7 +179,7 @@ namespace XamarinTSP.UI.ViewModels
         public ICommand OpenConfigurationCommand => new Command(async () => await _navigator.PushAsync<ConfigurationViewModel>());
         public ICommand AddLocationCommand => new Command(async () =>
         {
-            if(List.Locations.Count >= _googleMapsService.MAX_REQUEST_DESTINATIONS_COUNT)
+            if (List.Locations.Count >= _googleMapsService.MAX_REQUEST_DESTINATIONS_COUNT)
             {
                 await Application.Current.MainPage.DisplayAlert("REACHED LIMIT",
                     $"Distance matrix API destinations equals: {_googleMapsService.MAX_REQUEST_DESTINATIONS_COUNT}", "OK");
@@ -193,7 +193,7 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
-            _googleMapsService.OpenInGoogleMaps(MapViewModel.CalculatedRoute.RouteCoordinates.Select(x => $"{x.Latitude}, {x.Longitude}").ToArray());
+            _googleMapsService.OpenInGoogleMaps(List.Locations.Concat(new[] { List.Locations.First() }).Select(x => $"{x.Position.Latitude}+{x.Position.Longitude}").ToArray());
         });
         private void Locations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

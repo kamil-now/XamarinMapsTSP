@@ -39,18 +39,15 @@ namespace XamarinTSP.GoogleMapsApi
             }
             else
             {
-                //TODO 
+                throw new ArgumentException("MAX_REQUEST_DESTINATIONS_COUNT value exceeded");
             }
             return new DistanceMatrixData(response);
         }
 
         public void OpenInGoogleMaps(string[] waypoints)
         {
-            var origin = waypoints[0];
-            var destination = waypoints[waypoints.Length - 1];
-            string str = $"https://www.google.com/maps/dir/?api=1&origin={origin}&destination={destination}&waypoints=";
-            var tmp = waypoints.Skip(1).Take(waypoints.Length - 2).ToArray();
-            str += string.Join("|", tmp);
+            string str = "https://www.google.com/maps/dir/";
+            str += string.Join("/",waypoints);
             Device.OpenUri(new Uri(str));
         }
         private List<string> BuildRequests(IEnumerable<string> locations, IDistanceMatrixRequestConfiguration configuration)
