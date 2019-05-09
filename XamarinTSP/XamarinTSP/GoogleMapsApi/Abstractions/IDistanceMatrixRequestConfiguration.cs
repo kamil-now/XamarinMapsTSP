@@ -7,11 +7,13 @@ namespace XamarinTSP.GoogleMapsApi.Abstractions
     {
         string[] Destinations { get; set; }
         string[] Origins { get; set; }
+        string Origin { get; set; }
         TravelMode TravelMode { get; set; }
-        UnitSystem UnitSystem { get; set; }
         DateTime? DepartureTime { get; set; }
         DateTime? ArrivalTime { get; set; }
         TrafficModel TrafficModel { get; set; }
         Restriction Restriction { get; set; }
+
+        IDistanceMatrixRequestConfiguration Copy();
     }
 }

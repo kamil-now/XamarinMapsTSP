@@ -1,55 +1,165 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
+using Xamarin.Forms;
+using XamarinTSP.GoogleMapsApi.Abstractions;
+using XamarinTSP.GoogleMapsApi.Enums;
 using XamarinTSP.TSP.Abstractions;
 using XamarinTSP.UI.Abstractions;
+using XamarinTSP.UI.Utilities.Enums;
 
 namespace XamarinTSP.UI.ViewModels
 {
     public class ConfigurationViewModel : ViewModelBase
     {
+        private INavigator _navigator;
+        private IBasicGeneticAlgorithmConfiguration _activeTSPConfiguration;
+        private IDistanceMatrixRequestConfiguration _activeRouteConfiguration;
+
         private IEnumerable<ICrossoverAlgorithm> _crossoverAlgorithms;
         private IEnumerable<ISelectionAlgorithm> _selectionAlgorithms;
+        private IEnumerable<IMutationAlgorithm> _mutationAlgorithms;
+        private string _selectedCrossoverAlgorithm;
+        private string _selectedSelectionAlgorithm;
+        private string _selectedMutationAlgorithm;
+        private ConfigurationType _configurationType;
 
-        public IBasicGeneticAlgorithmConfiguration Configuration { get; set; }
+        public ConfigurationType ConfigurationType
+        {
+            get => _configurationType;
+            set
+            {
+                _configurationType = value;
+                NotifyOfPropertyChange();
+            }
+        }
+        public IBasicGeneticAlgorithmConfiguration TSPConfiguration { get; set; }
+
+        public IDistanceMatrixRequestConfiguration RouteConfiguration { get; set; }
 
         public IList<string> CrossoverAlgorithms => _crossoverAlgorithms.Select(x => x.Name).ToList();
         public IList<string> SelectionAlgorithms => _selectionAlgorithms.Select(x => x.Name).ToList();
-        public string SelectedCrossoverAlgorithm
+        public IList<string> MutationAlgorithms => _mutationAlgorithms.Select(x => x.Name).ToList();
+        public IList<string> TrafficModels => (IList<string>)Enum.GetValues(typeof(TrafficModel));
+
+        private string _selectedTrafficModel;
+
+        public string SelectedTrafficModel
         {
-            get => Configuration.CrossoverAlgorithm.Name;
+            get => _selectedTrafficModel;
             set
             {
+                _selectedTrafficModel = value;
+                TrafficModel val = TrafficModel.Undefined;
+                Enum.TryParse(value, out TrafficModel myStatus);
+                if (val != TrafficModel.Undefined)
+                {
+                    RouteConfiguration.TrafficModel = val;
+                }
+            }
+        }
+
+        public string SelectedCrossoverAlgorithm
+        {
+            get => _selectedCrossoverAlgorithm;
+            set
+            {
+                _selectedCrossoverAlgorithm = value;
                 var val = _crossoverAlgorithms.FirstOrDefault(x => x.Name == value);
                 if (val != null)
                 {
-                    Configuration.CrossoverAlgorithm = val;
+                    TSPConfiguration.CrossoverAlgorithm = val;
                 }
             }
-
         }
         public string SelectedSelectionAlgorithm
         {
-            get => Configuration.SelectionAlgorithm.Name;
+            get => _selectedSelectionAlgorithm;
             set
             {
+                _selectedSelectionAlgorithm = value;
                 var val = _selectionAlgorithms.FirstOrDefault(x => x.Name == value);
                 if (val != null)
                 {
-                    Configuration.SelectionAlgorithm = val;
+                    TSPConfiguration.SelectionAlgorithm = val;
                 }
             }
         }
 
-
-        public ConfigurationViewModel(IBasicGeneticAlgorithmConfiguration configuration
-                                    , IEnumerable<ICrossoverAlgorithm> crossoverAlgorithms
-                                    , IEnumerable<ISelectionAlgorithm> selectionAlgorithms)
+        public string SelectedMutationAlgorithm
         {
-            Configuration = configuration;
+            get => _selectedMutationAlgorithm;
+            set
+            {
+                _selectedMutationAlgorithm = value;
+                var val = _mutationAlgorithms.FirstOrDefault(x => x.Name == value);
+                if (val != null)
+                {
+                    TSPConfiguration.MutationAlgorithm = val;
+                }
+            }
+        }
+        public ConfigurationViewModel(INavigator navigator
+                                    , IBasicGeneticAlgorithmConfiguration activeTSPConfiguration
+                                    , IDistanceMatrixRequestConfiguration activeRouteConfiguration
+                                    , IEnumerable<ICrossoverAlgorithm> crossoverAlgorithms
+                                    , IEnumerable<ISelectionAlgorithm> selectionAlgorithms
+                                    , IEnumerable<IMutationAlgorithm> mutationAlgorithms)
+        {
+            _activeTSPConfiguration = activeTSPConfiguration;
+            _activeRouteConfiguration = activeRouteConfiguration;
 
+            TSPConfiguration = _activeTSPConfiguration.Copy();
+            RouteConfiguration = _activeRouteConfiguration.Copy();
+            _navigator = navigator;
             _crossoverAlgorithms = crossoverAlgorithms;
             _selectionAlgorithms = selectionAlgorithms;
+            _mutationAlgorithms = mutationAlgorithms;
 
+            ConfigurationType = ConfigurationType.TSP;
+
+            _selectedMutationAlgorithm = activeTSPConfiguration.MutationAlgorithm.Name;
+            _selectedSelectionAlgorithm = activeTSPConfiguration.SelectionAlgorithm.Name;
+            _selectedCrossoverAlgorithm = activeTSPConfiguration.CrossoverAlgorithm.Name;
+        }
+
+        public ICommand OnAppearingCommand => new Command(() =>
+        {
+            TSPConfiguration = _activeTSPConfiguration.Copy();
+            RouteConfiguration = _activeRouteConfiguration.Copy();
+        });
+        public ICommand SetTSPConfigurationCommand => new Command(() => ConfigurationType = ConfigurationType.TSP);
+        public ICommand SetRouteConfigurationCommand => new Command(() => ConfigurationType = ConfigurationType.Route);
+        public ICommand ReturnCommand => new Command(async () => await _navigator.PopToRootAsync());
+        public ICommand SaveCommand => new Command(async () =>
+        {
+            SaveTSPConfiguration();
+            SaveRouteConfiguration();
+            await Application.Current.MainPage.DisplayAlert("","CONFIGURATION SAVED", "OK");
+            ReturnCommand.Execute(null);
+        });
+
+        private void SaveTSPConfiguration()
+        {
+            _activeTSPConfiguration.CrossoverAlgorithm = TSPConfiguration.CrossoverAlgorithm;
+            _activeTSPConfiguration.SelectionAlgorithm = TSPConfiguration.SelectionAlgorithm;
+            _activeTSPConfiguration.MutationAlgorithm = TSPConfiguration.MutationAlgorithm;
+            _activeTSPConfiguration.PopulationSize = TSPConfiguration.PopulationSize;
+            _activeTSPConfiguration.TournamentSize = TSPConfiguration.TournamentSize;
+            _activeTSPConfiguration.CrossoverChance = TSPConfiguration.CrossoverChance;
+            _activeTSPConfiguration.MutationChance = TSPConfiguration.MutationChance;
+            _activeTSPConfiguration.ElitismFactor = TSPConfiguration.ElitismFactor;
+            _activeTSPConfiguration.MutationBasedOnDiversity = TSPConfiguration.MutationBasedOnDiversity;
+            _activeTSPConfiguration.TimeBasedFitness = TSPConfiguration.TimeBasedFitness;
+            _activeTSPConfiguration.DistanceBasedFitness = TSPConfiguration.DistanceBasedFitness;
+        }
+        private void SaveRouteConfiguration()
+        {
+            _activeRouteConfiguration.TrafficModel = RouteConfiguration.TrafficModel;
+            _activeRouteConfiguration.Restriction = RouteConfiguration.Restriction;
+            _activeRouteConfiguration.ArrivalTime = RouteConfiguration.ArrivalTime;
+            _activeRouteConfiguration.DepartureTime = RouteConfiguration.DepartureTime;
         }
     }
 }

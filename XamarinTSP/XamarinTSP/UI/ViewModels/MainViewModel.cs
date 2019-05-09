@@ -175,12 +175,21 @@ namespace XamarinTSP.UI.ViewModels
         });
         public ICommand SelectLocationCommand => new Command<Location>(selected => MapViewModel.MapPosition = selected.Position);
         public ICommand DeleteLocationCommand => new Command<Location>(selected => List.Locations.Remove(selected));
-        public ICommand AddLocationCommand => new Command(async () => await _navigator.PushAsync<LocationListViewModel>());
-        public ICommand OpenConfigurationCommand => new Command(async () => await _navigator.PushAsync<ConfigurationViewModel>());
 
-        public ICommand SetWalkModeCommand => new Command(() => _travelMode = TravelMode.Walking);
-        public ICommand SetBikeModeCommand => new Command(() => _travelMode = TravelMode.Bicycling);
-        public ICommand SetCarModeCommand => new Command(() => _travelMode = TravelMode.Driving);
+        public ICommand OpenConfigurationCommand => new Command(async () => await _navigator.PushAsync<ConfigurationViewModel>());
+        public ICommand AddLocationCommand => new Command(async () =>
+        {
+            if(List.Locations.Count >= _googleMapsService.MAX_REQUEST_DESTINATIONS_COUNT)
+            {
+                await Application.Current.MainPage.DisplayAlert("REACHED LIMIT",
+                    $"Distance matrix API destinations equals: {_googleMapsService.MAX_REQUEST_DESTINATIONS_COUNT}", "OK");
+            }
+            await _navigator.PushAsync<LocationListViewModel>();
+        });
+
+        public ICommand SetWalkModeCommand => new Command(() => TravelMode = TravelMode.Walking);
+        public ICommand SetBikeModeCommand => new Command(() => TravelMode = TravelMode.Bicycling);
+        public ICommand SetCarModeCommand => new Command(() => TravelMode = TravelMode.Driving);
 
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {

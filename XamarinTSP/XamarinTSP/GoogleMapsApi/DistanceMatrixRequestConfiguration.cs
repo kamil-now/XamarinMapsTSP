@@ -8,8 +8,8 @@ namespace XamarinTSP.GoogleMapsApi
     {
         public string[] Destinations { get; set; }
         public string[] Origins { get; set; }
+        public string Origin { get; set; }
         public TravelMode TravelMode { get; set; }
-        public UnitSystem UnitSystem { get; set; }
         public DateTime? DepartureTime { get; set; }
         public DateTime? ArrivalTime { get; set; }
         public TrafficModel TrafficModel { get; set; }
@@ -18,25 +18,37 @@ namespace XamarinTSP.GoogleMapsApi
         public DistanceMatrixRequestConfiguration()
         {
             TravelMode = TravelMode.Driving;
-            UnitSystem = UnitSystem.Metric;
             TrafficModel = TrafficModel.Optimistic;
         }
-        public DistanceMatrixRequestConfiguration(string[] locations) : this()
-        {
-            Destinations = locations;
-            Origins = locations;
-        }
-        public DistanceMatrixRequestConfiguration(string origin, string[] locations, DistanceMatrixRequestConfiguration config)
-        {
-            Origins = new[] { origin };
-            Destinations = locations;
+        //public DistanceMatrixRequestConfiguration(string[] locations) : this()
+        //{
+        //    Destinations = locations;
+        //    Origins = locations;
+        //}
+        //public DistanceMatrixRequestConfiguration(string origin, string[] locations, DistanceMatrixRequestConfiguration config)
+        //{
+        //    Origins = new[] { origin };
+        //    Destinations = locations;
 
-            TravelMode = config.TravelMode;
-            UnitSystem = config.UnitSystem;
-            DepartureTime = config.DepartureTime;
-            ArrivalTime = config.ArrivalTime;
-            TrafficModel = config.TrafficModel;
-            Restriction = config.Restriction;
+        //    TravelMode = config.TravelMode;
+        //    DepartureTime = config.DepartureTime;
+        //    ArrivalTime = config.ArrivalTime;
+        //    TrafficModel = config.TrafficModel;
+        //    Restriction = config.Restriction;
+        //}
+
+        public IDistanceMatrixRequestConfiguration Copy()
+        {
+            return new DistanceMatrixRequestConfiguration()
+            {
+                Destinations = Destinations,
+                Origins = Origins,
+                TravelMode = TravelMode,
+                DepartureTime = DepartureTime,
+                ArrivalTime = ArrivalTime,
+                TrafficModel = TrafficModel,
+                Restriction = Restriction
+            };
         }
     }
 }

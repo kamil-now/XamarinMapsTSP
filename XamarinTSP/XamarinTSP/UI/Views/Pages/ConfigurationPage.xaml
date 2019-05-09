@@ -1,136 +1,255 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="XamarinTSP.UI.Views.ConfigurationPage">
+             x:Class="XamarinTSP.UI.Views.ConfigurationPage"
+             xmlns:enums="clr-namespace:XamarinTSP.UI.Utilities.Enums"
+             xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
+             NavigationPage.HasNavigationBar="False">
+        <ContentPage.Behaviors>
+            <behaviors:EventToCommandBehavior EventName="Appearing"
+                                              Command="{Binding OnAppearingCommand}" />
+        </ContentPage.Behaviors>
     <ContentPage.Content>
-
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ScrollView Grid.Row="0">
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Text="TSP"
+                        FontAttributes="Bold"
+                        BackgroundColor="Transparent"
+                        Command="{Binding SetTSPConfigurationCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="TextColor"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding ConfigurationType, Mode=OneWay}"
+                                             Value="{x:Static enums:ConfigurationType.TSP}">
+                                    <Setter Property="TextColor"
+                                            Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Grid.Column="1"
+                        Text="ROUTE"
+                        FontAttributes="Bold"
+                        BackgroundColor="Transparent"
+                        Command="{Binding SetRouteConfigurationCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="TextColor"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding ConfigurationType, Mode=OneWay}"
+                                             Value="{x:Static enums:ConfigurationType.Route}">
+                                    <Setter Property="TextColor"
+                                            Value="CornflowerBlue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="IsVisible"
+                                Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Grid"
+                                         Binding="{Binding ConfigurationType, Mode=OneWay}"
+                                         Value="{x:Static enums:ConfigurationType.TSP}">
+                                <Setter Property="IsVisible"
+                                        Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <Label Text="TSP algorithm configuration"
+                       Grid.Row="0"
+                       HorizontalOptions="Center" />
+                <StackLayout Grid.Row="0"
+                             HeightRequest="1"
+                             HorizontalOptions="Fill"
+                             VerticalOptions="End"
+                             BackgroundColor="Black" />
 
-                    <Label Text="TSP algorithm configuration"
-                           Grid.Row="0"
-                           HorizontalOptions="Center"
-                           Grid.ColumnSpan="2" />
-                    <StackLayout Grid.Row="0"
-                                 Grid.ColumnSpan="2"
-                                 HeightRequest="1"
-                                 HorizontalOptions="Fill"
-                                 VerticalOptions="End"
-                                 BackgroundColor="Black" />
-                    <Label Text="Selection algorithm:"
-                           Grid.Row="1"
-                           Grid.Column="0" />
-                    <Picker Grid.Row="1"
-                            Grid.Column="1"
-                            ItemsSource="{Binding SelectionAlgorithms}"
-                            SelectedItem="{Binding SelectedSelectionAlgorithm}" />
-                    <Label Text="Crossover algorithm:"
-                           Grid.Row="2"
-                           Grid.Column="0" />
-                    <Picker Grid.Row="2"
-                            Grid.Column="1"
-                            ItemsSource="{Binding CrossoverAlgorithms}"
-                            SelectedItem="{Binding SelectedCrossoverAlgorithm}" />
+                <ScrollView Grid.Row="1">
+                    <StackLayout Orientation="Vertical">
 
-                    <Label Text="Population size:"
-                           Grid.Row="3"
-                           Grid.Column="0" />
-                    <Entry Grid.Row="3"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Text="{Binding Configuration.PopulationSize}" />
+                        <Grid>
+                            <Label Text="Population size:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Entry Grid.Column="1"
+                                   VerticalOptions="Center"
+                                   Keyboard="Numeric"
+                                   Text="{Binding TSPConfiguration.PopulationSize}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Time based fitness:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding TSPConfiguration.TimeBasedFitness}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Distance based fitness:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding TSPConfiguration.DistanceBasedFitness}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Selection algorithm:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Picker Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    ItemsSource="{Binding SelectionAlgorithms}"
+                                    SelectedItem="{Binding SelectedSelectionAlgorithm, Mode=TwoWay}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Crossover algorithm:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Picker Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    ItemsSource="{Binding CrossoverAlgorithms}"
+                                    SelectedItem="{Binding SelectedCrossoverAlgorithm, Mode=TwoWay}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Mutation algorithm:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Picker Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    ItemsSource="{Binding MutationAlgorithms}"
+                                    SelectedItem="{Binding SelectedMutationAlgorithm, Mode=TwoWay}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Crossover chance:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Entry Grid.Column="1"
+                                   Keyboard="Numeric"
+                                   VerticalOptions="Center"
+                                   Text="{Binding TSPConfiguration.CrossoverChance}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Mutation chance:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Entry Grid.Column="1"
+                                   Keyboard="Numeric"
+                                   VerticalOptions="Center"
+                                   Text="{Binding TSPConfiguration.MutationChance}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Mutation based on diversity:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding TSPConfiguration.MutationBasedOnDiversity}" />
+                        </Grid>
 
-                    <Label Text="Crossover chance:"
-                           Grid.Row="4"
-                           Grid.Column="0" />
-                    <Entry Grid.Row="4"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Text="{Binding Configuration.CrossoverChance}" />
+                    </StackLayout>
 
-                    <Label Text="Mutation chance:"
-                           Grid.Row="5"
-                           Grid.Column="0" />
-                    <Entry Grid.Row="5"
-                           Grid.Column="1"
-                           Keyboard="Numeric"
-                           Text="{Binding Configuration.MutationChance}" />
+                </ScrollView>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="IsVisible"
+                                Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Grid"
+                                         Binding="{Binding ConfigurationType, Mode=OneWay}"
+                                         Value="{x:Static enums:ConfigurationType.Route}">
+                                <Setter Property="IsVisible"
+                                        Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                    <Label Text="Mutation based on diversity:"
-                           Grid.Row="6"
-                           Grid.Column="0" />
-                    <Switch Grid.Row="6"
-                            Grid.Column="1"
-                            IsToggled="{Binding Configuration.MutationBasedOnDiversity}" />
+                <Label Text="Route configuration"
+                       Grid.Row="0"
+                       HorizontalOptions="Center" />
+                <StackLayout Grid.Row="0"
+                             HeightRequest="1"
+                             HorizontalOptions="Fill"
+                             VerticalOptions="End"
+                             BackgroundColor="Black" />
 
-                    <Label Text="Time based fitness:"
-                           Grid.Row="7"
-                           Grid.Column="0" />
-                    <Switch Grid.Row="7"
-                            Grid.Column="1"
-                            IsToggled="{Binding Configuration.TimeBasedFitness}" />
+                <ScrollView Grid.Row="1">
+                    <!--<StackLayout Orientation="Vertical">
+                        <Grid>
+                            <Label Text="TrafficModels:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Picker Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    ItemsSource="{Binding TrafficModels}"
+                                    SelectedItem="{Binding SelectedTrafficModel, Mode=TwoWay}" />
+                        </Grid>
+                    </StackLayout>-->
+                </ScrollView>
+            </Grid>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Text=" &#xF04D;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
+                        Command="{Binding ReturnCommand}" />
+                <Button Grid.Column="1"
+                        Text="&#xF249;"
+                        Style="{StaticResource IconButton}"
+                        FontFamily="{StaticResource MaterialDesignFont}"
+                        Command="{Binding SaveCommand}" />
 
-                    <Label Text="Distance based fitness:"
-                           Grid.Row="8"
-                           Grid.Column="0" />
-                    <Switch Grid.Row="8"
-                            Grid.Column="1"
-                            IsToggled="{Binding Configuration.DistanceBasedFitness}" />
-
-                </Grid>
-            </ScrollView>
-            <ScrollView Grid.Row="1">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <Label Text="Route configuration"
-                           Grid.Row="0"
-                           HorizontalOptions="Center"
-                           Grid.ColumnSpan="2" />
-                    <StackLayout Grid.Row="0"
-                                 Grid.ColumnSpan="2"
-                                 HeightRequest="1"
-                                 HorizontalOptions="Fill"
-                                 VerticalOptions="End"
-                                 BackgroundColor="Black" />
-                </Grid>
-            </ScrollView>
+            </Grid>
         </Grid>
-
     </ContentPage.Content>
 </ContentPage>

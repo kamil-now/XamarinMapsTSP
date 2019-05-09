@@ -14,5 +14,7 @@
         bool MutationBasedOnDiversity { get; set; }
         bool TimeBasedFitness { get; set; }
         bool DistanceBasedFitness { get; set; }
+
+        IBasicGeneticAlgorithmConfiguration Copy();
     }
 }

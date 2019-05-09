@@ -11,16 +11,18 @@ namespace XamarinTSP.GoogleMapsApi
 {
     public class GoogleMapsService : IGoogleMapsService
     {
-        private const int MAX_REQUEST_DESTINATIONS_COUNT = 25;
-
+        public int MAX_REQUEST_DESTINATIONS_COUNT => 25;
+        private IDistanceMatrixRequestConfiguration _activeDistanceMatrixConfiguration;
+        public GoogleMapsService(IDistanceMatrixRequestConfiguration activeDistanceMatrixConfiguration)
+        {
+            _activeDistanceMatrixConfiguration = activeDistanceMatrixConfiguration;
+        }
         public IDistanceMatrixData GetDistanceMatrix(IEnumerable<string> locations, TravelMode travelMode)
         {
-            var configuration = new DistanceMatrixRequestConfiguration(locations.ToArray())
-            {
-                TravelMode = travelMode
-            };
+            _activeDistanceMatrixConfiguration.Destinations = _activeDistanceMatrixConfiguration.Origins = locations.ToArray();
+            _activeDistanceMatrixConfiguration.TravelMode = _activeDistanceMatrixConfiguration.TravelMode;
 
-            DistanceMatrixResponse response = new DistanceMatrixResponse()
+             DistanceMatrixResponse response = new DistanceMatrixResponse()
             {
                 Origin_Addresses = Array.Empty<string>(),
                 Destination_Addresses = Array.Empty<string>(),
@@ -28,7 +30,7 @@ namespace XamarinTSP.GoogleMapsApi
             };
             if (locations.Count() < MAX_REQUEST_DESTINATIONS_COUNT)
             {
-                var requests = BuildRequests(locations, configuration);
+                var requests = BuildRequests(locations, _activeDistanceMatrixConfiguration);
                 requests.ForEach(async request =>
                 {
                     var res = await HttpRequest.Post<DistanceMatrixResponse>(request);
@@ -51,23 +53,26 @@ namespace XamarinTSP.GoogleMapsApi
             str += string.Join("|", tmp);
             Device.OpenUri(new Uri(str));
         }
-        private List<string> BuildRequests(IEnumerable<string> locations, DistanceMatrixRequestConfiguration configuration)
+        private List<string> BuildRequests(IEnumerable<string> locations, IDistanceMatrixRequestConfiguration configuration)
         {
             var count = locations.Count();
             var retval = new List<string>();
             for (int i = 0; i < count; i++)
             {
-                retval.Add(BuildSingleRequest(new DistanceMatrixRequestConfiguration(locations.ElementAt(i), locations.ToArray(), configuration)));
+                var config = configuration.Copy();
+                config.Origin = locations.ElementAt(i);
+                retval.Add(BuildSingleRequest(config));
             }
             return retval;
         }
-        private string BuildSingleRequest(DistanceMatrixRequestConfiguration configuration)
+        private string BuildSingleRequest(IDistanceMatrixRequestConfiguration configuration)
         {
-            if (configuration.Destinations == null || configuration.Origins == null)
+            if (configuration.Destinations == null || string.IsNullOrEmpty(configuration.Origin))
                 throw new ArgumentException("Invalid request configuration");
             if (string.IsNullOrEmpty((Application.Current as App).ApiKey))
                 throw new Exception("Missing API key");
 
+            configuration.Origins = new[] { configuration.Origin };
 
             var requestParameters = "";
             requestParameters += $"&key={(Application.Current as App).ApiKey}";
@@ -109,11 +114,8 @@ namespace XamarinTSP.GoogleMapsApi
             {
                 requestParameters += "&mode=" + (configuration.TravelMode as Enum).GetDescription();
             }
-            if (configuration.UnitSystem != UnitSystem.Undefined)
-            {
-                requestParameters += "&units=" + (configuration.UnitSystem as Enum).GetDescription();
-            }
 
+            requestParameters += "&units=" + UnitSystem.Metric.GetDescription();
             requestParameters += "&region=" + RegionInfo.CurrentRegion.ThreeLetterISORegionName;
 
             return $"https://maps.googleapis.com/maps/api/distancematrix/json?{requestParameters}";

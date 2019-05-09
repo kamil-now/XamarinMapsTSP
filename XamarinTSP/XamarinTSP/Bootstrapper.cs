@@ -52,9 +52,18 @@ namespace XamarinTSP
             builder.RegisterType<LocationList>().AsSelf().SingleInstance();
 
 
+            builder.RegisterType<PMXCrossover>().AsImplementedInterfaces();
+
+            builder.RegisterType<InversionMutation>().AsImplementedInterfaces();
+
+            builder.RegisterType<RouletteSelection>().AsImplementedInterfaces();
+            builder.RegisterType<TournamentSelection>().AsImplementedInterfaces();
+
+
             builder.RegisterType<GoogleMapsService>().As<IGoogleMapsService>().SingleInstance();
 
             builder.RegisterType<BasicGeneticAlgorithmConfiguration>().As<IBasicGeneticAlgorithmConfiguration>().SingleInstance();
+            builder.RegisterType<DistanceMatrixRequestConfiguration>().As<IDistanceMatrixRequestConfiguration>().SingleInstance();
 
             builder.RegisterType<DurationFitnessFunction>().As<IDurationFitnessFunction>().SingleInstance();
             builder.RegisterType<DistanceFitnessFunction>().As<IDistanceFitnessFunction>().SingleInstance();
