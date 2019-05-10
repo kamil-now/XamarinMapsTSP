@@ -110,7 +110,6 @@
                         </Style>
                     </Button.Style>
                 </Button>
-
                 <Frame  Grid.Row="0"
                         Grid.Column="1"
                         Grid.RowSpan="3"
@@ -168,24 +167,35 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Frame>
-
                 <Button Grid.Row="1"
                         Grid.Column="2"
                         Grid.RowSpan="2"
                         Text="&#xF419;"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
                         Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
                         Command="{Binding AddLocationCommand}"
-                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}" />
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}">
+
+                </Button>
                 <Button Grid.Row="0"
                         Grid.Column="2"
                         Grid.RowSpan="2"
-                        Text="&#xF651;"
-                        IsVisible="False"
+                        Text="&#xF9EC;"
                         Style="{StaticResource IconButton}"
-                        FontFamily="{StaticResource MaterialDesignFont}">
-
-                </Button>
+                        FontFamily="{StaticResource MaterialDesignFont}"
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}"
+                        Command="{Binding SetSampleDataCommand}" />
+                <ActivityIndicator Grid.Row="0"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Color="Black"
+                                   BackgroundColor="Transparent"
+                                   IsVisible="{Binding LoadingSampleData}"
+                                   IsRunning="true" />
             </Grid>
 
             <StackLayout Grid.Row="1"
@@ -238,6 +248,7 @@
                         IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}" />
                 <Button Grid.Column="1"
                         x:Name="tspButton"
+                        IsEnabled="True"
                         CommandParameter="{x:Reference tspButton}"
                         Command="{Binding RunTSPCommand}">
                     <Button.Style>
@@ -264,6 +275,12 @@
                                     <Setter Property="FontFamily"
                                             Value="{StaticResource MaterialDesignFont}" />
                                 </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding List.Locations.Count}"
+                                             Value="0">
+                                    <Setter Property="IsEnabled"
+                                            Value="False" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
@@ -277,9 +294,39 @@
                                    IsRunning="{Binding IsAlgorithmRunning}" />
                 <Button Grid.Column="2"
                         Text="&#xF34D;"
-                        Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
-                        Command="{Binding OpenInGoogleMapsCommand}"/>
+                        Command="{Binding OpenInGoogleMapsCommand}"
+                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
+                            <Setter Property="FontFamily"
+                                    Value="{StaticResource MaterialDesignFont}" />
+                            <Setter Property="IsEnabled"
+                                    Value="True" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsAlgorithmRunning}"
+                                             Value="True">
+                                    <Setter Property="IsEnabled"
+                                            Value="False" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding IsAlgorithmRunning}"
+                                             Value="False">
+                                    <Setter Property="IsEnabled"
+                                            Value="True" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding List.Locations.Count}"
+                                             Value="0">
+                                    <Setter Property="IsEnabled"
+                                            Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
 
         </Grid>

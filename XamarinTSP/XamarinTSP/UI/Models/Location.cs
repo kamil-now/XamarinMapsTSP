@@ -13,6 +13,8 @@ namespace XamarinTSP.UI.Models
         private Position _position;
 
         public Guid Id { get; }
+        public bool IsSampleData { get; }
+        public string Name { get; }
         public string MainDisplayString { get; private set; }
         public string AdditionalLocationInfo { get; private set; }
         public string Coordinates { get; private set; }
@@ -28,6 +30,11 @@ namespace XamarinTSP.UI.Models
             }
         }
         public Location() { }
+        public Location(string name, int index, Address address) : this(index, address)
+        {
+            Name = name;
+            IsSampleData = true;
+        }
         public Location(int index, Address address)
         {
             SetIndex(index);

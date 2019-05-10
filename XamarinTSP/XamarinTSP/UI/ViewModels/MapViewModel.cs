@@ -13,6 +13,7 @@ namespace XamarinTSP.UI.ViewModels
         private IGeolocationService _geolocation;
         private Position _mapPosition;
 
+        public double ZoomDistance { get; set; }
         public bool IsRouteVisible { get; set; }
         public Route CalculatedRoute { get; set; }
         public LocationList List { get; set; }
@@ -40,7 +41,11 @@ namespace XamarinTSP.UI.ViewModels
             NotifyOfPropertyChange(() => CalculatedRoute.Time);
             NotifyOfPropertyChange(() => CalculatedRoute.Distance);
         }
-        public async Task MoveToUserRegion() => await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
+        public async Task MoveToUserRegion()
+        {
+
+            await MoveToLocation(RegionInfo.CurrentRegion.DisplayName);
+        }
         public async Task MoveToLocation(string locationName)
         {
             var positions = await _geolocation.GetLocationCoordinates(locationName);

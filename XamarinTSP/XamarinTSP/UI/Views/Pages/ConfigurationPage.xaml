@@ -5,10 +5,10 @@
              xmlns:enums="clr-namespace:XamarinTSP.UI.Utilities.Enums"
              xmlns:behaviors="clr-namespace:XamarinTSP.UI.Behaviors"
              NavigationPage.HasNavigationBar="False">
-        <ContentPage.Behaviors>
-            <behaviors:EventToCommandBehavior EventName="Appearing"
-                                              Command="{Binding OnAppearingCommand}" />
-        </ContentPage.Behaviors>
+    <ContentPage.Behaviors>
+        <behaviors:EventToCommandBehavior EventName="Appearing"
+                                          Command="{Binding OnAppearingCommand}" />
+    </ContentPage.Behaviors>
     <ContentPage.Content>
         <Grid>
             <Grid.RowDefinitions>
@@ -175,6 +175,26 @@
                                    Text="{Binding TSPConfiguration.MutationChance}" />
                         </Grid>
                         <Grid>
+                            <Label Text="Elitism factor:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Entry Grid.Column="1"
+                                   Keyboard="Numeric"
+                                   VerticalOptions="Center"
+                                   Text="{Binding TSPConfiguration.ElitismFactor}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Elitism:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding TSPConfiguration.Elitism}" />
+                        </Grid>
+                        <Grid>
                             <Label Text="Mutation based on diversity:"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End"
@@ -184,7 +204,6 @@
                                     HorizontalOptions="Center"
                                     IsToggled="{Binding TSPConfiguration.MutationBasedOnDiversity}" />
                         </Grid>
-
                     </StackLayout>
 
                 </ScrollView>
@@ -219,9 +238,10 @@
                              BackgroundColor="Black" />
 
                 <ScrollView Grid.Row="1">
-                    <!--<StackLayout Orientation="Vertical">
+
+                    <StackLayout Orientation="Vertical">
                         <Grid>
-                            <Label Text="TrafficModels:"
+                            <Label Text="Traffic models:"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End"
                                    Grid.Column="0" />
@@ -230,7 +250,37 @@
                                     ItemsSource="{Binding TrafficModels}"
                                     SelectedItem="{Binding SelectedTrafficModel, Mode=TwoWay}" />
                         </Grid>
-                    </StackLayout>-->
+                        <Grid>
+                            <Label Text="Avoid tolls:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding AvoidTolls}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Avoid highways:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding AvoidHighways}" />
+                        </Grid>
+                        <Grid>
+                            <Label Text="Avoid ferries:"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="0" />
+                            <Switch Grid.Column="1"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    IsToggled="{Binding AvoidFerries}" />
+                        </Grid>
+                    </StackLayout>
                 </ScrollView>
             </Grid>
             <Grid Grid.Row="2">

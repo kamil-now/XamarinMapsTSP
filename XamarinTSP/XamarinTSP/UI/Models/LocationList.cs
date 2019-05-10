@@ -28,7 +28,7 @@ namespace XamarinTSP.UI.Models
             for (int i = 0; i < positions.Length; i++)
             {
                 tmp[i] = Locations.ElementAt(positions[i]);
-                tmp[i].SetIndex(i+1);
+                tmp[i].SetIndex(i + 1);
             }
             Locations = new ObservableCollection<Location>(tmp);
         }
@@ -37,7 +37,9 @@ namespace XamarinTSP.UI.Models
             Locations.Clear();
             void addLocation(string location)
             {
-                Locations.Add(new Location(Locations.Count + 1, geolocation.GetAddressList(location).FirstOrDefault()));
+                App.InvokeOnMainThreadAsync(() =>
+                Locations.Add(new Location(location, Locations.Count + 1, geolocation.GetAddressList(location).FirstOrDefault()))
+                );
             }
             addLocation("Warszawa");
             addLocation("Wrocław");

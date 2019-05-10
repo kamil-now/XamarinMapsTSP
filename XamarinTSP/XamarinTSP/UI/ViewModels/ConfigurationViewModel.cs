@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using Xamarin.Forms;
+using XamarinTSP.Common.Extensions;
 using XamarinTSP.GoogleMapsApi.Abstractions;
 using XamarinTSP.GoogleMapsApi.Enums;
 using XamarinTSP.TSP.Abstractions;
@@ -37,11 +38,55 @@ namespace XamarinTSP.UI.ViewModels
         public IBasicGeneticAlgorithmConfiguration TSPConfiguration { get; set; }
 
         public IDistanceMatrixRequestConfiguration RouteConfiguration { get; set; }
-
+        public bool AvoidTolls
+        {
+            get => RouteConfiguration.Restriction.HasFlag(Restriction.AvoidTolls);
+            set
+            {
+                if (value)
+                {
+                    RouteConfiguration.Restriction |= Restriction.AvoidTolls;
+                }
+                else
+                {
+                    RouteConfiguration.Restriction &= ~Restriction.AvoidTolls;
+                }
+            }
+        }
+        public bool AvoidFerries
+        {
+            get => RouteConfiguration.Restriction.HasFlag(Restriction.AvoidFerries);
+            set
+            {
+                if (value)
+                {
+                    RouteConfiguration.Restriction |= Restriction.AvoidFerries;
+                }
+                else
+                {
+                    RouteConfiguration.Restriction &= ~Restriction.AvoidFerries;
+                }
+            }
+        }
+        public bool AvoidHighways
+        {
+            get => RouteConfiguration.Restriction.HasFlag(Restriction.AvoidHighways);
+            set
+            {
+                if (value)
+                {
+                    RouteConfiguration.Restriction |= Restriction.AvoidHighways;
+                }
+                else
+                {
+                    RouteConfiguration.Restriction &= ~Restriction.AvoidHighways;
+                }
+            }
+        }
         public IList<string> CrossoverAlgorithms => _crossoverAlgorithms.Select(x => x.Name).ToList();
         public IList<string> SelectionAlgorithms => _selectionAlgorithms.Select(x => x.Name).ToList();
         public IList<string> MutationAlgorithms => _mutationAlgorithms.Select(x => x.Name).ToList();
-        public IList<string> TrafficModels => (IList<string>)Enum.GetValues(typeof(TrafficModel));
+        public IList<string> TrafficModels { get; }
 
         private string _selectedTrafficModel;
 
@@ -116,8 +161,8 @@ namespace XamarinTSP.UI.ViewModels
             _crossoverAlgorithms = crossoverAlgorithms;
             _selectionAlgorithms = selectionAlgorithms;
             _mutationAlgorithms = mutationAlgorithms;
-
-            ConfigurationType = ConfigurationType.TSP;
+            
+            TrafficModels = new List<string>(EnumExtensions.GetValues<TrafficModel>().Select(x => x.ToString()));
 
             _selectedMutationAlgorithm = activeTSPConfiguration.MutationAlgorithm.Name;
             _selectedSelectionAlgorithm = activeTSPConfiguration.SelectionAlgorithm.Name;
@@ -126,8 +171,10 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand OnAppearingCommand => new Command(() =>
         {
+            ConfigurationType = ConfigurationType.TSP;
             TSPConfiguration = _activeTSPConfiguration.Copy();
             RouteConfiguration = _activeRouteConfiguration.Copy();
+            NotifyOfPropertyChange();
         });
         public ICommand SetTSPConfigurationCommand => new Command(() => ConfigurationType = ConfigurationType.TSP);
         public ICommand SetRouteConfigurationCommand => new Command(() => ConfigurationType = ConfigurationType.Route);
@@ -136,7 +183,7 @@ namespace XamarinTSP.UI.ViewModels
         {
             SaveTSPConfiguration();
             SaveRouteConfiguration();
-            await Application.Current.MainPage.DisplayAlert("","CONFIGURATION SAVED", "OK");
+            await Application.Current.MainPage.DisplayAlert("", "CONFIGURATION SAVED", "OK");
             ReturnCommand.Execute(null);
         });
 
@@ -150,6 +197,7 @@ namespace XamarinTSP.UI.ViewModels
             _activeTSPConfiguration.CrossoverChance = TSPConfiguration.CrossoverChance;
             _activeTSPConfiguration.MutationChance = TSPConfiguration.MutationChance;
             _activeTSPConfiguration.ElitismFactor = TSPConfiguration.ElitismFactor;
+            _activeTSPConfiguration.Elitism = TSPConfiguration.Elitism;
             _activeTSPConfiguration.MutationBasedOnDiversity = TSPConfiguration.MutationBasedOnDiversity;
             _activeTSPConfiguration.TimeBasedFitness = TSPConfiguration.TimeBasedFitness;
             _activeTSPConfiguration.DistanceBasedFitness = TSPConfiguration.DistanceBasedFitness;

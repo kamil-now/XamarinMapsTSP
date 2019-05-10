@@ -60,11 +60,13 @@ namespace XamarinTSP.TSP
 
                 population = Configuration.SelectionAlgorithm.Select(population, Configuration.PopulationSize);
 
-
-                int elitism = (int)(Configuration.ElitismFactor * population.Size);
-                for (int j = 0; j < elitism; j++)
+                if (Configuration.Elitism)
                 {
-                    population.Add(population.Best.Copy());
+                    int elitism = (int)(Configuration.ElitismFactor * population.Size);
+                    for (int j = 0; j < elitism; j++)
+                    {
+                        population.Add(population.Best.Copy());
+                    }
                 }
 
                 if (population.Best.Value < currentBest.Value)

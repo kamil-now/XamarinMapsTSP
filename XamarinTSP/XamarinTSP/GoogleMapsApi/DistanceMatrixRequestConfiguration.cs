@@ -20,22 +20,6 @@ namespace XamarinTSP.GoogleMapsApi
             TravelMode = TravelMode.Driving;
             TrafficModel = TrafficModel.Optimistic;
         }
-        //public DistanceMatrixRequestConfiguration(string[] locations) : this()
-        //{
-        //    Destinations = locations;
-        //    Origins = locations;
-        //}
-        //public DistanceMatrixRequestConfiguration(string origin, string[] locations, DistanceMatrixRequestConfiguration config)
-        //{
-        //    Origins = new[] { origin };
-        //    Destinations = locations;
-
-        //    TravelMode = config.TravelMode;
-        //    DepartureTime = config.DepartureTime;
-        //    ArrivalTime = config.ArrivalTime;
-        //    TrafficModel = config.TrafficModel;
-        //    Restriction = config.Restriction;
-        //}
 
         public IDistanceMatrixRequestConfiguration Copy()
         {

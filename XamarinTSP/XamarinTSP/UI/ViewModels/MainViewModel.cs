@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -55,6 +56,8 @@ namespace XamarinTSP.UI.ViewModels
             }
         }
 
+        public bool LoadingSampleData { get; private set; }
+
         public MapViewModel MapViewModel { get; private set; }
         public LocationList List { get; private set; }
 
@@ -90,17 +93,13 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-            if (List.Locations.Count == 0)
-            {
-                List.SetMockData(_geolocation);
-            }
-            if (List.Locations?.Count == 0)
-                await MapViewModel.MoveToUserRegion();
+            MapViewModel.ZoomDistance = 1000;
+            await MapViewModel.MoveToUserRegion();
         });
 
         public ICommand RunTSPCommand => new Command<Button>(async button =>
         {
-            var renderActionQueue = new DelegateInvocationQueue() { MillisecondsTimeout = 2000 };
+            var renderActionQueue = new DelegateInvocationQueue() { MillisecondsTimeout = 5000 };
 
             if (IsAlgorithmRunning || RetrievingDistanceMatrix)
             {
@@ -190,10 +189,30 @@ namespace XamarinTSP.UI.ViewModels
         public ICommand SetWalkModeCommand => new Command(() => TravelMode = TravelMode.Walking);
         public ICommand SetBikeModeCommand => new Command(() => TravelMode = TravelMode.Bicycling);
         public ICommand SetCarModeCommand => new Command(() => TravelMode = TravelMode.Driving);
+        public ICommand SetSampleDataCommand => new Command(async () =>
+        {
+            LoadingSampleData = true;
+
+            NotifyOfPropertyChange(() => LoadingSampleData);
+            await Task.Run(async () =>
+            {
+                List.SetMockData(_geolocation);
+                await App.InvokeOnMainThreadAsync(() =>
+                {
+                    foreach (var item in List.Locations)
+                    {
+                        Debug.WriteLine($"{item.Position.Latitude} | {item.Position.Longitude}");
+                    }
+                    LoadingSampleData = false;
+                    NotifyOfPropertyChange(() => LoadingSampleData);
+
+                });
+            });
+        });
 
         public ICommand OpenInGoogleMapsCommand => new Command(() =>
         {
-            _googleMapsService.OpenInGoogleMaps(List.Locations.Concat(new[] { List.Locations.First() }).Select(x => $"{x.Position.Latitude}+{x.Position.Longitude}").ToArray());
+            _googleMapsService.OpenInGoogleMaps(List.Locations.Concat(new[] { List.Locations.First() }).Select(x => x.IsSampleData ? x.Name : $"{x.Position.Latitude}+{x.Position.Longitude}").ToArray());
         });
         private void Locations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {

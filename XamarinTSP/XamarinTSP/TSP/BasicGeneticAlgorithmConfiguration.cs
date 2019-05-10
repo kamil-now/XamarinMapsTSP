@@ -27,16 +27,15 @@ namespace XamarinTSP.TSP
         public double CrossoverChance { get; set; }
         public double MutationChance { get; set; }
         public double ElitismFactor { get; set; }
+        public bool Elitism { get; set; }
         public bool MutationBasedOnDiversity { get; set; }
         public bool TimeBasedFitness { get; set; }
         public bool DistanceBasedFitness { get; set; }
 
         public BasicGeneticAlgorithmConfiguration()
         {
-            SelectionAlgorithm = new TournamentSelection()
-            {
-                TournamentSize = 5
-            };
+            TournamentSize = 5;
+            SelectionAlgorithm = new RouletteSelection();
             CrossoverAlgorithm = new PMXCrossover();
             MutationAlgorithm = new InversionMutation();
             MutationChance = 0.05;
@@ -44,8 +43,9 @@ namespace XamarinTSP.TSP
             PopulationSize = 40;
             ElitismFactor = 0.1;
 
+            Elitism = true;
             MutationBasedOnDiversity = false;
-            TimeBasedFitness = false;
+            TimeBasedFitness = true;
             DistanceBasedFitness = true;
         }
 
@@ -61,6 +61,7 @@ namespace XamarinTSP.TSP
                 CrossoverChance = CrossoverChance,
                 MutationChance = MutationChance,
                 ElitismFactor = ElitismFactor,
+                Elitism = Elitism,
                 MutationBasedOnDiversity = MutationBasedOnDiversity,
                 TimeBasedFitness = TimeBasedFitness,
                 DistanceBasedFitness = DistanceBasedFitness

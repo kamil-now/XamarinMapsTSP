@@ -18,12 +18,17 @@ namespace XamarinTSP.Common.Extensions
                     ?.GetCustomAttribute<DescriptionAttribute>()
                     ?.Description;
         }
-        
+
         public static IEnumerable<Enum> GetFlags(this Enum input)
         {
             foreach (Enum value in Enum.GetValues(input.GetType()))
                 if (input.HasFlag(value))
                     yield return value;
         }
+        public static IEnumerable<T> GetValues<T>()
+        {
+            return Enum.GetValues(typeof(T)).Cast<T>();
+        }
+
     }
 }

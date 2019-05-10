@@ -11,6 +11,7 @@
         double CrossoverChance { get; set; }
         double MutationChance { get; set; }
         double ElitismFactor { get; set; }
+        bool Elitism { get; set; }
         bool MutationBasedOnDiversity { get; set; }
         bool TimeBasedFitness { get; set; }
         bool DistanceBasedFitness { get; set; }

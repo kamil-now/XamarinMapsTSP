@@ -8,6 +8,7 @@
                                   RouteCoordinates="{Binding CalculatedRoute.RouteCoordinates}"
                                   Position="{Binding MapPosition}"
                                   Locations="{Binding List.Locations}"
+                                  ZoomDistance="{Binding ZoomDistance}"
                                   IsRouteVisible="{Binding IsRouteVisible}"/>
     </ContentView.Content>
 </ContentView>

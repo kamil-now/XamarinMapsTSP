@@ -11,6 +11,22 @@ namespace XamarinTSP.UI.CustomControls
 {
     public class CustomMap : Map
     {
+        public static readonly BindableProperty ZoomDistanceProperty =
+            BindableProperty.Create(
+                propertyName: "ZoomDistanceProperty",
+                returnType: typeof(double),
+                declaringType: typeof(CustomMap),
+                defaultValue: null,
+                defaultBindingMode: BindingMode.TwoWay,
+                validateValue: null,
+                propertyChanged: PositionChanged
+            );
+
+        public double ZoomDistance
+        {
+            get { return (double)GetValue(ZoomDistanceProperty); }
+            set { SetValue(ZoomDistanceProperty, value); }
+        }
         public static readonly BindableProperty IsRouteVisibleProperty =
             BindableProperty.Create(
                 propertyName: "IsRouteVisibleProperty",
@@ -101,7 +117,7 @@ namespace XamarinTSP.UI.CustomControls
         {
             if (bindable is CustomMap map)
             {
-                map.MoveToRegion(MapSpan.FromCenterAndRadius(map.Position, Distance.FromKilometers(1)));
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(map.Position, Distance.FromKilometers(map.ZoomDistance)));
             }
         }
         private static void LocationsChanged(BindableObject bindable, object oldValue, object newValue)
