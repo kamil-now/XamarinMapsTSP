@@ -241,7 +241,7 @@
 
                     <StackLayout Orientation="Vertical">
                         <Grid>
-                            <Label Text="Traffic models:"
+                            <Label Text="Traffic model:"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End"
                                    Grid.Column="0" />

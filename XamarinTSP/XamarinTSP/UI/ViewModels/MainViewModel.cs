@@ -93,8 +93,11 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-            MapViewModel.ZoomDistance = 1000;
-            await MapViewModel.MoveToUserRegion();
+             if (List.Locations?.Count == 0)
+            {
+                MapViewModel.ZoomDistance = 1000;
+                await MapViewModel.MoveToUserRegion();
+            }
         });
 
         public ICommand RunTSPCommand => new Command<Button>(async button =>

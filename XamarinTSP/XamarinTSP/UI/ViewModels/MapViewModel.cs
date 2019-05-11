@@ -31,6 +31,7 @@ namespace XamarinTSP.UI.ViewModels
         {
             _geolocation = geolocation;
             List = list;
+            ZoomDistance = 10;
             CalculatedRoute = new Route();
         }
         

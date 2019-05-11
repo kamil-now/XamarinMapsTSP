@@ -102,7 +102,7 @@ namespace XamarinTSP.UI.CustomControls
         public void FocusPins()
         {
             var pins = Pins.Select(x => x.Position);
-            if (pins != null && pins.Count() > 0)
+            if (pins != null && pins.Count() > 1)
             {
                 MoveToRegion(MapSpanGenerator.Generate(pins));
             }

@@ -33,6 +33,7 @@
             <ListView  x:Name="List"
                        Grid.Row="1"
                        Margin="10,5"
+                       RowHeight="50"
                        ItemsSource="{Binding FoundLocations, UpdateSourceEventName=CollectionChanged}">
                 <ListView.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="ItemTapped"
@@ -50,7 +51,7 @@
                                     </Grid.RowDefinitions>
                                     <Label Text="{Binding MainDisplayString}"
                                            FontAttributes="Bold" />
-                                    <Label Grid.Row="1" Text="{Binding AdditionalLocationInfo}" />
+                                    <Label Grid.Row="1" Text="{Binding AdditionalLocationInfo}"/>
                                 </Grid>
                             </ViewCell.View>
                         </ViewCell>
