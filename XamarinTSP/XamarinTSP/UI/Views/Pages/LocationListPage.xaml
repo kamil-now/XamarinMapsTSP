@@ -33,7 +33,7 @@
             <ListView  x:Name="List"
                        Grid.Row="1"
                        Margin="10,5"
-                       RowHeight="50"
+                       RowHeight="60"
                        ItemsSource="{Binding FoundLocations, UpdateSourceEventName=CollectionChanged}">
                 <ListView.Behaviors>
                     <behaviors:EventToCommandBehavior EventName="ItemTapped"

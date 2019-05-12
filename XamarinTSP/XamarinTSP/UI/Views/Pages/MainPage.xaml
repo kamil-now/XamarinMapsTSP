@@ -300,8 +300,8 @@
                     <Button.Style>
                         <Style TargetType="Button"
                                BasedOn="{StaticResource IconButton}">
-                            <Setter Property="FontFamily"
-                                    Value="{StaticResource MaterialDesignFont}" />
+                            <Setter Property="FontSize"
+                                    Value="25" />
                             <Setter Property="IsEnabled"
                                     Value="True" />
                             <Style.Triggers>
