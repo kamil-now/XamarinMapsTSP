@@ -20,6 +20,13 @@ namespace XamarinTSP.UI.Models
         public ICommand DeleteCommand => new Command<Location>(location =>
         {
             Locations.Remove(location);
+            for (int i = 0; i < Locations.Count; i++)
+            {
+                var loc = Locations.ElementAt(i);
+                loc.SetIndex(i + 1);
+                loc.NotifyOfPropertyChange(() => loc.Index);
+            }
+
             location.Dispose();
         });
         public void Reorder(int[] positions)

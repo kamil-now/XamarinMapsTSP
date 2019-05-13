@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -93,7 +92,7 @@ namespace XamarinTSP.UI.ViewModels
 
         public ICommand OnAppearingCommand => new Command(async () =>
         {
-             if (List.Locations?.Count == 0)
+            if (List.Locations?.Count == 0)
             {
                 MapViewModel.ZoomDistance = 1000;
                 await MapViewModel.MoveToUserRegion();
@@ -176,8 +175,7 @@ namespace XamarinTSP.UI.ViewModels
             }).ConfigureAwait(false);
         });
         public ICommand SelectLocationCommand => new Command<Location>(selected => MapViewModel.MapPosition = selected.Position);
-        public ICommand DeleteLocationCommand => new Command<Location>(selected => List.Locations.Remove(selected));
-
+        public ICommand DeleteLocationCommand => new Command<Location>(selected => List.DeleteCommand.Execute(selected));
         public ICommand OpenConfigurationCommand => new Command(async () => await _navigator.PushAsync<ConfigurationViewModel>());
         public ICommand AddLocationCommand => new Command(async () =>
         {
@@ -194,23 +192,21 @@ namespace XamarinTSP.UI.ViewModels
         public ICommand SetCarModeCommand => new Command(() => TravelMode = TravelMode.Driving);
         public ICommand SetSampleDataCommand => new Command(async () =>
         {
-            LoadingSampleData = true;
-
-            NotifyOfPropertyChange(() => LoadingSampleData);
-            await Task.Run(async () =>
+            if (!LoadingSampleData)
             {
-                List.SetMockData(_geolocation);
-                await App.InvokeOnMainThreadAsync(() =>
-                {
-                    foreach (var item in List.Locations)
-                    {
-                        Debug.WriteLine($"{item.Position.Latitude} | {item.Position.Longitude}");
-                    }
-                    LoadingSampleData = false;
-                    NotifyOfPropertyChange(() => LoadingSampleData);
+                LoadingSampleData = true;
 
+                NotifyOfPropertyChange(() => LoadingSampleData);
+                await Task.Run(async () =>
+                {
+                    List.SetMockData(_geolocation);
+                    await App.InvokeOnMainThreadAsync(() =>
+                    {
+                        LoadingSampleData = false;
+                        NotifyOfPropertyChange(() => LoadingSampleData);
+                    });
                 });
-            });
+            }
         });
 
         public ICommand OpenInGoogleMapsCommand => new Command(() =>

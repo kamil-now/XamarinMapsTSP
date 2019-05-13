@@ -119,7 +119,7 @@
                         Padding="5,1"
                         CornerRadius="10">
                     <ListView x:Name="List"
-                              ItemsSource="{Binding List.Locations, UpdateSourceEventName=CollectionChanged}">
+                              ItemsSource="{Binding List.Locations}">
                         <ListView.Behaviors>
                             <!--<behaviors:EventToCommandBehavior EventName="ItemTapped"
                                                               CommandParameter="{Binding Path=SelectedItem, Source={x:Reference Name=List} }"
@@ -137,21 +137,20 @@
                                             </Grid.ColumnDefinitions>
                                             <Label Grid.Column="0"
                                                    HorizontalOptions="End"
-                                                   VerticalOptions="End"
+                                                   VerticalOptions="Center"
                                                    Text="{Binding Index}"
                                                    FontSize="Small"
                                                    TextColor="Black" />
                                             <Label Grid.Column="1"
                                                    HorizontalOptions="Start"
-                                                   VerticalOptions="End"
+                                                   VerticalOptions="Center"
                                                    Text="{Binding MainDisplayString}"
                                                    FontSize="Small"
                                                    TextColor="Black"
                                                    LineBreakMode="NoWrap" />
                                             <Button Grid.Column="2"
                                                     Margin="0"
-                                                    HorizontalOptions="Start"
-                                                    VerticalOptions="End"
+                                                    Padding="0"
                                                     Text="&#xF377;"
                                                     FontSize="20"
                                                     Style="{StaticResource IconButton}"
@@ -183,10 +182,26 @@
                         Grid.Column="2"
                         Grid.RowSpan="2"
                         Text="&#xF9EC;"
-                        Style="{StaticResource IconButton}"
                         FontFamily="{StaticResource MaterialDesignFont}"
-                        IsEnabled="{Binding IsAlgorithmRunning, Converter={StaticResource NegateBoolConverter}}"
-                        Command="{Binding SetSampleDataCommand}" />
+                        Command="{Binding SetSampleDataCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button"
+                               BasedOn="{StaticResource IconButton}">
+                            <Setter Property="FontSize"
+                                    Value="25" />
+                            <Setter Property="IsEnabled"
+                                    Value="False" />
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding LoadingSampleData}"
+                                             Value="True">
+                                    <Setter Property="IsEnabled"
+                                            Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <ActivityIndicator Grid.Row="0"
                                    Grid.Column="2"
                                    Grid.RowSpan="2"
@@ -195,7 +210,7 @@
                                    Color="Black"
                                    BackgroundColor="Transparent"
                                    IsVisible="{Binding LoadingSampleData}"
-                                   IsRunning="true" />
+                                   IsRunning="{Binding LoadingSampleData}" />
             </Grid>
 
             <StackLayout Grid.Row="1"
